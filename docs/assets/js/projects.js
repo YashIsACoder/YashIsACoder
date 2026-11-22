@@ -43,7 +43,7 @@ export const PROJECTS = [
     name: 'Event-replay engine', lang: 'C++20 · Linux',
     one: 'Bursty market events through bounded queues, measured against a p99 latency budget. A work in progress.',
     about: [
-      'At the Commonwealth Bank of Australia I built tick-level replay for futures desks. This is a public, from-scratch take on the same problem.',
+      'At the Commonwealth Bank of Australia I built pipelines over high-frequency exchange data. This is a public, from-scratch take on the latency side of that problem.',
       'The question: how do fixed and deadline-aware batching change the highest event rate a replay stage can sustain within a p99 target, under bursty input and background CPU contention?'
     ],
     highlights: [

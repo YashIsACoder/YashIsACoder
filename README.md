@@ -1,6 +1,6 @@
 ### Hi, I'm Yash
 
-I study Computer Science and Advanced Science at UNSW Sydney. At the Commonwealth Bank of Australia I modelled government bond auctions with Gaussian processes and built tick-level market replay; before that I worked on race strategy at Sunswift Racing. I'm interested in C++, algorithms, market data and simulation, and I'm looking for an honours thesis in algorithms or C++.
+I study Computer Science and Advanced Science at UNSW Sydney. At the Commonwealth Bank of Australia I worked on Gaussian process models of government bond auctions and built an exchange-data platform for high-frequency order book features; before that I worked on race strategy at Sunswift Racing. I'm interested in C++, algorithms, market data and simulation, and I'm looking for an honours thesis in algorithms or C++.
 
 **Site:** [yashisacoder.github.io/YashIsACoder](https://yashisacoder.github.io/YashIsACoder/) has my research, projects you can run in the browser, a blog and course reviews.
 
