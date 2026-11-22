@@ -1,0 +1,123 @@
+% Yashwanth Madan, one-page CV.
+% Build: cd scripts/cv && pdflatex -interaction=nonstopmode cv.tex && cp cv.pdf ../../docs/cv.pdf
+\documentclass[10pt]{article}
+\usepackage[a4paper,top=1.25cm,bottom=1.1cm,left=1.55cm,right=1.55cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{charter}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[hidelinks,pdftitle={Yashwanth Madan - CV},pdfauthor={Yashwanth Madan}]{hyperref}
+
+% clean, ATS-readable text layer
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\definecolor{ink}{HTML}{16233A}
+\definecolor{accent}{HTML}{1F3A6E}
+\definecolor{muted}{HTML}{55606E}
+\color{ink}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\tabcolsep}{0pt}
+\linespread{1.04}
+\raggedright
+
+\titleformat{\section}{\color{accent}\large\bfseries}{}{0pt}{\MakeUppercase}[\vspace{-6pt}{\color{accent!55}\rule{\linewidth}{0.6pt}}]
+\titlespacing*{\section}{0pt}{10pt}{2pt}
+
+\setlist[itemize]{leftmargin=1.05em,label={\color{accent}\small\textbullet},itemsep=2pt,parsep=0pt,topsep=2pt,after=\vspace{1pt}}
+
+% \role{Org}{Dates}{Title}{Location}
+\newcommand{\role}[4]{%
+  \vspace{3.5pt}%
+  \begin{tabularx}{\linewidth}{@{}X r@{}}
+    \textbf{#1} & #2 \\
+    \textit{#3} & \textit{\color{muted}#4} \\
+  \end{tabularx}\vspace{-1pt}}
+% \project{Name}{one-liner}{stack}
+\newcommand{\project}[3]{%
+  \vspace{3.5pt}%
+  \begin{tabularx}{\linewidth}{@{}X r@{}}
+    \textbf{#1}\,{\color{muted}\textbar}\, #2 & \textit{\color{muted}#3} \\
+  \end{tabularx}\vspace{-1pt}}
+
+\begin{document}
+
+%----------------------------------------------------------- header
+\begin{center}
+  {\fontsize{24}{28}\selectfont\bfseries Yashwanth Madan}\\[5pt]
+  {\small
+  Sydney, Australia \,\textbullet\, Australian citizen \,\textbullet\,
+  \href{mailto:yashwanth.madan7070@gmail.com}{yashwanth.madan7070@gmail.com} \,\textbullet\,
+  \href{https://github.com/YashIsACoder}{github.com/YashIsACoder}\\[1pt]
+  \href{https://www.linkedin.com/in/yashwanth-madan-7ab57b282}{linkedin.com/in/yashwanth-madan-7ab57b282} \,\textbullet\,
+  \href{https://yashisacoder.github.io/YashIsACoder/}{yashisacoder.github.io/YashIsACoder}}
+\end{center}
+\vspace{-6pt}
+
+%----------------------------------------------------------- experience
+\section{Experience}
+
+\role{Commonwealth Bank of Australia}{Mar 2026 -- Sep 2026}{Data Science Intern, Institutional Banking \& Markets}{Sydney}
+\begin{itemize}
+  \item Built \textbf{Gaussian process regression models of government bond auctions}, forecasting \textbf{bid price and spread} with calibrated predictive uncertainty to inform the desk's bidding and pricing decisions.
+  \item Owned the modelling pipeline end to end: auction data ingestion, feature engineering, kernel selection and hyperparameter fitting by marginal likelihood, and out-of-sample backtesting on historical auctions.
+  \item Engineered a \textbf{tick-level market replay platform} for futures and commodities, letting traders reconstruct intraday sessions to measure execution quality and liquidity.
+  \item Built fixed income analytics surfacing credit spreads and \textbf{relative-value signals} across high-grade bonds.
+  \item Productionised models with GitHub Actions CI/CD for automated testing, deployment and monitoring.
+\end{itemize}
+
+\role{Sunswift Racing (UNSW Solar Car Team)}{Apr 2025 -- May 2026}{Performance Optimisation Engineer}{Sydney}
+\begin{itemize}
+  \item Built the \textbf{race-strategy pipeline} for Sunswift~7 at the 2025 Bridgestone World Solar Challenge (3,000\,km, Darwin to Adelaide), recommending adaptive target speeds from live telemetry, solar irradiance and weather forecasts.
+  \item Quantified strategy risk with \textbf{paired Monte Carlo simulation} under shared weather draws, estimating finish probability and battery-reserve breaches with Wilson and Newcombe confidence intervals.
+  \item Modelled vehicle energy use (drag, rolling resistance, gradient, motor maps) to pace against the 55\,MJ energy limit.
+\end{itemize}
+
+\role{Sydney Swans}{Feb 2025 -- May 2025}{Data Engineering Intern}{Sydney}
+\begin{itemize}
+  \item Architected a serverless \textbf{AWS data lake} (S3, Lambda, Glue, Athena) unifying sports performance data for analysts.
+  \item Automated REST API ingestion and optimised SQL ETL workflows, \textbf{cutting processing time by 50\%}.
+\end{itemize}
+
+\role{UNSW School of Computer Science and Engineering}{2026 -- Present}{Tutor, COMP3110}{Sydney}
+
+%----------------------------------------------------------- education
+\section{Education}
+
+\role{University of New South Wales (UNSW Sydney)}{2023 -- 2028 (expected)}{Bachelor of Computer Science / Bachelor of Advanced Science (Honours), Statistics major}{Sydney}
+\begin{itemize}
+  \item \textbf{Coursework:} Data and Algorithms in Trading (with Optiver), Extended Algorithm Design and Analysis, Bayesian Inference and Computation, Higher Theory of Statistics, Higher Linear Models, Linear and Discrete Optimisation.
+  \item \textbf{1st Place, UNSW \& ANZHFR Health Datathon} (Dec 2025): predicting delirium after hip-fracture surgery.
+\end{itemize}
+
+%----------------------------------------------------------- projects
+\section{Projects}
+
+\project{ECM: Energy Consumption Model}{solar-electric vehicle simulation library}{C++20, CMake, pybind11}
+\begin{itemize}
+  \item Four energy models (steady segment, drive cycle, motor-efficiency map, gust-aware); drive cycles integrated with \textbf{Gaussian quadrature} and bisection at power transitions, verified against closed-form solutions.
+  \item Packaged as a tested CMake library with \textbf{Python bindings} and a browser lab for replaying race simulations.
+\end{itemize}
+
+\project{cpp-mlp}{neural network from first principles}{C++17, Eigen}
+\begin{itemize}
+  \item Dense layers, activations and hand-derived \textbf{backpropagation} built on Eigen; trained and evaluated on MNIST.
+\end{itemize}
+
+%----------------------------------------------------------- skills
+\section{Technical Skills}
+\begin{tabularx}{\linewidth}{@{}p{2.95cm}X@{}}
+  \textbf{Languages} & C++ (C++17/20), Python, SQL, C, TypeScript, JavaScript, Bash \\[1.5pt]
+  \textbf{Methods} & Gaussian Processes, Bayesian Inference, Monte Carlo, Statistical Modelling, Machine Learning \\[1.5pt]
+  \textbf{Libraries} & NumPy, pandas, Polars, SciPy, scikit-learn, PyTorch, XGBoost, Eigen, pybind11 \\[1.5pt]
+  \textbf{Data and Cloud} & AWS (S3, Lambda, Glue, Athena, SageMaker), DuckDB, SQLite, FastAPI, REST APIs \\[1.5pt]
+  \textbf{Tools} & Linux, Git, GitHub Actions (CI/CD), Docker, CMake, tmux, Jupyter \\
+\end{tabularx}
+
+\end{document}

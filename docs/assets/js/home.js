@@ -47,7 +47,7 @@ function links(p) {
     return `<a class="btn${l.primary ? ' btn--primary' : ''}" href="${esc(l.href)}"${ext ? ' rel="noopener" target="_blank"' : ''}>${esc(l.label)}${ext ? ' ↗' : ''}</a>`;
   });
   if (p.private) out.push('<span class="btn" aria-disabled="true">private repo · ask me for a demo</span>');
-  if (p.brewing) out.push('<span class="btn" aria-disabled="true">in progress · 2027</span>');
+  if (p.brewing) out.push('<span class="btn" aria-disabled="true">work in progress</span>');
   return out.join('');
 }
 function tapHTML(p) {

@@ -49,7 +49,7 @@ function load(dir, kind) {
 // ------------------------------------------------------------ page shell
 const flavourScript = `<script>(function(){var m=null;try{m=localStorage.getItem('yash-colorscheme')}catch(e){}var h=new Date().getHours();var a=h>=6&&h<17?'latte':h>=17&&h<19?'frappe':h>=19&&h<22?'macchiato':'mocha';document.documentElement.dataset.flavor=m&&m!=='auto'?m:a})()</script>`;
 
-export function shell({ title, description, base, url, file, active, body, scripts = ['posts.js'], noindex = false }) {
+export function shell({ title, description, base, url, file, active, body, scripts = ['posts.js', 'tables.js'], noindex = false }) {
   const tab = (id, label, dot, href) => `<a class="tab${active === id ? ' is-active' : ''}" href="${href}" style="--dot: var(${dot})"><i></i>${label}</a>`;
   return `<!doctype html>
 <html lang="en" data-flavor="mocha">
@@ -123,15 +123,38 @@ function notecard(p, base) {
   return `<a class="notecard" href="${base}blog/${p.slug}/" style="--c: var(--mauve)"><div class="notecard__bar"><b>${esc(p.slug)}.md</b><span>${nice(p.date)}</span></div><div class="notecard__body"><span class="notecard__title">${esc(p.title)}</span>${p.summary ? `<span class="notecard__dek">${esc(p.summary)}</span>` : ''}${p.card_math ? `<div class="notecard__math">${inlineTex(p.card_math)}</div>` : ''}${p.toc.length ? `<ul class="notecard__toc">${p.toc.slice(0, 4).map((t) => `<li>${esc(t.text)}</li>`).join('')}</ul>` : ''}<div class="notecard__foot"><span>${readTime(p.words)}</span>${p.tags.slice(0, 3).map((t) => `<span>#${esc(t)}</span>`).join('')}</div></div></a>`;
 }
 
-function courseTable(courses, reviews, base) {
+const termKey = (t) => { const m = String(t || '').match(/(\d{4})\s*T(\d)/i); return m ? Number(m[1]) * 10 + Number(m[2]) : 0; };
+const STATUS = {
+  reviewed: { order: 0, colour: 'var(--green)', label: 'reviewed' },
+  taking: { order: 1, colour: 'var(--blue)', label: 'taking it now' },
+  taken: { order: 2, colour: 'var(--yellow)', label: 'review pending' },
+  planned: { order: 3, colour: 'var(--mauve)', label: 'planned' }
+};
+
+function courseTable(courses, reviews, base, { scroll = false } = {}) {
   const byCode = new Map(reviews.map((r) => [String(r.course).toUpperCase(), r]));
-  const rows = courses.map((c) => {
-    const r = byCode.get(c.code.toUpperCase());
-    const status = r ? ['var(--green)', 'reviewed'] : c.status === 'taking' ? ['var(--blue)', 'taking it now'] : ['var(--yellow)', 'review pending'];
-    const action = r ? `<a class="read" href="${base}courses/${r.slug}/">read →</a>` : c.status === 'taking' ? '<span class="meter-none">after exams</span>' : '<span class="todo">TODO</span>';
-    return `<tr><td class="code">${esc(c.code)}</td><td class="name">${esc(c.name)}${c.note ? `<small>${esc(c.note)}</small>` : ''}</td><td><span class="status" style="--c:${status[0]}">${status[1]}</span></td><td>${meter(r?.difficulty, '--red')}</td><td>${meter(r?.workload, '--peach')}</td><td>${meter(r?.enjoyment, '--green')}</td><td>${action}</td></tr>`;
+  const list = courses.map((c) => ({ ...c, review: byCode.get(c.code.toUpperCase()) }))
+    .sort((a, b) => termKey(b.term) - termKey(a.term) || a.code.localeCompare(b.code));
+  const subjects = [...new Set(list.map((c) => c.code.slice(0, 4)))];
+  const main = subjects.filter((s) => list.filter((c) => c.code.startsWith(s)).length >= 3);
+  let prevTerm = null;
+  const rows = list.map((c) => {
+    const st = c.review ? STATUS.reviewed : STATUS[c.status] || STATUS.taken;
+    const key = c.review ? 'reviewed' : c.status || 'taken';
+    const action = c.review ? `<a class="read" href="${base}courses/${c.review.slug}/">read →</a>`
+      : key === 'taking' ? '<span class="meter-none">after exams</span>'
+      : key === 'planned' ? '<span class="meter-none">—</span>' : '<span class="todo">TODO</span>';
+    const subj = main.includes(c.code.slice(0, 4)) ? c.code.slice(0, 4) : 'other';
+    const start = c.term !== prevTerm; prevTerm = c.term;
+    return `<tr${start ? ' class="is-term-start"' : ''} data-term="${termKey(c.term)}" data-code="${esc(c.code)}" data-name="${esc(c.name.toLowerCase())}" data-status="${st.order}" data-subject="${subj}" data-state="${key}"><td class="term">${esc(c.term || '')}</td><td class="code">${esc(c.code)}</td><td class="name">${esc(c.name)}${c.note ? `<small>${esc(c.note)}</small>` : ''}</td><td><span class="status" style="--c:${st.colour}">${st.label}</span></td><td>${meter(c.review?.difficulty, '--red')}</td><td>${meter(c.review?.workload, '--peach')}</td><td>${meter(c.review?.enjoyment, '--green')}</td><td>${action}</td></tr>`;
   }).join('');
-  return `<div class="ctable-wrap"><table class="ctable"><thead><tr><th scope="col">course</th><th scope="col">name</th><th scope="col">status</th><th scope="col">difficulty</th><th scope="col">workload</th><th scope="col">enjoyment</th><th scope="col">review</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const sortTh = (k, label) => `<th scope="col"${k === 'term' ? ' aria-sort="descending"' : ''}><button type="button" data-sort="${k}">${label}</button></th>`;
+  const filters = ['all', ...main, 'other'].filter((f) => f !== 'other' || list.some((c) => !main.includes(c.code.slice(0, 4))));
+  return `<div class="ctools" data-course-tools>
+    <div class="filters" role="group" aria-label="Filter courses">${filters.map((f, i) => `<button type="button" data-cfilter="${f}" aria-pressed="${i === 0}">${f === 'all' ? 'all' : f === 'other' ? 'other' : f}</button>`).join('')}<button type="button" data-cfilter="state:taking" aria-pressed="false">taking now</button></div>
+    <span class="ctools__count" data-course-count>${list.length} courses</span>
+  </div>
+  <div class="ctable-wrap${scroll ? ' ctable-wrap--scroll' : ''}"><table class="ctable" data-sortable><thead><tr>${sortTh('term', 'term')}${sortTh('code', 'course')}${sortTh('name', 'name')}${sortTh('status', 'status')}<th scope="col">difficulty</th><th scope="col">workload</th><th scope="col">enjoyment</th><th scope="col">review</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 function postPage(p, older, newer, section) {
@@ -170,13 +193,13 @@ function blogIndex(posts) {
         <div class="win__bar"><span class="win__path">~/yash<span class="sep">›</span><b>blog/</b></span><span>${posts.length} post${posts.length === 1 ? '' : 's'} · <a class="c-blue" href="${base}feed.xml">rss</a></span></div>
         <div class="win__body">
           <h1 class="h2"><span class="hash">#</span>blog</h1>
-          <p class="lede">Notes on what I’m building and what I’m learning: C++, Monte Carlo, markets and solar cars. Maths is typeset from LaTeX.</p>
+          <p class="lede">Notes on what I’m building and what I’m learning: C++, algorithms, markets and solar cars. Maths is typeset from LaTeX.</p>
           <div class="filters" role="group" aria-label="Filter by tag" data-filters><button type="button" data-filter="all" aria-pressed="true">all</button>${tags.map((t) => `<button type="button" data-filter="${esc(t)}" aria-pressed="false">#${esc(t)}</button>`).join('')}</div>
           <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}"><a href="${p.slug}/"><span class="d">${p.date}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a></li>`).join('')}</ul>
         </div>
       </div>
     </section>`;
-  return shell({ title: 'Blog · Yash Madan', description: 'Notes on C++, Monte Carlo, markets and solar cars.', base, url: `${SITE}blog/`, file: '~/yash/blog/', active: 'blog', body });
+  return shell({ title: 'Blog · Yash Madan', description: 'Notes on C++, algorithms, markets and solar cars.', base, url: `${SITE}blog/`, file: '~/yash/blog/', active: 'blog', body });
 }
 
 function coursesIndex(courses, reviews) {
@@ -242,7 +265,7 @@ function main() {
   const homePath = path.join(DOCS, 'index.html');
   let home = fs.readFileSync(homePath, 'utf8');
   home = home.replace(/<!-- blog:start -->[\s\S]*?<!-- blog:end -->/, `<!-- blog:start -->\n${posts.map((p) => notecard(p, '')).join('\n')}\n<!-- blog:end -->`);
-  home = home.replace(/<!-- courses:start -->[\s\S]*?<!-- courses:end -->/, `<!-- courses:start -->\n${courseTable(courses, reviews, '')}\n<!-- courses:end -->`);
+  home = home.replace(/<!-- courses:start -->[\s\S]*?<!-- courses:end -->/, `<!-- courses:start -->\n${courseTable(courses, reviews, '', { scroll: true })}\n<!-- courses:end -->`);
   fs.writeFileSync(homePath, home);
   console.log(`\n  built ${posts.length} post(s), ${reviews.length} review(s), the indexes, feed.xml and the homepage.`);
 }

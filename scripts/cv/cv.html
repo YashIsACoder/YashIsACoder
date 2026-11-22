@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Yashwanth Madan · CV</title>
+<!-- Source for docs/cv.pdf. Regenerate with:  python3 scripts/make_cv.py
+     (or open in Chrome → Print → Save as PDF · A4 · margins none · background graphics on) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  :root { --ink: #111318; --body: #262a33; --muted: #5b606c; --rule: #c9ccd4; --accent: #1f3a6e; }
+  html, body { margin: 0; }
+  body { width: 210mm; height: 297mm; padding: 14mm 16mm 12mm; font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-size: 10.3pt; line-height: 1.42; color: var(--body); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: inherit; text-decoration: none; }
+
+  header { text-align: center; padding-bottom: 9px; border-bottom: 1.2px solid var(--ink); }
+  h1 { margin: 0; font-size: 24pt; line-height: 1.05; font-weight: 700; letter-spacing: -0.3px; color: var(--ink); }
+  .contact { margin-top: 6px; font-size: 9.3pt; color: var(--body); }
+  .contact span + span::before { content: "|"; margin: 0 8px; color: var(--rule); }
+
+  section { margin-top: 12px; }
+  h2 { margin: 0 0 5px; padding-bottom: 2px; font-size: 10pt; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); border-bottom: 0.8px solid var(--rule); }
+
+  .item { margin-top: 7px; }
+  .item:first-of-type { margin-top: 2px; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .org { font-weight: 700; font-size: 10.6pt; color: var(--ink); }
+  .meta { font-size: 9.6pt; color: var(--muted); white-space: nowrap; }
+  .role { font-style: italic; color: var(--body); }
+  ul { margin: 2px 0 0; padding-left: 15px; }
+  li { margin-top: 1.5px; padding-left: 2px; }
+  li::marker { color: var(--ink); }
+  b { font-weight: 600; color: var(--ink); }
+  .stack { font-size: 9.4pt; color: var(--muted); white-space: nowrap; }
+
+  .skills { display: grid; grid-template-columns: 118px 1fr; gap: 2.5px 10px; margin-top: 2px; }
+  .skills dt { font-weight: 600; color: var(--ink); }
+  .skills dd { margin: 0; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Yashwanth Madan</h1>
+    <div class="contact">
+      <span>Sydney, Australia (Australian citizen)</span>
+      <span><a href="mailto:yashwanth.madan7070@gmail.com">yashwanth.madan7070@gmail.com</a></span>
+      <span><a href="https://github.com/YashIsACoder">github.com/YashIsACoder</a></span>
+      <span><a href="https://www.linkedin.com/in/yashwanth-madan-7ab57b282/">linkedin.com/in/yashwanth-madan-7ab57b282</a></span>
+      <span><a href="https://yashisacoder.github.io/YashIsACoder/">yashisacoder.github.io/YashIsACoder</a></span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Experience</h2>
+    <div class="item">
+      <div class="row"><span class="org">Commonwealth Bank of Australia</span><span class="meta">Mar 2026 – Sep 2026</span></div>
+      <div class="row"><span class="role">Data Science Intern</span><span class="meta">Sydney</span></div>
+      <ul>
+        <li>Developed <b>Gaussian process models for government bond auctions</b>.</li>
+        <li>Built a <b>tick-level market replay platform</b> for futures and commodities data, enabling traders to analyse execution quality and intraday liquidity.</li>
+        <li>Developed fixed-income desk analytics surfacing credit spreads, pricing and relative-value signals for high-grade bonds.</li>
+        <li>Automated model deployment and monitoring with GitHub Actions.</li>
+      </ul>
+    </div>
+    <div class="item">
+      <div class="row"><span class="org">Sunswift Racing</span><span class="meta">Apr 2025 – May 2026</span></div>
+      <div class="row"><span class="role">Performance Optimisation Engineer</span><span class="meta">UNSW Sydney</span></div>
+      <ul>
+        <li>Built predictive pipelines recommending <b>adaptive race speeds</b> from live telemetry and environmental data.</li>
+        <li>Developed Monte Carlo simulations comparing race strategies under changing weather, terrain and energy limits.</li>
+        <li>Supported the team during the 2025 race from Race Control in Sydney.</li>
+      </ul>
+    </div>
+    <div class="item">
+      <div class="row"><span class="org">Sydney Swans</span><span class="meta">Feb 2025 – May 2025</span></div>
+      <div class="row"><span class="role">Data Engineering Intern</span><span class="meta">Sydney</span></div>
+      <ul>
+        <li>Built an <b>AWS data lake</b> (S3, Lambda, Glue, Athena) consolidating sports performance datasets for analysis.</li>
+        <li>Automated REST API ingestion and optimised SQL ETL workflows, cutting processing time by <b>50%</b>.</li>
+      </ul>
+    </div>
+    <div class="item">
+      <div class="row"><span class="org">UNSW School of Computer Science &amp; Engineering</span><span class="meta">2026 – present</span></div>
+      <div class="row"><span class="role">Tutor, COMP3110</span><span class="meta">Sydney</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <div class="item">
+      <div class="row"><span class="org">University of New South Wales (UNSW Sydney)</span><span class="meta">2023 – 2028 (expected)</span></div>
+      <div class="row"><span class="role">Bachelor of Computer Science / Bachelor of Advanced Science (Honours), Statistics major</span></div>
+      <ul>
+        <li>Coursework: Data and Algorithms in Trading (with Optiver), Extended Algorithm Design and Analysis, Machine Learning, Bayesian Inference and Computation, Linear and Discrete Optimisation, Computer Networks.</li>
+        <li><b>1st place</b>, UNSW &amp; ANZHFR Health Datathon (2025).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div class="item">
+      <div class="row"><span><span class="org">ECM</span> · energy consumption model for solar-electric vehicles</span><span class="stack">C++20, CMake, pybind11</span></div>
+      <ul><li>Four vehicle energy models and a route-simulation lab with O(1)-memory confidence intervals; ships as a CMake package with Python bindings.</li></ul>
+    </div>
+    <div class="item">
+      <div class="row"><span><span class="org">Payoff Lab</span> · options portfolio and Greeks simulator</span><span class="stack">TypeScript, React</span></div>
+      <ul><li>Built for MATH2991 (with Optiver): combine calls, puts and futures, then vary volatility and expiry to see value, payoff and Greeks.</li></ul>
+    </div>
+    <div class="item">
+      <div class="row"><span><span class="org">cpp-mlp</span> · neural network from scratch</span><span class="stack">C++17, Eigen</span></div>
+      <ul><li>Dense layers and hand-written backpropagation, trained and evaluated on MNIST.</li></ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <dl class="skills">
+      <dt>Languages</dt><dd>C++17/20, Python, SQL, TypeScript, JavaScript, C, Bash</dd>
+      <dt>Python &amp; ML</dt><dd>NumPy, pandas, Polars, SciPy, scikit-learn, PyTorch, XGBoost, Gaussian processes, Jupyter</dd>
+      <dt>C++</dt><dd>CMake, Eigen, pybind11, SFML</dd>
+      <dt>Data &amp; cloud</dt><dd>AWS (S3, Lambda, Glue, Athena, SageMaker), DuckDB, SQLite, FastAPI, REST APIs</dd>
+      <dt>Tools</dt><dd>Linux, Git, GitHub Actions, Docker, tmux, React, Next.js</dd>
+    </dl>
+  </section>
+</body>
+</html>

@@ -1,7 +1,7 @@
 ---
 title: Give both cars the same weather
 date: 2026-11-22
-tags: [monte-carlo, statistics, ecm]
+tags: [statistics, simulation, ecm]
 summary: A fast pacing rule can look brilliant on a calm day. For a fair comparison, weather is an input we can share.
 card_math: $\operatorname{Var}(A-B) = \operatorname{Var}A + \operatorname{Var}B - 2\operatorname{Cov}(A,B)$
 ---

@@ -41,9 +41,9 @@ export const PROJECTS = [
   {
     id: 'event-replay', row: 'markets', col: 'cpp', brewing: true,
     name: 'Event-replay engine', lang: 'C++20 · Linux',
-    one: 'Bursty market events through bounded queues, measured against a p99 latency budget. Steeping until 2027.',
+    one: 'Bursty market events through bounded queues, measured against a p99 latency budget. A work in progress.',
     about: [
-      'At CommBank I built tick-level replay for futures desks. This is the public, from-scratch version of that problem, and the seed of my CS honours thesis.',
+      'At the Commonwealth Bank of Australia I built tick-level replay for futures desks. This is a public, from-scratch take on the same problem.',
       'The question: how do fixed and deadline-aware batching change the highest event rate a replay stage can sustain within a p99 target, under bursty input and background CPU contention?'
     ],
     highlights: [
@@ -86,19 +86,6 @@ report(latency.p50(), latency.p99(), queue.max_depth(), drops);` }
     tap: { kind: 'sprint' }
   },
   {
-    id: 'mathblitz', row: 'markets', col: 'tool',
-    name: 'MathBlitz', lang: 'Next.js · SQLite',
-    one: 'Monkeytype for maths: a zero-latency game loop, adaptive difficulty and SQLite analytics.',
-    about: [
-      'My first go at an arithmetic trainer. Pick the operations, a mode (60-second timer, endless or target score) and a number range, then race.',
-      'It taught me that the feel of a game loop is mostly latency: no network round trip between a keystroke and the next question.'
-    ],
-    highlights: ['Adaptive difficulty', 'Timer, endless and target-score modes', 'Local SQLite analytics through Prisma'],
-    stack: ['Next.js', 'TypeScript', 'Prisma', 'SQLite'],
-    links: [{ label: 'Source', href: 'https://github.com/YashIsACoder/mathblitz', primary: true }],
-    tap: null
-  },
-  {
     id: 'solarroute', row: 'solar', col: 'browser',
     name: 'SolarRoute Studio', lang: 'ECM → JS', ontap: true,
     one: 'Replay a solar car from Darwin to Adelaide through control stops, and inspect its energy budget leg by leg.',
@@ -119,7 +106,7 @@ report(latency.p50(), latency.p99(), queue.max_depth(), drops);` }
   {
     id: 'ecm', row: 'solar', col: 'cpp',
     name: 'ECM', lang: 'C++20 · pybind11',
-    one: 'C++20 energy modelling for solar-electric vehicles, with a Monte Carlo route lab adapted from Sunswift strategy work.',
+    one: 'C++20 energy modelling for solar-electric vehicles, with a route-simulation lab adapted from Sunswift strategy work.',
     about: [
       'ECM estimates energy for a road segment or a continuous speed trace. The route lab uses those estimates to compare pacing and battery outcomes under the same simulated weather.',
       'SR7 defaults to the 2025 Cruiser limit of 55 MJ with overnight charging; SR8 is a provisional battery-and-solar scenario. The routes are synthetic.'
@@ -198,25 +185,6 @@ private:
     highlights: ['1D, 2D and 3D walks', 'Reproducible randomness from a seed', 'Statistical summaries and CSV export', 'SFML visualisation'],
     stack: ['C++17', 'SFML', 'Dear ImGui', 'CMake'],
     links: [{ label: 'Source', href: 'https://github.com/YashIsACoder/random-walk-sim', primary: true }],
-    tap: null
-  },
-  {
-    id: 'leetrun', row: 'algo', col: 'tool',
-    name: 'LeetRun', lang: 'Next.js · SQLite',
-    one: 'A private, local-first, gamified LeetCode training companion with its own Elo, skill tree and weekly quests.',
-    about: [
-      'LeetCode stays where problems are solved. LeetRun owns everything around it: question queues, timed attempts, code evidence, complexity review, quests and progress.',
-      'Ratings are taken seriously. Hand-assigned difficulties for problems without contest data land within about 95 Elo of community ratings on a blind test, against about 160 for a ridge regression.'
-    ],
-    highlights: [
-      'An offline catalogue of 4,119 problems',
-      'LeetRun Elo starts at 1500 and counts first attempts within an interview time budget',
-      '1,475 hand-rated problems on the contest scale',
-      'More than 90 test files'
-    ],
-    stack: ['Next.js', 'TypeScript', 'Node’s built-in SQLite'],
-    links: [],
-    private: true,
     tap: null
   }
 ];
