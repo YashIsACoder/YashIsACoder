@@ -1,0 +1,10 @@
+[
+  { "code": "MATH2991", "name": "Data and Algorithms in Trading", "note": "taught with Optiver", "status": "taken" },
+  { "code": "COMP3821", "name": "Extended Algorithm Design and Analysis", "status": "taking" },
+  { "code": "COMP3900", "name": "Computer Science Project", "status": "taking" },
+  { "code": "COMP3331", "name": "Computer Networks & Applications", "status": "taken" },
+  { "code": "COMP2511", "name": "Object-Oriented Design & Programming", "status": "taken" },
+  { "code": "COMP2521", "name": "Data Structures and Algorithms", "status": "taken" },
+  { "code": "COMP1521", "name": "Computer Systems Fundamentals", "status": "taken" },
+  { "code": "COMP1511", "name": "Programming Fundamentals", "status": "taken" }
+]

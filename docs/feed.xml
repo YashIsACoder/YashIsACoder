@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Yash Madan</title>
+    <link>https://yashisacoder.github.io/YashIsACoder/</link>
+    <description>Blog posts and course reviews from Yashwanth Madan.</description>
+    <language>en-au</language>
+    <item>
+      <title>Give both cars the same weather</title>
+      <link>https://yashisacoder.github.io/YashIsACoder/blog/paired-weather/</link>
+      <guid>https://yashisacoder.github.io/YashIsACoder/blog/paired-weather/</guid>
+      <pubDate>Sat, 21 Nov 2026 22:00:00 GMT</pubDate>
+      <description>A fast pacing rule can look brilliant on a calm day. For a fair comparison, weather is an input we can share.</description>
+    </item>
+    <item>
+      <title>Where did the battery charge go?</title>
+      <link>https://yashisacoder.github.io/YashIsACoder/blog/battery-ledger/</link>
+      <guid>https://yashisacoder.github.io/YashIsACoder/blog/battery-ledger/</guid>
+      <pubDate>Sat, 21 Nov 2026 22:00:00 GMT</pubDate>
+      <description>A six-leg audit of one simulated day in the Sunswift 7 preset.</description>
+    </item>
+  </channel>
+</rss>

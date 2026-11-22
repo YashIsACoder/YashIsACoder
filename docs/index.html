@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en" data-flavor="mocha">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yashwanth Madan · C++, markets, solar cars</title>
+  <meta name="description" content="Yashwanth (Yash) Madan. Computer Science and Advanced Science at UNSW. C++, Monte Carlo, market data and solar race strategy. Ex-CommBank IB&M, ex-Sunswift Racing.">
+  <meta property="og:title" content="Yashwanth Madan">
+  <meta property="og:description" content="C++, Monte Carlo, market data and solar race strategy. Projects you can run, a blog, and honest course reviews.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Yash Madan · blog" href="feed.xml">
+  <script>
+    (function () {
+      var m = null; try { m = localStorage.getItem('yash-colorscheme'); } catch (e) {}
+      var h = new Date().getHours();
+      var a = h >= 6 && h < 17 ? 'latte' : h >= 17 && h < 19 ? 'frappe' : h >= 19 && h < 22 ? 'macchiato' : 'mocha';
+      document.documentElement.dataset.flavor = m && m !== 'auto' ? m : a;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/katex/katex.min.css">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script type="module" src="assets/js/core.js"></script>
+  <script type="module" src="assets/js/home.js"></script>
+</head>
+<body data-base="">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="tabline">
+    <div class="wrap tabline__in">
+      <a class="tabline__logo" href="./"><b>~/yash</b><span class="long muted">.nvim</span></a>
+      <nav class="tabs" aria-label="Sections">
+        <a class="tab is-active" data-tab="top" href="#top" style="--dot: var(--blue)"><i></i>README.md</a>
+        <a class="tab" data-tab="experience" href="#experience" style="--dot: var(--peach)"><i></i>experience.log</a>
+        <a class="tab" data-tab="projects" href="#projects" style="--dot: var(--green)"><i></i>projects/</a>
+        <a class="tab" data-tab="blog" href="#blog" style="--dot: var(--mauve)"><i></i>blog/</a>
+        <a class="tab" data-tab="courses" href="#courses" style="--dot: var(--yellow)"><i></i>courses/</a>
+        <a class="tab" data-tab="contact" href="#contact" style="--dot: var(--teal)"><i></i>contact</a>
+      </nav>
+      <div class="tabline__right">
+        <button class="chip" type="button" data-scheme title="Follows your clock. Click to choose a flavour.">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <span data-scheme-label>mocha · auto</span>
+        </button>
+        <a class="chip hide-sm" href="cv.pdf">cv.pdf</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="top" class="wrap" data-file="~/yash/README.md" aria-labelledby="who">
+      <div class="dash">
+        <div class="dash__main">
+<p class="dash__prompt"><span class="c-green">yash@unsw</span> <span class="c-blue">~</span> <span class="c-ov">$</span> whoami</p>
+          <h1 class="dash__name" id="who">yashwanth madan<span class="cursor" aria-hidden="true"></span></h1>
+          <p class="dash__tag">C++ · market data · Monte Carlo · solar cars</p>
+          <p class="dash__intro">I study <b>Computer Science and Advanced Science</b> at UNSW. This year I built tick-level market replay for the futures desk at <b>CommBank</b>. Before that I wrote Monte Carlo race strategy for <b>Sunswift Racing</b>, UNSW’s solar car team. I like problems with noisy inputs, hard budgets and a clock.</p>
+          <div class="now"><span class="now__dot" aria-hidden="true"></span><span><b>Now:</b> writing a C++20 event-replay engine. It becomes my honours thesis on tail latency in 2027.</span></div>
+          <ul class="keys" aria-label="Shortcuts">
+            <li><a href="#projects"><span class="ico">▤</span><span class="lbl">projects</span><kbd>p</kbd></a></li>
+            <li><a href="#experience"><span class="ico">⎇</span><span class="lbl">experience</span><kbd>e</kbd></a></li>
+            <li><a href="#blog"><span class="ico">✎</span><span class="lbl">blog</span><kbd>b</kbd></a></li>
+            <li><a href="#courses"><span class="ico">◎</span><span class="lbl">course reviews</span><kbd>c</kbd></a></li>
+            <li><a href="cv.pdf"><span class="ico">⎙</span><span class="lbl">résumé</span><kbd>r</kbd></a></li>
+            <li><button type="button" data-run="help"><span class="ico">⌘</span><span class="lbl">all keys</span><kbd>space</kbd></button></li>
+          </ul>
+        </div>
+        <div class="pane" aria-label="Weather pane: rain falling over the city">
+          <div class="pane__top"><span><b>weather</b> · sydney</span><span data-flavor-name>catppuccin-mocha</span></div>
+          <div class="pane__screen">
+            <canvas data-rain aria-hidden="true"></canvas>
+            <div class="pane__readout"><b data-clock>23:30</b><span><span data-daypart>night</span> · <span data-rain-word>rain</span> · lights follow your clock</span></div>
+          </div>
+          <div class="pane__status">
+            <span><span class="seg seg--on">0</span><span class="seg">weather*</span></span>
+            <span class="pane__btns">
+              <button type="button" data-rain-toggle aria-pressed="true">rain: on</button>
+              <button type="button" data-rain-heavy aria-pressed="false">drizzle</button>
+              <button type="button" data-sound aria-pressed="false">sound: off</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="wrap section" data-file="~/yash/experience.log" aria-labelledby="exp-h">
+      <div class="win">
+        <div class="win__bar"><span class="win__path">~/yash<span class="sep">›</span><b>experience.log</b></span><span>git log --graph --oneline</span></div>
+        <div class="win__body">
+          <h2 class="h2" id="exp-h"><span class="hash">#</span>experience</h2>
+          <p class="lede">Where I’ve worked and what I built there. The internal code stays internal, but the problems are here.</p>
+          <ol class="log">
+            <li style="--c: var(--teal); --c-text: var(--t-teal)">
+              <span class="graph" aria-hidden="true"></span><span class="when">2026 · now</span>
+              <div class="entry"><span class="ref"><span class="branch">HEAD → unsw</span><span class="muted">teaching</span></span>
+                <h3>COMP3110 Tutor</h3><span class="role">UNSW School of Computer Science &amp; Engineering</span>
+                <p>Teaching on the COMP3110 course team.</p></div>
+            </li>
+            <li style="--c: var(--peach); --c-text: var(--t-peach)">
+              <span class="graph" aria-hidden="true"></span><span class="when">Mar – Sep 2026</span>
+              <div class="entry"><span class="ref"><span class="branch">commbank</span><span class="muted">institutional banking &amp; markets</span></span>
+                <h3>Data Science &amp; Decisions Intern</h3><span class="role">Commonwealth Bank of Australia</span>
+                <p>Built a tick-level market replay platform for futures and commodities, so traders could analyse execution quality and intraday liquidity. Developed fixed-income desk analytics surfacing credit spreads, pricing and relative-value signals for high-grade bonds. Automated model deployment and monitoring with GitHub Actions.</p>
+                <div class="tags"><span class="tagc">market replay</span><span class="tagc">futures</span><span class="tagc">fixed income</span><span class="tagc">CI/CD</span></div></div>
+            </li>
+            <li style="--c: var(--yellow); --c-text: var(--t-yellow)">
+              <span class="graph" aria-hidden="true"></span><span class="when">Apr 2025 – May 2026</span>
+              <div class="entry"><span class="ref"><span class="branch">sunswift</span><span class="muted">UNSW solar car team</span></span>
+                <h3>Performance Optimisation Engineer</h3><span class="role">Sunswift Racing</span>
+                <p>Built predictive pipelines for adaptive race-speed recommendations from telemetry and environmental data. Developed Monte Carlo simulations comparing race strategies under changing weather, terrain and energy constraints. Supported the 2025 race from Race Control in Sydney.</p>
+                <div class="tags"><span class="tagc">Monte Carlo</span><span class="tagc">telemetry</span><span class="tagc">race strategy</span></div></div>
+            </li>
+            <li style="--c: var(--mauve); --c-text: var(--t-mauve)">
+              <span class="graph" aria-hidden="true"></span><span class="when">Dec 2025</span>
+              <div class="entry"><span class="ref"><span class="branch">tag: 1st-place</span><span class="muted">award</span></span>
+                <h3>1st place, UNSW &amp; ANZHFR Health Datathon</h3><span class="role">Team project</span>
+                <p>Our team predicted post-operative delirium and won.</p></div>
+            </li>
+            <li style="--c: var(--blue); --c-text: var(--t-blue)">
+              <span class="graph" aria-hidden="true"></span><span class="when">Feb – May 2025</span>
+              <div class="entry"><span class="ref"><span class="branch">swans</span><span class="muted">first industry role</span></span>
+                <h3>Data Engineering Intern</h3><span class="role">Sydney Swans</span>
+                <p>Built an AWS data lake on S3, Lambda, Glue and Athena to consolidate sports performance data. Automated REST API ingestion and optimised the SQL ETL workflows, cutting processing time by 50%.</p>
+                <div class="tags"><span class="tagc">AWS</span><span class="tagc">ETL</span><span class="tagc">SQL</span></div></div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="wrap section" data-file="~/yash/projects/" aria-labelledby="proj-h">
+      <div class="win">
+        <div class="win__bar"><span class="win__path">~/yash<span class="sep">›</span><b>projects/</b></span><span>click to open · <kbd>h</kbd> <kbd>l</kbd> flip · <kbd>q</kbd> close</span></div>
+        <div class="win__body">
+          <h2 class="h2" id="proj-h"><span class="hash">#</span>projects</h2>
+          <p class="lede">Laid out by domain and by what kind of thing it is. Anything marked <span class="mono c-green">● live</span> runs on this page, including the C++ energy model’s maths and a mental-arithmetic sprint.</p>
+          <div class="matrix" id="matrix" role="table" aria-label="Projects by domain and kind"></div>
+          <noscript><p>The source for everything is on <a href="https://github.com/YashIsACoder">GitHub</a>. Live labs: <a href="labs/payoff/index.html">Payoff Lab</a>, <a href="labs/ecm/index.html">SolarRoute Studio</a>.</p></noscript>
+        </div>
+      </div>
+    </section>
+
+    <section id="blog" class="wrap section" data-file="~/yash/blog/" aria-labelledby="blog-h">
+      <div class="win">
+        <div class="win__bar"><span class="win__path">~/yash<span class="sep">›</span><b>blog/</b></span><span>scroll sideways · <a href="blog/" class="c-blue">all posts →</a></span></div>
+        <div class="win__body">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px">
+            <div>
+              <h2 class="h2" id="blog-h"><span class="hash">#</span>blog</h2>
+              <p class="lede" style="margin-bottom:22px">Notes on what I’m building and what I’m learning. Written in Markdown, maths in LaTeX.</p>
+            </div>
+            <div class="shelf__ctl" style="margin-bottom:22px">
+              <button class="iconbtn" type="button" data-shelf-step="-1" aria-controls="shelf" aria-label="Scroll posts left">←</button>
+              <button class="iconbtn" type="button" data-shelf-step="1" aria-controls="shelf" aria-label="Scroll posts right">→</button>
+            </div>
+          </div>
+          <div class="shelf" id="shelf" tabindex="0" aria-label="Blog posts">
+<!-- blog:start -->
+<a class="notecard" href="blog/paired-weather/" style="--c: var(--mauve)"><div class="notecard__bar"><b>paired-weather.md</b><span>22 Nov 2026</span></div><div class="notecard__body"><span class="notecard__title">Give both cars the same weather</span><span class="notecard__dek">A fast pacing rule can look brilliant on a calm day. For a fair comparison, weather is an input we can share.</span><div class="notecard__math"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Var</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>A</mi><mo>−</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">Var</mi><mo>⁡</mo><mi>A</mi><mo>+</mo><mi mathvariant="normal">Var</mi><mo>⁡</mo><mi>B</mi><mo>−</mo><mn>2</mn><mi mathvariant="normal">Cov</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>A</mi><mo separator="true">,</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{Var}(A-B) = \operatorname{Var}A + \operatorname{Var}B - 2\operatorname{Cov}(A,B)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">Var</span></span><span class="mopen">(</span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.0502em;">B</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mop"><span class="mord mathrm">Var</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mop"><span class="mord mathrm">Var</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0502em;">B</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.0139em;">Cov</span></span><span class="mopen">(</span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0502em;">B</span><span class="mclose">)</span></span></span></span></div><ul class="notecard__toc"><li>One draw, two decisions</li><li>Count the disagreements</li><li>Four counters, constant memory</li></ul><div class="notecard__foot"><span>2 min read</span><span>#monte-carlo</span><span>#statistics</span><span>#ecm</span></div></div></a>
+<a class="notecard" href="blog/battery-ledger/" style="--c: var(--mauve)"><div class="notecard__bar"><b>battery-ledger.md</b><span>22 Nov 2026</span></div><div class="notecard__body"><span class="notecard__title">Where did the battery charge go?</span><span class="notecard__dek">A six-leg audit of one simulated day in the Sunswift 7 preset.</span><div class="notecard__math"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mtext>end</mtext></msub><mo>=</mo><msub><mi>E</mi><mtext>start</mtext></msub><mo>−</mo><mo stretchy="false">(</mo><msub><mi>E</mi><mtext>demand</mtext></msub><mo>−</mo><msub><mi>E</mi><mtext>solar</mtext></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">E_{\text{end}} = E_{\text{start}} - (E_{\text{demand}} - E_{\text{solar}})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">end</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">start</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">demand</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">solar</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></div><ul class="notecard__toc"><li>Balance generation against demand</li><li>Read the timestamps</li></ul><div class="notecard__foot"><span>1 min read</span><span>#solar-cars</span><span>#simulation</span><span>#ecm</span></div></div></a>
+<!-- blog:end -->
+            <a class="notecard notecard--new" data-mail href="#contact"><div class="notecard__body" style="justify-content:center"><span class="cmt">-- next post</span><span class="notecard__title">Suggest a topic</span><span class="notecard__dek">C++, markets, solar cars or a course. My inbox is open.</span></div></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="courses" class="wrap section" data-file="~/yash/courses/" aria-labelledby="courses-h">
+      <div class="win">
+        <div class="win__bar"><span class="win__path">~/yash<span class="sep">›</span><b>courses/</b></span><span><a href="courses/" class="c-blue">all reviews →</a></span></div>
+        <div class="win__body">
+          <h2 class="h2" id="courses-h"><span class="hash">#</span>course reviews</h2>
+          <p class="lede">An honest review of every UNSW course I take: how hard it is, how much time it eats, and whether I enjoyed it. No marks, just how it felt.</p>
+<!-- courses:start -->
+<div class="ctable-wrap"><table class="ctable"><thead><tr><th scope="col">course</th><th scope="col">name</th><th scope="col">status</th><th scope="col">difficulty</th><th scope="col">workload</th><th scope="col">enjoyment</th><th scope="col">review</th></tr></thead><tbody><tr><td class="code">MATH2991</td><td class="name">Data and Algorithms in Trading<small>taught with Optiver</small></td><td><span class="status" style="--c:var(--yellow)">review pending</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="todo">TODO</span></td></tr><tr><td class="code">COMP3821</td><td class="name">Extended Algorithm Design and Analysis</td><td><span class="status" style="--c:var(--blue)">taking it now</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">after exams</span></td></tr><tr><td class="code">COMP3900</td><td class="name">Computer Science Project</td><td><span class="status" style="--c:var(--blue)">taking it now</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">after exams</span></td></tr><tr><td class="code">COMP3331</td><td class="name">Computer Networks &amp; Applications</td><td><span class="status" style="--c:var(--yellow)">review pending</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="todo">TODO</span></td></tr><tr><td class="code">COMP2511</td><td class="name">Object-Oriented Design &amp; Programming</td><td><span class="status" style="--c:var(--yellow)">review pending</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="todo">TODO</span></td></tr><tr><td class="code">COMP2521</td><td class="name">Data Structures and Algorithms</td><td><span class="status" style="--c:var(--yellow)">review pending</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="todo">TODO</span></td></tr><tr><td class="code">COMP1521</td><td class="name">Computer Systems Fundamentals</td><td><span class="status" style="--c:var(--yellow)">review pending</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="todo">TODO</span></td></tr><tr><td class="code">COMP1511</td><td class="name">Programming Fundamentals</td><td><span class="status" style="--c:var(--yellow)">review pending</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="meter-none">—</span></td><td><span class="todo">TODO</span></td></tr></tbody></table></div>
+<!-- courses:end -->
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="wrap section" data-file=":help yash" aria-labelledby="contact-h">
+      <div class="win">
+        <div class="win__bar"><span class="win__path"><b>:help yash</b></span><span>yash.txt</span></div>
+        <div class="win__body">
+          <div class="contact">
+            <div class="contact__pitch">
+              <h2 class="h2" id="contact-h" style="margin:0"><span class="hash">#</span>contact</h2>
+              <h3>Looking for software and quant-dev internships in Sydney.</h3>
+              <p>If you’d like to talk C++, market data, Monte Carlo or a course you’re stuck on, email me. I reply.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--primary" data-mail href="#contact">email me</a><a class="btn" href="cv.pdf">cv.pdf</a></div>
+            </div>
+            <div class="help">
+              <div class="help__row"><span>email</span><span class="help__tag">*yash-email*</span></div>
+              <div class="help__row"><a data-mail data-show href="#contact">yashwanth.madan7070 [at] gmail [dot] com</a></div>
+              <div class="help__row"><span>github</span><a href="https://github.com/YashIsACoder" rel="noopener">github.com/YashIsACoder</a></div>
+              <div class="help__row"><span>linkedin</span><a href="https://www.linkedin.com/in/yashwanth-madan-7ab57b282/" rel="noopener">in/yashwanth-madan</a></div>
+              <div class="help__row"><span>based in</span><span>Sydney, Australia · Australian work rights</span></div>
+              <div class="help__row"><span>feed</span><a href="feed.xml">feed.xml</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="wrap foot">
+      <span>~/yash · built by hand · no trackers</span>
+      <span>press <kbd>space</kbd> for keys · <kbd>:</kbd> for commands · palette <a href="https://catppuccin.com" rel="noopener">catppuccin</a></span>
+    </footer>
+  </main>
+
+  <div class="float" id="float" role="dialog" aria-modal="true" aria-labelledby="float-title">
+    <div class="float__dim"></div>
+    <div class="float__win">
+      <div class="float__title"><span>projects/<b data-float-name></b></span><button class="iconbtn" type="button" data-float-close aria-label="Close">q ✕</button></div>
+      <div class="float__body" id="float-body"></div>
+      <div class="float__foot"><button type="button" data-float-step="-1">h ← prev</button><button type="button" data-float-step="1">l → next</button><span>o open</span><button type="button" data-float-close>q close</button></div>
+    </div>
+  </div>
+
+  <div class="whichkey" role="dialog" aria-label="Keyboard shortcuts"><div class="whichkey__title">&lt;leader&gt; · press a key, or Esc</div><ul></ul></div>
+  <div class="cmdline"><span>:</span><label class="sr-only" for="cmd">Command</label><input id="cmd" data-cmd-input autocomplete="off" spellcheck="false"></div>
+  <div class="statusline" role="status" aria-label="Status line">
+    <span class="sl sl--mode" data-mode>NORMAL</span>
+    <span class="sl sl--branch sl--hide-sm">⎇ main</span>
+    <span class="sl sl--file" data-sl-file>~/yash/README.md</span>
+    <span class="sl sl--hide-sm"><button type="button" data-run="help">:help</button></span>
+    <span class="sl sl--right sl--hide-sm" data-flavor-name>catppuccin-mocha</span>
+    <span class="sl sl--hide-sm" data-sl-pos>Top</span>
+    <span class="sl sl--clock" data-clock>23:30</span>
+  </div>
+</body>
+</html>

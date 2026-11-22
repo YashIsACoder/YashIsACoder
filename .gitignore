@@ -1,0 +1,17 @@
+node_modules/
+.DS_Store
+__pycache__/
+
+# local-only scripts from the earlier portfolio
+covers.py
+studies.py
+trace.py
+
+# pages and images from the earlier design comparison (not part of the site)
+docs/study.html
+docs/vault.html
+docs/bench.html
+docs/assets/site.css
+docs/assets/share.png
+docs/assets/stacks.webp
+docs/assets/vault.webp

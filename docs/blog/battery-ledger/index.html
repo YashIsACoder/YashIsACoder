@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" data-flavor="mocha">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Where did the battery charge go? · Yash Madan</title>
+  <meta name="description" content="A six-leg audit of one simulated day in the Sunswift 7 preset.">
+  <meta property="og:title" content="Where did the battery charge go? · Yash Madan">
+  <meta property="og:description" content="A six-leg audit of one simulated day in the Sunswift 7 preset.">
+  
+  <link rel="canonical" href="https://yashisacoder.github.io/YashIsACoder/blog/battery-ledger/">
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Yash Madan · blog" href="../../feed.xml">
+  <script>(function(){var m=null;try{m=localStorage.getItem('yash-colorscheme')}catch(e){}var h=new Date().getHours();var a=h>=6&&h<17?'latte':h>=17&&h<19?'frappe':h>=19&&h<22?'macchiato':'mocha';document.documentElement.dataset.flavor=m&&m!=='auto'?m:a})()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../../assets/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+  <script type="module" src="../../assets/js/core.js"></script>
+  <script type="module" src="../../assets/js/posts.js"></script>
+</head>
+<body data-base="../../">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="tabline">
+    <div class="wrap tabline__in">
+      <a class="tabline__logo" href="../../"><b>~/yash</b><span class="long muted">.nvim</span></a>
+      <nav class="tabs" aria-label="Sections">
+        <a class="tab" href="../../" style="--dot: var(--blue)"><i></i>README.md</a>
+        <a class="tab" href="../../#experience" style="--dot: var(--peach)"><i></i>experience.log</a>
+        <a class="tab" href="../../#projects" style="--dot: var(--green)"><i></i>projects/</a>
+        <a class="tab is-active" href="../../blog/" style="--dot: var(--mauve)"><i></i>blog/</a>
+        <a class="tab" href="../../courses/" style="--dot: var(--yellow)"><i></i>courses/</a>
+        <a class="tab" href="../../#contact" style="--dot: var(--teal)"><i></i>contact</a>
+      </nav>
+      <div class="tabline__right">
+        <button class="chip" type="button" data-scheme title="Follows your clock. Click to choose a flavour."><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span data-scheme-label>mocha · auto</span></button>
+        <a class="chip hide-sm" href="../../cv.pdf">cv.pdf</a>
+      </div>
+    </div>
+  </header>
+  <main id="main" data-file="~/yash/blog/battery-ledger.md">
+    <div class="wrap post-layout">
+      <nav class="toc" aria-label="On this page"><span class="toc__label">-- on this page</span><a href="#balance-generation-against-demand">Balance generation against demand</a><a href="#read-the-timestamps">Read the timestamps</a></nav>
+      <article class="post" style="--c-text: var(--t-mauve)">
+        <span class="crumbs"><a href="../../">~</a> / <a href="../../blog/">blog</a> / battery-ledger</span>
+        <span class="post__kicker">blog/<b>battery-ledger.md</b> · #solar-cars #simulation #ecm</span>
+        <h1>Where did the battery charge go?</h1>
+        <p class="post__summary">A six-leg audit of one simulated day in the Sunswift 7 preset.</p>
+        <div class="post__meta"><span>Yashwanth Madan</span><time datetime="2026-11-22">22 Nov 2026</time><span>1 min read</span></div>
+        
+        <div class="prose"><p>The public SR7 example starts its first morning with 15.28 kWh. At the end of the first simulated leg it holds 13.89 kWh. The difference is smaller than the energy the drivetrain and auxiliaries drew.</p>
+<h2 id="balance-generation-against-demand">Balance generation against demand</h2>
+<p>In the reference run, the first leg consumes 1,816 Wh and collects 431 Wh of solar energy. Net draw is about 1,385 Wh:</p>
+<div class="math-display"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>E</mi><mtext>end</mtext></msub><mo>=</mo><msub><mi>E</mi><mtext>start</mtext></msub><mo>−</mo><mrow><mo fence="true">(</mo><msub><mi>E</mi><mtext>demand</mtext></msub><mo>−</mo><msub><mi>E</mi><mtext>solar</mtext></msub><mo fence="true">)</mo></mrow><mo>=</mo><mn>15.28</mn><mo>−</mo><mo stretchy="false">(</mo><mn>1.816</mn><mo>−</mo><mn>0.431</mn><mo stretchy="false">)</mo><mo>≈</mo><mn>13.89</mn><mtext> kWh</mtext></mrow><annotation encoding="application/x-tex">E_{\text{end}} = E_{\text{start}} - \left(E_{\text{demand}} - E_{\text{solar}}\right) = 15.28 - (1.816 - 0.431) \approx 13.89\ \text{kWh}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">end</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">start</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">demand</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">solar</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">15.28</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1.816</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.431</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">13.89</span><span class="mspace"> </span><span class="mord text"><span class="mord">kWh</span></span></span></span></span></span></div>
+<p>Looking at demand alone would miss the solar contribution.</p>
+<h2 id="read-the-timestamps">Read the timestamps</h2>
+<p>The first day ends at 6.26 kWh after six legs. Within that day, one arrival at 3.39 elapsed hours and the next departure at 3.89 hours share the same charge. The half-hour control hold advances the race clock but not the battery. Overnight, the next departure begins with a full pack under this Cruiser charging scenario.</p>
+<p>These are modelled leg endpoints from seed 2025, draw 7. Connecting the endpoints is helpful for a replay, but it can&#39;t recover instantaneous power or the exact charging curve while parked.</p>
+<ul>
+<li><a href="../../assets/sr7.csv">Download the endpoint data</a> (CSV)</li>
+<li><a href="../../labs/ecm/index.html">Inspect the race atlas</a> in SolarRoute Studio</li>
+<li><a href="https://github.com/YashIsACoder/ecm/blob/da068a8/apps/route-lab/web/atlas-demo.json">Read the recorded run</a> on GitHub</li>
+</ul>
+</div>
+        <div class="post__end">
+          <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--primary" data-mail data-subject="Re: Where did the battery charge go?" href="../../#contact">reply by email</a><a class="btn" href="../../blog/">all posts</a></div>
+          <details><summary class="cmt" style="cursor:pointer">-- cite this</summary><pre>@misc{madan2026where,
+  author = {Yashwanth Madan},
+  title  = {Where did the battery charge go?},
+  year   = {2026},
+  note   = {https://yashisacoder.github.io/YashIsACoder/blog/battery-ledger/}
+}</pre></details>
+          <div class="pager"><span></span><a href="../../blog/paired-weather/"><small>newer →</small>Give both cars the same weather</a></div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer class="wrap foot"><span>~/yash · built by hand · no trackers</span><span>press <kbd>space</kbd> for keys · <kbd>:</kbd> for commands</span></footer>
+  <div class="whichkey" role="dialog" aria-label="Keyboard shortcuts"><div class="whichkey__title">&lt;leader&gt; · press a key, or Esc</div><ul></ul></div>
+  <div class="cmdline"><span>:</span><label class="sr-only" for="cmd">Command</label><input id="cmd" data-cmd-input autocomplete="off" spellcheck="false"></div>
+  <div class="statusline" role="status" aria-label="Status line">
+    <span class="sl sl--mode" data-mode>NORMAL</span>
+    <span class="sl sl--branch sl--hide-sm">⎇ main</span>
+    <span class="sl sl--file" data-sl-file>~/yash/blog/battery-ledger.md</span>
+    <span class="sl sl--hide-sm"><button type="button" data-run="help">:help</button></span>
+    <span class="sl sl--right sl--hide-sm" data-flavor-name>catppuccin-mocha</span>
+    <span class="sl sl--hide-sm" data-sl-pos>Top</span>
+    <span class="sl sl--clock" data-clock>--:--</span>
+  </div>
+</body>
+</html>

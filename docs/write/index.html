@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" data-flavor="mocha">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>write · Yash Madan</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <script>(function(){var m=null;try{m=localStorage.getItem('yash-colorscheme')}catch(e){}var h=new Date().getHours();var a=h>=6&&h<17?'latte':h>=17&&h<19?'frappe':h>=19&&h<22?'macchiato':'mocha';document.documentElement.dataset.flavor=m&&m!=='auto'?m:a})()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../assets/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script type="module" src="../assets/js/core.js"></script>
+  <script type="module" src="../assets/js/write.js"></script>
+</head>
+<body data-base="../" data-kind="post">
+  <a class="skip" href="#main">Skip to the editor</a>
+  <header class="tabline">
+    <div class="wrap tabline__in" style="max-width:1600px">
+      <a class="tabline__logo" href="../"><b>~/yash</b><span class="long muted">.nvim</span></a>
+      <nav class="tabs" aria-label="Sections">
+        <a class="tab" href="../" style="--dot: var(--blue)"><i></i>README.md</a>
+        <a class="tab" href="../blog/" style="--dot: var(--mauve)"><i></i>blog/</a>
+        <a class="tab" href="../courses/" style="--dot: var(--yellow)"><i></i>courses/</a>
+        <a class="tab is-active" href="./" style="--dot: var(--green)"><i></i>write</a>
+      </nav>
+      <div class="tabline__right">
+        <button class="chip" type="button" data-scheme><span data-scheme-label>mocha · auto</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="writer" data-file="~/yash/write">
+    <div class="wrap" style="max-width:1600px;padding-top:28px">
+      <div class="win">
+        <div class="win__bar">
+          <span class="win__path">~/yash<span class="sep">›</span><b id="w-path">content/blog/new.md</b></span>
+          <span><span id="w-saved">draft not saved yet</span> · <kbd>⌘</kbd><kbd>S</kbd></span>
+        </div>
+        <div class="win__body" style="padding-top:22px">
+          <div class="wform">
+            <fieldset class="wkind">
+              <legend class="sr-only">What are you writing?</legend>
+              <label><input type="radio" name="kind" value="post" checked> blog post</label>
+              <label><input type="radio" name="kind" value="review"> course review</label>
+            </fieldset>
+            <label class="wf wf--wide"><span>title</span><input id="w-title" type="text" placeholder="Give both cars the same weather" autocomplete="off"></label>
+            <label class="wf"><span>date</span><input id="w-date" type="date"></label>
+            <label class="wf only-review"><span>course</span><select id="w-course"><option>loading…</option></select></label>
+            <label class="wf only-review"><span>term taken</span><input id="w-term" type="text" placeholder="2026 T2"></label>
+            <label class="wf wf--wide"><span>summary · one sentence for the card and the feed</span><input id="w-summary" type="text"></label>
+            <label class="wf"><span>tags · comma separated</span><input id="w-tags" type="text" placeholder="c++, monte-carlo"></label>
+            <label class="wf only-post"><span>card formula · optional LaTeX, e.g. $x^2$</span><input id="w-math" type="text" placeholder="$\hat d = (n_{10} - n_{01}) / n$"></label>
+            <div class="wmeters only-review">
+              <label class="wf"><span>difficulty <output id="o-difficulty">5/10</output></span><input id="w-difficulty" type="range" min="1" max="10" value="5"></label>
+              <label class="wf"><span>workload <output id="o-workload">5/10</output></span><input id="w-workload" type="range" min="1" max="10" value="5"></label>
+              <label class="wf"><span>enjoyment <output id="o-enjoyment">5/10</output></span><input id="w-enjoyment" type="range" min="1" max="10" value="5"></label>
+              <label class="wcheck"><input id="w-again" type="checkbox" checked> I’d take it again</label>
+            </div>
+            <label class="wcheck"><input id="w-draft" type="checkbox"> save as a draft (won’t appear on the site)</label>
+          </div>
+
+          <div class="wsplit">
+            <div class="wpane">
+              <div class="wpane__bar">
+                <span>markdown</span>
+                <span class="wtools" aria-label="Insert">
+                  <button type="button" data-insert="h2">## section</button>
+                  <button type="button" data-insert="math">$$ maths</button>
+                  <button type="button" data-insert="code">``` code</button>
+                  <button type="button" data-insert="fn">[^1] note</button>
+                  <button type="button" data-insert="link">link</button>
+                  <button type="button" data-insert="widget">widget</button>
+                </span>
+              </div>
+              <label class="sr-only" for="w-body">Post body in Markdown</label>
+              <textarea id="w-body" spellcheck="true"></textarea>
+            </div>
+            <div class="wpane">
+              <div class="wpane__bar"><span>preview · exactly what gets published</span><span>live</span></div>
+              <div class="wpreview">
+                <p id="w-error" class="werror" role="alert" hidden></p>
+                <article class="post" id="preview"></article>
+              </div>
+            </div>
+          </div>
+
+          <div class="wpublish">
+            <div class="wpublish__main">
+              <button class="btn btn--primary" type="button" id="w-github">publish on GitHub ↗</button>
+              <button class="btn" type="button" id="w-copy">copy .md</button>
+              <button class="btn" type="button" id="w-download">download .md</button>
+              <label class="btn" style="cursor:pointer">open .md<input id="w-import" type="file" accept=".md,text/markdown,text/plain" class="sr-only"></label>
+              <button class="btn" type="button" id="w-new">new</button>
+            </div>
+            <p class="cmt" style="margin:0">-- “publish on GitHub” opens GitHub with this post filled in. Sign in, press <b>Commit changes</b>, and the site rebuilds in about a minute.</p>
+            <details class="wtoken">
+              <summary>commit directly from here (optional, one-time setup)</summary>
+              <ol>
+                <li>On GitHub: Settings → Developer settings → Fine-grained tokens → <b>Generate new token</b>.</li>
+                <li>Repository access: only <span class="mono">YashIsACoder/YashIsACoder</span>. Permissions: <b>Contents: Read and write</b>. Nothing else.</li>
+                <li>Paste it below. It’s kept only in this browser and only sent to api.github.com.</li>
+              </ol>
+              <div class="wtoken__row">
+                <label class="sr-only" for="w-token">GitHub token</label>
+                <input id="w-token" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+                <label class="wcheck"><input id="w-remember" type="checkbox"> remember on this device</label>
+                <button class="btn btn--primary" type="button" id="w-commit">commit now</button>
+                <button class="btn" type="button" id="w-forget">forget token</button>
+              </div>
+              <p id="w-status" class="cmt" aria-live="polite" style="margin:0"></p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="whichkey" role="dialog" aria-label="Keyboard shortcuts"><div class="whichkey__title">&lt;leader&gt; · press a key, or Esc</div><ul></ul></div>
+  <div class="cmdline"><span>:</span><label class="sr-only" for="cmd">Command</label><input id="cmd" data-cmd-input autocomplete="off" spellcheck="false"></div>
+  <div class="statusline" role="status" aria-label="Status line">
+    <span class="sl sl--mode" data-mode>NORMAL</span>
+    <span class="sl sl--branch sl--hide-sm">⎇ main</span>
+    <span class="sl sl--file" data-sl-file>~/yash/write</span>
+    <span class="sl sl--right sl--hide-sm" data-flavor-name>catppuccin-mocha</span>
+    <span class="sl sl--clock" data-clock>--:--</span>
+  </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "yash-site",
+  "private": true,
+  "type": "module",
+  "description": "Yashwanth Madan's personal site: projects, blog and course reviews.",
+  "homepage": "https://yashisacoder.github.io/YashIsACoder/",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:drafts": "node scripts/build.mjs --drafts",
+    "new": "node scripts/new.mjs",
+    "serve": "node scripts/serve.mjs",
+    "dev": "node scripts/build.mjs --drafts && node scripts/serve.mjs"
+  },
+  "dependencies": {
+    "katex": "^0.16.22",
+    "marked": "^15.0.12"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
