@@ -17,3 +17,7 @@ docs/assets/stacks.webp
 docs/assets/vault.webp
 
 .site-sync.tgz
+scripts/cv/cv.pdf
+scripts/cv/cv.aux
+scripts/cv/cv.log
+scripts/cv/cv.out

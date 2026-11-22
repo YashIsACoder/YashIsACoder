@@ -150,6 +150,8 @@ function step(d) { const i = PROJECTS.findIndex((p) => p.id === openId); openPro
 if (fl) {
   document.addEventListener('click', (e) => {
     const t = e.target.closest('.tile[data-project]'); if (t) return openProject(t.dataset.project, t);
+    const pl = e.target.closest('a[href^="#p/"]'); if (pl) { e.preventDefault(); return openProject(pl.getAttribute('href').slice(3), pl); }
+    const inner = e.target.closest('a[href^="#"]'); if (inner && openId && fl.contains(inner)) { e.preventDefault(); const h = inner.getAttribute('href'); closeUI(); history.replaceState(null, '', h); setTimeout(() => document.querySelector(h)?.scrollIntoView(), 320); return; }
     const g = e.target.closest('[data-goto]'); if (g && fl.contains(g)) return openProject(g.dataset.goto);
     if (e.target.closest('[data-float-close]') || e.target.classList.contains('float__dim')) return requestClose();
     const s = e.target.closest('[data-float-step]'); if (s) step(+s.dataset.floatStep);
@@ -318,6 +320,7 @@ command(['open', 'o'], (arg) => {
 command(['ls'], () => PROJECTS.map((p) => p.id).join('  '), 'list projects');
 command(['sprint'], () => { openProject('quantsprint'); return ''; }, 'play QuantSprint');
 map('s', 'play QuantSprint', () => openProject('quantsprint'));
+map('v', 'watch the solvers race', () => openProject('3821-viz'));
 
 renderMatrix();
 if (/^#p\//.test(location.hash)) fromHash();

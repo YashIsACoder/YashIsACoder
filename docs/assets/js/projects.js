@@ -164,6 +164,61 @@ private:
     tap: { kind: 'solar' }
   },
   {
+    id: '3821-viz', row: 'algo', col: 'browser', ontap: true,
+    name: 'Skipping the work', lang: 'TypeScript · Vite · C++ traces',
+    one: 'Race four exact solvers on deterministic MDPs and watch where each one spends its work. Every frame is replayed from our C++ library.',
+    about: [
+      'The site for our COMP3821 research. It explains the problem from scratch, then lets you race SCC + Karp, our pruning cascade, the hybrid and Howard’s method on ten graphs. The clock counts relaxations, so whoever finishes first did the least work.',
+      'The page never re-implements an algorithm. It replays JSON traces recorded by the dmdp library, refuses a newer trace format instead of drawing it wrong, and the data build fails if any two methods ever disagree on a gain.'
+    ],
+    highlights: [
+      'Dot plot of every method’s work across ten graphs, then a side-by-side race',
+      'Scroll-through story: DMDP as a graph, SCCs, Karp’s table, the cascade, Howard',
+      'Drop in your own dmdp viz output and it races too',
+      'Unit tests plus a render test of every graph in CI'
+    ],
+    stack: ['TypeScript', 'Vite', 'SVG', 'dmdp (C++)'],
+    links: [
+      { label: 'Open the race', href: 'https://yashisacoder.github.io/3821-viz/compare.html', primary: true },
+      { label: 'The explainer', href: 'https://yashisacoder.github.io/3821-viz/' },
+      { label: 'Source', href: 'https://github.com/YashIsACoder/3821-viz' },
+      { label: 'The research', href: '#research' }
+    ],
+    tap: { kind: 'iframe', src: 'https://yashisacoder.github.io/3821-viz/compare.html', label: 'the race · live' }
+  },
+  {
+    id: 'dmdp', row: 'algo', col: 'cpp',
+    name: 'dmdp', lang: 'C++ · research library',
+    one: 'Our research library for deterministic MDPs: Tarjan SCCs, Karp’s table, the pruning cascade, Howard’s method and exact rational arithmetic.',
+    about: [
+      'Long-run average reward on a deterministic MDP is a best-cycle problem. dmdp solves it exactly, component by component, and records a trace of every relaxation so runs can be compared and replayed.',
+      'I wrote the core: SCC decomposition, Karp’s table and the cascade that stops filling it once the largest one-row rise falls below the best gain reachable after leaving. The repository stays private while the course runs; the visualiser and results are public.'
+    ],
+    highlights: [
+      'Four solvers: SCC + Karp, the cascade, the hybrid, Howard; plus brute force for checking',
+      'Exact fractions throughout, so solvers can be compared for equality, not tolerance',
+      'Graph generators for rising, falling, periodic and Howard-hard families, plus ISCAS circuits',
+      'Seven experiments on 136 graphs with zero disagreements'
+    ],
+    stack: ['C++', 'Make', 'exact rationals', 'Tarjan', 'Karp 1978'],
+    links: [{ label: 'Read the research', href: '#research', primary: true }, { label: 'See the results', href: 'https://yashisacoder.github.io/3821-viz/results.html' }],
+    tap: { kind: 'code', title: 'the skip test, sketched', lang: 'cpp', code:
+`// a sketch of the cascade, not the library's code
+for (auto& K : sccs_reverse_topo(g)) {
+    Fraction exit = gain_after_leaving(K);  // D(K)
+    if (max_edge(K) <= exit) { skip(K); continue; }
+
+    KarpTable t(K);              // rows Karp builds anyway
+    bool skipped = false;
+    for (int k = 1; k <= K.size() && !skipped; ++k) {
+        t.add_row();
+        skipped = t.largest_row_rise() <= exit;  // δk ≤ D(K)
+    }
+    if (skipped) skip(K);
+    else solve(K, t.cycle_mean());  // λ(K), exact
+}` }
+  },
+  {
     id: 'cpp-mlp', row: 'algo', col: 'cpp',
     name: 'cpp-mlp', lang: 'C++17 · Eigen',
     one: 'A multilayer perceptron from scratch: dense layers, activations and backpropagation, trained on MNIST.',

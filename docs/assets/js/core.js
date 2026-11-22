@@ -108,9 +108,9 @@ function go(sectionId, file) {
   if (el) { el.scrollIntoView(); return `"${file}" opened`; }
   location.href = `${BASE}#${sectionId}`; return '';
 }
-command(['help', 'h'], () => 'try :e projects · :e blog · :e courses · :e experience · :colorscheme latte|frappe|macchiato|mocha|auto · :rain · :cv · :mail · or press <Space>', 'list commands');
+command(['help', 'h'], () => 'try :e research · :e projects · :e blog · :e courses · :e experience · :colorscheme latte|frappe|macchiato|mocha|auto · :rain · :cv · :mail · or press <Space>', 'list commands');
 command(['e', 'edit', 'cd'], (arg) => {
-  const map = { readme: 'top', home: 'top', '~': 'top', projects: 'projects', experience: 'experience', exp: 'experience', blog: 'blog', posts: 'blog', courses: 'courses', reviews: 'courses', contact: 'contact' };
+  const map = { readme: 'top', home: 'top', '~': 'top', projects: 'projects', research: 'research', dmdp: 'research', experience: 'experience', exp: 'experience', blog: 'blog', posts: 'blog', courses: 'courses', reviews: 'courses', contact: 'contact' };
   const id = map[(arg || '').replace(/[/.].*$/, '')];
   return id ? go(id, arg) : `E37: no such file: ${arg || '(none)'}`;
 }, 'open a section');
@@ -163,6 +163,7 @@ wk?.addEventListener('click', (e) => { const b = e.target.closest('[data-wk]'); 
 
 map('p', 'projects', () => go('projects', 'projects/'));
 map('e', 'experience', () => go('experience', 'experience.log'));
+map('d', 'research (dmdp)', () => go('research', 'research/'));
 map('b', 'blog', () => go('blog', 'blog/'));
 map('c', 'course reviews', () => go('courses', 'courses/'));
 map('m', 'contact', () => go('contact', ':help yash'));

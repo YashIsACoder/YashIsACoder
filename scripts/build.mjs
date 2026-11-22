@@ -266,6 +266,10 @@ function main() {
   let home = fs.readFileSync(homePath, 'utf8');
   home = home.replace(/<!-- blog:start -->[\s\S]*?<!-- blog:end -->/, `<!-- blog:start -->\n${posts.map((p) => notecard(p, '')).join('\n')}\n<!-- blog:end -->`);
   home = home.replace(/<!-- courses:start -->[\s\S]*?<!-- courses:end -->/, `<!-- courses:start -->\n${courseTable(courses, reviews, '', { scroll: true })}\n<!-- courses:end -->`);
+  // hand-written TeX on the homepage: <span class="tex [tex--display]" data-tex="..."><!--tex-->…<!--/tex--></span>
+  const unesc = (t) => t.replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  home = home.replace(/(<span class="tex( tex--display)?" data-tex="([^"]*)">)<!--tex-->[\s\S]*?<!--\/tex-->/g,
+    (_, open, display, src) => `${open}<!--tex-->${katex.renderToString(unesc(src), { displayMode: !!display, throwOnError: false })}<!--/tex-->`);
   fs.writeFileSync(homePath, home);
   console.log(`\n  built ${posts.length} post(s), ${reviews.length} review(s), the indexes, feed.xml and the homepage.`);
 }
