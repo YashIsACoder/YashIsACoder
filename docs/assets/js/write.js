@@ -10,7 +10,7 @@ import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
 import { createRenderer, esc, slugify, readTime } from './md.js';
 import { mountWidgets } from './posts.js';
-import { toast } from './core.js';
+import { toast } from './site.js';
 
 const REPO = 'YashIsACoder/YashIsACoder';
 const BRANCH = 'main';
@@ -128,7 +128,7 @@ function saveDraft() {
   const d = { kind: f.kind(), title: f.title.value, date: f.date.value, tags: f.tags.value, summary: f.summary.value, math: f.math.value, course: f.course.value, term: f.term.value, difficulty: f.difficulty.value, workload: f.workload.value, enjoyment: f.enjoyment.value, again: f.again.checked, draft: f.draft.checked, body: f.body.value };
   store.set(DRAFT_KEY, JSON.stringify(d));
   const t = new Date();
-  $('#w-saved').textContent = `draft saved ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+  $('#w-saved').textContent = `Draft saved at ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
 }
 function loadDraft(d) {
   document.querySelector(`input[name="kind"][value="${d.kind || 'post'}"]`).checked = true;
@@ -152,7 +152,7 @@ $('#w-import').addEventListener('change', async (e) => {
     difficulty: data.difficulty || 5, workload: data.workload || 5, enjoyment: data.enjoyment || 5, again: data.again !== 'false', draft: data.draft === 'true',
     body: m ? text.slice(m[0].length) : text
   });
-  update(); toast(`loaded ${file.name}`);
+  update(); toast(`Loaded ${file.name}`);
 });
 
 // ------------------------------------------------------------ editor niceties
@@ -166,7 +166,7 @@ document.addEventListener('change', (e) => {
 });
 f.body.addEventListener('keydown', (e) => {
   if (e.key === 'Tab') { e.preventDefault(); const { selectionStart: a, selectionEnd: b, value } = f.body; f.body.value = value.slice(0, a) + '    ' + value.slice(b); f.body.selectionStart = f.body.selectionEnd = a + 4; update(); }
-  if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveDraft(); toast('draft saved in this browser'); }
+  if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveDraft(); toast('Draft saved in this browser'); }
 });
 document.querySelectorAll('[data-insert]').forEach((b) => b.addEventListener('click', () => {
   const snip = { math: '\n$$\n\\hat d = \\frac{n_{10} - n_{01}}{n}\n$$\n', code: '\n```cpp\n\n```\n', h2: '\n## Section\n', fn: '[^1]\n\n[^1]: \n', widget: '\n::: widget paired-draws seed=7 trials=8\n', link: '[text](https://)' }[b.dataset.insert];
@@ -177,13 +177,13 @@ document.querySelectorAll('[data-insert]').forEach((b) => b.addEventListener('cl
 
 // ------------------------------------------------------------ publish
 function check() {
-  if (!f.title.value.trim()) { toast('add a title first'); f.title.focus(); return false; }
+  if (!f.title.value.trim()) { toast('Add a title first'); f.title.focus(); return false; }
   try { render(f.body.value, 'your post'); } catch (e) { toast(e.message); return false; }
   return true;
 }
 $('#w-copy').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(toMarkdown()); toast('copied the .md to your clipboard'); }
-  catch { toast('copy failed: select the text in the editor instead'); }
+  try { await navigator.clipboard.writeText(toMarkdown()); toast('Copied the Markdown to your clipboard'); }
+  catch { toast('Copy failed: select the text in the editor instead'); }
 });
 $('#w-download').addEventListener('click', () => {
   const blob = new Blob([toMarkdown()], { type: 'text/markdown' });
@@ -195,10 +195,10 @@ $('#w-github').addEventListener('click', async () => {
   const md = toMarkdown();
   const base = `https://github.com/${REPO}/new/${BRANCH}?filename=${encodeURIComponent(filePath())}`;
   const url = `${base}&value=${encodeURIComponent(md)}`;
-  if (url.length < 7500) { window.open(url, '_blank', 'noopener'); toast('opened GitHub: check it, then press "Commit changes"'); return; }
+  if (url.length < 7500) { window.open(url, '_blank', 'noopener'); toast('Opened GitHub: check the post, then press Commit changes'); return; }
   try { await navigator.clipboard.writeText(md); } catch { /* fall through */ }
   window.open(base, '_blank', 'noopener');
-  toast('long post: it’s on your clipboard. Paste it into GitHub, then commit.');
+  toast('Long post: it’s on your clipboard. Paste it into GitHub, then commit.');
 });
 
 // token commit
@@ -209,13 +209,13 @@ const b64 = (s) => { const bytes = new TextEncoder().encode(s); let bin = ''; fo
 $('#w-commit').addEventListener('click', async () => {
   if (!check()) return;
   const token = tokenIn.value.trim();
-  if (!token) { toast('paste a fine-grained token first (see the steps)'); tokenIn.focus(); return; }
+  if (!token) { toast('Paste a fine-grained token first (see the steps)'); tokenIn.focus(); return; }
   if ($('#w-remember').checked) store.set(TOKEN_KEY, token); else store.del(TOKEN_KEY);
   const p = filePath();
   const api = `https://api.github.com/repos/${REPO}/contents/${p.split('/').map(encodeURIComponent).join('/')}`;
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   const status = $('#w-status');
-  status.textContent = 'committing…';
+  status.textContent = 'Committing…';
   try {
     let sha;
     const head = await fetch(`${api}?ref=${BRANCH}`, { headers });
@@ -224,12 +224,12 @@ $('#w-commit').addEventListener('click', async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || res.status);
     status.innerHTML = `committed <a class="c-blue" href="${esc(data.commit.html_url)}" target="_blank" rel="noopener">${esc(data.commit.sha.slice(0, 7))}</a> · the site rebuilds in about a minute (<a class="c-blue" href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">watch</a>)`;
-    toast(f.draft.checked ? 'committed as a draft (it won’t show until you untick draft)' : 'published: live in about a minute');
+    toast(f.draft.checked ? 'Committed as a draft: it won’t show until you untick draft' : 'Published: live in about a minute');
   } catch (e) {
-    status.textContent = `commit failed: ${e.message}. Check the token can write "Contents" on ${REPO}.`;
+    status.textContent = `Commit failed: ${e.message}. Check the token can write "Contents" on ${REPO}.`;
   }
 });
-$('#w-forget').addEventListener('click', () => { store.del(TOKEN_KEY); tokenIn.value = ''; $('#w-remember').checked = false; toast('token removed from this browser'); });
+$('#w-forget').addEventListener('click', () => { store.del(TOKEN_KEY); tokenIn.value = ''; $('#w-remember').checked = false; toast('Token removed from this browser'); });
 $('#w-new').addEventListener('click', () => {
   if (!confirmClear()) return;
   store.del(DRAFT_KEY);
@@ -239,7 +239,7 @@ $('#w-new').addEventListener('click', () => {
 let armed = 0;
 function confirmClear() {
   if (Date.now() - armed < 3000) return true;
-  armed = Date.now(); toast('press "new" again within 3 s to clear this draft'); return false;
+  armed = Date.now(); toast('Press New again within 3 seconds to clear this draft'); return false;
 }
 
 update();

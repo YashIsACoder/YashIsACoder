@@ -1,51 +1,43 @@
 <!doctype html>
-<html lang="en" data-flavor="mocha">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Where did the battery charge go? · Yash Madan</title>
+  <title>Where did the battery charge go?: Yashwanth Madan</title>
   <meta name="description" content="A six-leg audit of one simulated day in the Sunswift 7 preset.">
-  <meta property="og:title" content="Where did the battery charge go? · Yash Madan">
+  <meta property="og:title" content="Where did the battery charge go?: Yashwanth Madan">
   <meta property="og:description" content="A six-leg audit of one simulated day in the Sunswift 7 preset.">
   
   <link rel="canonical" href="https://yashisacoder.github.io/YashIsACoder/blog/battery-ledger/">
   <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
-  <link rel="alternate" type="application/rss+xml" title="Yash Madan · blog" href="../../feed.xml">
-  <script>(function(){var m=null;try{m=localStorage.getItem('yash-colorscheme')}catch(e){}var h=new Date().getHours();var a=h>=6&&h<17?'latte':h>=17&&h<19?'frappe':h>=19&&h<22?'macchiato':'mocha';document.documentElement.dataset.flavor=m&&m!=='auto'?m:a})()</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="alternate" type="application/rss+xml" title="Yashwanth Madan: writing" href="../../feed.xml">
+  <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light'})()</script>
+  <link rel="preload" href="../../assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../../assets/katex/katex.min.css">
   <link rel="stylesheet" href="../../assets/css/site.css">
-  <script type="module" src="../../assets/js/core.js"></script>
+  <script type="module" src="../../assets/js/site.js"></script>
   <script type="module" src="../../assets/js/posts.js"></script>
   <script type="module" src="../../assets/js/tables.js"></script>
 </head>
-<body data-base="../../">
+<body>
   <a class="skip" href="#main">Skip to content</a>
-  <header class="tabline">
-    <div class="wrap tabline__in">
-      <a class="tabline__logo" href="../../"><b>~/yash</b><span class="long muted">.nvim</span></a>
-      <nav class="tabs" aria-label="Sections">
-        <a class="tab" href="../../" style="--dot: var(--blue)"><i></i>README.md</a>
-        <a class="tab" href="../../#experience" style="--dot: var(--peach)"><i></i>experience.log</a>
-        <a class="tab" href="../../#projects" style="--dot: var(--green)"><i></i>projects/</a>
-        <a class="tab is-active" href="../../blog/" style="--dot: var(--mauve)"><i></i>blog/</a>
-        <a class="tab" href="../../courses/" style="--dot: var(--yellow)"><i></i>courses/</a>
-        <a class="tab" href="../../#contact" style="--dot: var(--teal)"><i></i>contact</a>
-      </nav>
-      <div class="tabline__right">
-        <button class="chip" type="button" data-scheme title="Follows your clock. Click to choose a flavour."><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span data-scheme-label>mocha · auto</span></button>
-        <a class="chip hide-sm" href="../../cv.pdf">cv.pdf</a>
-      </div>
-    </div>
+  <header class="wrap site-head">
+    <a class="site-head__name" href="../../">Yashwanth Madan</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="../../#work">Work</a>
+      <a href="../../research/">Research</a>
+      <a href="../../#projects">Projects</a>
+      <a href="../../blog/" aria-current="page">Writing</a>
+      <a href="../../courses/">Courses</a>
+      <a href="../../cv.pdf">CV</a>
+    </nav>
   </header>
-  <main id="main" data-file="~/yash/blog/battery-ledger.md">
-    <div class="wrap post-layout">
-      <nav class="toc" aria-label="On this page"><span class="toc__label">-- on this page</span><a href="#balance-generation-against-demand">Balance generation against demand</a><a href="#read-the-timestamps">Read the timestamps</a></nav>
-      <article class="post" style="--c-text: var(--t-mauve)">
-        <span class="crumbs"><a href="../../">~</a> / <a href="../../blog/">blog</a> / battery-ledger</span>
-        <span class="post__kicker">blog/<b>battery-ledger.md</b> · #solar-cars #simulation #ecm</span>
+  <main id="main" class="wrap">
+    <div class="post-layout">
+      <nav class="toc" aria-label="On this page"><span class="toc__label">On this page</span><a href="#balance-generation-against-demand">Balance generation against demand</a><a href="#read-the-timestamps">Read the timestamps</a></nav>
+      <article class="post">
+        <span class="crumbs"><a href="../../blog/">Writing</a></span>
+        <ul class="post__tags" aria-label="Tags"><li>solar-cars</li><li>simulation</li><li>ecm</li></ul>
         <h1>Where did the battery charge go?</h1>
         <p class="post__summary">A six-leg audit of one simulated day in the Sunswift 7 preset.</p>
         <div class="post__meta"><span>Yashwanth Madan</span><time datetime="2026-11-22">22 Nov 2026</time><span>1 min read</span></div>
@@ -65,29 +57,32 @@
 </ul>
 </div>
         <div class="post__end">
-          <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--primary" data-mail data-subject="Re: Where did the battery charge go?" href="../../#contact">reply by email</a><a class="btn" href="../../blog/">all posts</a></div>
-          <details><summary class="cmt" style="cursor:pointer">-- cite this</summary><pre>@misc{madan2026where,
+          <div class="btn-row"><a class="btn btn--primary" data-mail data-subject="Re: Where did the battery charge go?" href="../../">Reply by email</a><a class="btn" href="../../blog/">All writing</a></div>
+          <details><summary>Cite this</summary><pre>@misc{madan2026where,
   author = {Yashwanth Madan},
   title  = {Where did the battery charge go?},
   year   = {2026},
   note   = {https://yashisacoder.github.io/YashIsACoder/blog/battery-ledger/}
 }</pre></details>
-          <div class="pager"><span></span><a href="../../blog/paired-weather/"><small>newer →</small>Give both cars the same weather</a></div>
+          <div class="pager"><span></span><a href="../../blog/paired-weather/"><small>Newer</small>Give both cars the same weather</a></div>
         </div>
       </article>
     </div>
   </main>
-  <footer class="wrap foot"><span>~/yash · built by hand · no trackers</span><span>press <kbd>space</kbd> for keys · <kbd>:</kbd> for commands</span></footer>
-  <div class="whichkey" role="dialog" aria-label="Keyboard shortcuts"><div class="whichkey__title">&lt;leader&gt; · press a key, or Esc</div><ul></ul></div>
-  <div class="cmdline"><span>:</span><label class="sr-only" for="cmd">Command</label><input id="cmd" data-cmd-input autocomplete="off" spellcheck="false"></div>
-  <div class="statusline" role="status" aria-label="Status line">
-    <span class="sl sl--mode" data-mode>NORMAL</span>
-    <span class="sl sl--branch sl--hide-sm">⎇ main</span>
-    <span class="sl sl--file" data-sl-file>~/yash/blog/battery-ledger.md</span>
-    <span class="sl sl--hide-sm"><button type="button" data-run="help">:help</button></span>
-    <span class="sl sl--right sl--hide-sm" data-flavor-name>catppuccin-mocha</span>
-    <span class="sl sl--hide-sm" data-sl-pos>Top</span>
-    <span class="sl sl--clock" data-clock>--:--</span>
-  </div>
+  <footer class="wrap site-foot">
+    <a data-mail data-show href="../../">Email me</a>
+    <span class="site-foot__links">
+      <a href="https://github.com/YashIsACoder" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/yashwanth-madan-7ab57b282" rel="noopener">LinkedIn</a>
+      <a href="../../cv.pdf">CV</a>
+      <a href="../../courses/">Courses</a>
+      <a href="../../feed.xml">RSS</a>
+    </span>
+    <span class="theme" role="group" aria-label="Colour theme">
+      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+    </span>
+  </footer>
 </body>
 </html>

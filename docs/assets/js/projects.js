@@ -182,7 +182,7 @@ private:
       { label: 'Open the race', href: 'https://yashisacoder.github.io/3821-viz/compare.html', primary: true },
       { label: 'The explainer', href: 'https://yashisacoder.github.io/3821-viz/' },
       { label: 'Source', href: 'https://github.com/YashIsACoder/3821-viz' },
-      { label: 'The research', href: '#research' }
+      { label: 'The research', href: 'research/' }
     ],
     tap: { kind: 'iframe', src: 'https://yashisacoder.github.io/3821-viz/compare.html', label: 'the race · live' }
   },
@@ -201,7 +201,7 @@ private:
       'Seven experiments on 136 graphs with zero disagreements'
     ],
     stack: ['C++', 'Make', 'exact rationals', 'Tarjan', 'Karp 1978'],
-    links: [{ label: 'Read the research', href: '#research', primary: true }, { label: 'See the results', href: 'https://yashisacoder.github.io/3821-viz/results.html' }],
+    links: [{ label: 'Read the research', href: 'research/', primary: true }, { label: 'See the results', href: 'https://yashisacoder.github.io/3821-viz/results.html' }],
     tap: { kind: 'code', title: 'the skip test, sketched', lang: 'cpp', code:
 `// a sketch of the cascade, not the library's code
 for (auto& K : sccs_reverse_topo(g)) {

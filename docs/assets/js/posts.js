@@ -18,9 +18,9 @@ const WIDGETS = {
         cells.push(`<li class="${a && !b ? 'a' : b && !a ? 'b' : ''}" aria-label="Draw ${i + 1}: A ${a ? 'finishes' : 'fails'}, B ${b ? 'finishes' : 'fails'}"><span class="${a ? '' : 'x'}">A</span><span class="${b ? '' : 'x'}">B</span></li>`);
       }
       const d = n10 - n01;
-      el.innerHTML = `<div class="widget__top"><span class="widget__label">● live · ${n} paired draws · seed ${seed}</span><button type="button" class="btn btn--primary" data-reroll>re-roll the weather</button></div>
+      el.innerHTML = `<div class="widget__top"><span class="widget__label">${n} paired draws, weather seed ${seed}</span><button type="button" class="btn btn--primary" data-reroll>Re-roll the weather</button></div>
         <ul class="draws" style="grid-template-columns: repeat(${Math.min(n, 8)}, minmax(0, 1fr))">${cells.join('')}</ul>
-        <div class="widget__sum" aria-live="polite"><span>both finish ${n11}</span><span class="c-peach">only A ${n10}</span><span class="c-blue">only B ${n01}</span><span>neither ${n00}</span><b style="margin-left:auto">d̂ = ${d < 0 ? '−' : ''}${Math.abs(d)}/${n}</b></div>`;
+        <div class="widget__sum" aria-live="polite"><span>Both finish ${n11}</span><span class="c-peach">Only A ${n10}</span><span class="c-blue">Only B ${n01}</span><span>Neither ${n00}</span><b style="margin-left:auto">d̂ = ${d < 0 ? '−' : ''}${Math.abs(d)}/${n}</b></div>`;
     }
     el.addEventListener('click', (e) => { if (e.target.closest('[data-reroll]')) { seed++; render(); } });
     render();
@@ -30,7 +30,7 @@ export function mountWidgets(root = document) {
   root.querySelectorAll('[data-widget]').forEach((el) => {
     el.classList.add('widget');
     const make = WIDGETS[el.dataset.widget];
-    if (make) make(el); else el.innerHTML = `<span class="widget__label">unknown widget: ${esc(el.dataset.widget)}</span>`;
+    if (make) make(el); else el.innerHTML = `<span class="widget__label">Unknown widget: ${esc(el.dataset.widget)}</span>`;
   });
 }
 mountWidgets();

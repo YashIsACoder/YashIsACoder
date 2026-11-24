@@ -1,0 +1,79 @@
+<!-- {"title": "Write: Yashwanth Madan", "description": "The editor for this site.", "base": "../", "noindex": true, "scripts": ["write.js"], "bodyAttrs": "data-base=\"../\" data-kind=\"post\"", "mainClass": "writer"} -->
+    <section class="page">
+      <h1 class="page__h">Write</h1>
+      <p class="page__lede">Write a post or a course review in Markdown, check the preview, then publish. This saves to <span class="mono" id="w-path">content/blog/new.md</span>. <span id="w-saved">Draft not saved yet.</span> Press <kbd>⌘</kbd> <kbd>S</kbd> to save it in this browser.</p>
+
+      <div class="wform">
+        <fieldset class="wkind">
+          <legend class="sr-only">What are you writing?</legend>
+          <label><input type="radio" name="kind" value="post" checked> Blog post</label>
+          <label><input type="radio" name="kind" value="review"> Course review</label>
+        </fieldset>
+        <label class="wf wf--wide"><span>Title</span><input id="w-title" type="text" placeholder="Give both cars the same weather" autocomplete="off"></label>
+        <label class="wf"><span>Date</span><input id="w-date" type="date"></label>
+        <label class="wf only-review"><span>Course</span><select id="w-course"><option>Loading…</option></select></label>
+        <label class="wf only-review"><span>Term taken</span><input id="w-term" type="text" placeholder="2026 T2"></label>
+        <label class="wf wf--wide"><span>Summary: one sentence for the card and the feed</span><input id="w-summary" type="text"></label>
+        <label class="wf"><span>Tags, separated by commas</span><input id="w-tags" type="text" placeholder="c++, statistics"></label>
+        <label class="wf only-post"><span>Card formula, optional LaTeX</span><input id="w-math" type="text" placeholder="$\hat d = (n_{10} - n_{01}) / n$"></label>
+        <div class="wmeters only-review">
+          <label class="wf"><span>Difficulty <output id="o-difficulty">5/10</output></span><input id="w-difficulty" type="range" min="1" max="10" value="5"></label>
+          <label class="wf"><span>Workload <output id="o-workload">5/10</output></span><input id="w-workload" type="range" min="1" max="10" value="5"></label>
+          <label class="wf"><span>Enjoyment <output id="o-enjoyment">5/10</output></span><input id="w-enjoyment" type="range" min="1" max="10" value="5"></label>
+          <label class="wcheck"><input id="w-again" type="checkbox" checked> I’d take it again</label>
+        </div>
+        <label class="wcheck" style="grid-column: 1 / -1"><input id="w-draft" type="checkbox"> Save as a draft (it won’t appear on the site)</label>
+      </div>
+
+      <div class="wsplit">
+        <div class="wpane">
+          <div class="wpane__bar">
+            <span>Markdown</span>
+            <span class="wtools" aria-label="Insert">
+              <button type="button" data-insert="h2">## Section</button>
+              <button type="button" data-insert="math">$$ Maths</button>
+              <button type="button" data-insert="code">``` Code</button>
+              <button type="button" data-insert="fn">[^1] Note</button>
+              <button type="button" data-insert="link">Link</button>
+              <button type="button" data-insert="widget">Widget</button>
+            </span>
+          </div>
+          <label class="sr-only" for="w-body">Post body in Markdown</label>
+          <textarea id="w-body" spellcheck="true"></textarea>
+        </div>
+        <div class="wpane">
+          <div class="wpane__bar"><span>Preview: exactly what gets published</span><span>Updates as you type</span></div>
+          <div class="wpreview">
+            <p id="w-error" class="werror" role="alert" hidden></p>
+            <article class="post" id="preview"></article>
+          </div>
+        </div>
+      </div>
+
+      <div class="wpublish">
+        <div class="wpublish__main">
+          <button class="btn btn--primary" type="button" id="w-github">Publish on GitHub</button>
+          <button class="btn" type="button" id="w-copy">Copy Markdown</button>
+          <button class="btn" type="button" id="w-download">Download .md</button>
+          <label class="btn">Open .md<input id="w-import" type="file" accept=".md,text/markdown,text/plain" class="sr-only"></label>
+          <button class="btn" type="button" id="w-new">New</button>
+        </div>
+        <p class="cmt" style="margin:0">Publish on GitHub opens GitHub with this post filled in. Sign in, press Commit changes, and the site rebuilds in about a minute.</p>
+        <details class="wtoken">
+          <summary>Commit straight from this page (optional, one-time setup)</summary>
+          <ol>
+            <li>On GitHub, go to Settings, Developer settings, Fine-grained tokens, and generate a new token.</li>
+            <li>Give it access to <span class="mono">YashIsACoder/YashIsACoder</span> only, with Contents set to Read and write. Nothing else.</li>
+            <li>Paste it below. It’s kept only in this browser and only sent to api.github.com.</li>
+          </ol>
+          <div class="wtoken__row">
+            <label class="sr-only" for="w-token">GitHub token</label>
+            <input id="w-token" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+            <label class="wcheck"><input id="w-remember" type="checkbox"> Remember on this device</label>
+            <button class="btn btn--primary" type="button" id="w-commit">Commit now</button>
+            <button class="btn" type="button" id="w-forget">Forget token</button>
+          </div>
+          <p id="w-status" class="cmt" aria-live="polite" style="margin:0"></p>
+        </details>
+      </div>
+    </section>

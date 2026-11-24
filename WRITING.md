@@ -2,7 +2,7 @@
 
 ## The easy way: in the browser
 
-Open **https://yashisacoder.github.io/YashIsACoder/write/** (or press `Space` then `n` anywhere on the site).
+Open **https://yashisacoder.github.io/YashIsACoder/write/**.
 
 1. Pick **blog post** or **course review**, fill in the title and the rest, and write in Markdown. The preview on the right is exactly what gets published, LaTeX included.
 2. Drafts save in your browser as you type (`⌘S` / `Ctrl+S` to save now).

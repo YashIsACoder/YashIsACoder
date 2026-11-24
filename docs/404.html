@@ -1,20 +1,57 @@
 <!doctype html>
-<html lang="en" data-flavor="mocha">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>E37: file not found · Yash Madan</title>
+  <title>Page not found: Yashwanth Madan</title>
+  <meta name="description" content="This page doesn’t exist.">
+  <meta property="og:title" content="Page not found: Yashwanth Madan">
+  <meta property="og:description" content="This page doesn’t exist.">
+  <meta name="robots" content="noindex, nofollow">
+  
   <link rel="icon" href="/YashIsACoder/favicon.svg" type="image/svg+xml">
-  <script>(function(){var m=null;try{m=localStorage.getItem('yash-colorscheme')}catch(e){}var h=new Date().getHours();var a=h>=6&&h<17?'latte':h>=17&&h<19?'frappe':h>=19&&h<22?'macchiato':'mocha';document.documentElement.dataset.flavor=m&&m!=='auto'?m:a})()</script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="alternate" type="application/rss+xml" title="Yashwanth Madan: writing" href="/YashIsACoder/feed.xml">
+  <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light'})()</script>
+  <link rel="preload" href="/YashIsACoder/assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/YashIsACoder/assets/katex/katex.min.css">
   <link rel="stylesheet" href="/YashIsACoder/assets/css/site.css">
+  <script type="module" src="/YashIsACoder/assets/js/site.js"></script>
+  
 </head>
-<body style="padding:0">
-  <main class="wrap" style="min-height:90vh;display:flex;flex-direction:column;justify-content:center;gap:18px">
-    <p class="cmt" style="margin:0">yash@unsw ~ $ nvim this-page</p>
-    <h1 class="h2" style="font-size:clamp(34px,6vw,64px)"><span class="hash">E37:</span>file not found</h1>
-    <p class="lede" style="margin:0">Whatever was here has moved or never existed.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--primary" href="/YashIsACoder/">:e README.md</a><a class="btn" href="/YashIsACoder/blog/">:e blog/</a></div>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="wrap site-head">
+    <a class="site-head__name" href="/YashIsACoder/">Yashwanth Madan</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="/YashIsACoder/#work">Work</a>
+      <a href="/YashIsACoder/research/">Research</a>
+      <a href="/YashIsACoder/#projects">Projects</a>
+      <a href="/YashIsACoder/blog/">Writing</a>
+      <a href="/YashIsACoder/courses/">Courses</a>
+      <a href="/YashIsACoder/cv.pdf">CV</a>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <section class="page lost">
+      <h1 class="page__h">This page doesn’t exist</h1>
+      <p class="page__lede">The link may be old, or the page may have moved when the site was redesigned. Try the <a href="/YashIsACoder/">homepage</a>, the <a href="/YashIsACoder/blog/">writing</a> or the <a href="/YashIsACoder/research/">research</a>.</p>
+    </section>
+
   </main>
+  <footer class="wrap site-foot">
+    <a data-mail data-show href="/YashIsACoder/">Email me</a>
+    <span class="site-foot__links">
+      <a href="https://github.com/YashIsACoder" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/yashwanth-madan-7ab57b282" rel="noopener">LinkedIn</a>
+      <a href="/YashIsACoder/cv.pdf">CV</a>
+      <a href="/YashIsACoder/courses/">Courses</a>
+      <a href="/YashIsACoder/feed.xml">RSS</a>
+    </span>
+    <span class="theme" role="group" aria-label="Colour theme">
+      <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+    </span>
+  </footer>
 </body>
 </html>

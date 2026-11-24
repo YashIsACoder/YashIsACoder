@@ -19,22 +19,8 @@
     "status": "taken"
   },
   {
-    "code": "MATH3699",
-    "name": "Mathematics Work Placement 2",
-    "note": "work placement",
-    "term": "2026 T2",
-    "status": "taken"
-  },
-  {
     "code": "COMP9417",
     "name": "Machine Learning and Data Mining",
-    "term": "2026 T1",
-    "status": "taken"
-  },
-  {
-    "code": "MATH1399",
-    "name": "Co-op Advanced Mathematics Internship 1",
-    "note": "work placement",
     "term": "2026 T1",
     "status": "taken"
   },
