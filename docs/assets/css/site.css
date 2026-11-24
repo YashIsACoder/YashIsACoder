@@ -26,6 +26,7 @@
   --band: #C5D0F2;
   --warm: #9A4A0E;          /* second chart colour: burnt orange, AA on --bg */
   --good: #2F6B3A;
+  --sun: #C99700;
   --mark: rgba(42, 68, 184, .09);
   --code-bg: #E7EBF1;
   --shadow: 0 1px 2px rgba(24, 32, 43, .06), 0 8px 24px rgba(24, 32, 43, .07);
@@ -48,6 +49,7 @@
   --band: #2E3A68;
   --warm: #F0A86A;
   --good: #8FD19C;
+  --sun: #FFD400;
   --mark: rgba(147, 166, 255, .12);
   --code-bg: #1F2735;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
@@ -74,6 +76,8 @@ kbd { font-family: var(--mono); font-size: .82em; padding: 1px 6px; border: 1px 
 .skip:focus { top: 16px; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
 .nowrap { white-space: nowrap; }
+/* links only the site's owner sees, on devices where they've opened the editor */
+html:not(.is-owner) [data-owner] { display: none !important; }
 
 /* ---------- header and footer ---------- */
 .site-head { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; }
@@ -127,7 +131,9 @@ kbd { font-family: var(--mono); font-size: .82em; padding: 1px 6px; border: 1px 
 .job { display: grid; grid-template-columns: 48px minmax(0, 1fr) 170px; gap: 6px 20px; padding: 28px 0; border-bottom: 1px solid var(--line); }
 .job:first-child { padding-top: 0; }
 .job:last-child { border-bottom: 0; }
-.job__logo { width: 48px; height: 48px; border-radius: 10px; background: #FFFFFF; border: 1px solid var(--line); padding: 6px; object-fit: contain; }
+.job__logo { display: block; width: 48px; height: 48px; object-fit: contain; }
+.job__logo--sun g:first-child { stroke: var(--sun); }
+.job__logo--sun .stars { fill: var(--ink); }
 .job h3 { margin: 0; font-size: 22px; line-height: 1.25; font-weight: 600; }
 .job__role { margin: 4px 0 10px; font-size: 17px; color: var(--ink-2); }
 .job__text { margin: 0; max-width: 680px; font-size: 18px; line-height: 1.55; }
@@ -431,7 +437,7 @@ body[data-kind="post"] .only-review, body[data-kind="review"] .only-post { displ
   .hero { padding-top: 28px; }
   .hero__lede { font-size: 18px; }
   .job { grid-template-columns: 40px minmax(0, 1fr); }
-  .job__logo { width: 40px; height: 40px; padding: 5px; }
+  .job__logo { width: 40px; height: 40px; }
   .job__when { grid-column: 2; text-align: left; margin: 8px 0 0; font-size: 15px; }
   .facts { grid-template-columns: 1fr; gap: 16px; }
   .facts b { font-size: 34px; }

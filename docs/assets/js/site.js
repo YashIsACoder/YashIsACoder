@@ -21,6 +21,9 @@ document.addEventListener('click', (e) => {
 systemDark.addEventListener('change', () => { if (stored() === 'auto') apply('auto'); });
 apply(stored());
 
+// The owner's own devices: set by opening /write/ once.
+try { if (localStorage.getItem('yash-owner') === '1') root.classList.add('is-owner'); } catch { /* private mode */ }
+
 // Email: assembled here so the address never sits in the page source.
 const MAIL = ['yashwanth.madan7070', 'gmail.com'];
 export const mailto = (subject) => `mailto:${MAIL.join('@')}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;

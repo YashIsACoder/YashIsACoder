@@ -11,13 +11,13 @@
   <link rel="canonical" href="https://yashisacoder.github.io/YashIsACoder/blog/">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="alternate" type="application/rss+xml" title="Yashwanth Madan: writing" href="../feed.xml">
-  <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light'})()</script>
+  <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="../assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/katex/katex.min.css">
-  <link rel="stylesheet" href="../assets/css/site.css?v=5a60447d">
-  <script type="module" src="../assets/js/site.js?v=5a60447d"></script>
-  <script type="module" src="../assets/js/posts.js?v=5a60447d"></script>
-  <script type="module" src="../assets/js/tables.js?v=5a60447d"></script>
+  <link rel="stylesheet" href="../assets/css/site.css?v=30be2d68">
+  <script type="module" src="../assets/js/site.js?v=30be2d68"></script>
+  <script type="module" src="../assets/js/posts.js?v=30be2d68"></script>
+  <script type="module" src="../assets/js/tables.js?v=30be2d68"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -30,12 +30,14 @@
       <a href="../blog/" aria-current="page">Writing</a>
       <a href="../courses/">Courses</a>
       <a href="../cv.pdf">CV</a>
+      <a href="../write/" data-owner>Write</a>
     </nav>
   </header>
   <main id="main" class="wrap">
     <section class="page">
       <h1 class="page__h">Writing</h1>
       <p class="page__lede">Notes on what I’m building and learning: C++, algorithms, statistics, markets and solar cars. New posts also go out by <a href="../feed.xml">RSS</a>.</p>
+      <p class="btn-row" data-owner style="margin-top:22px"><a class="btn btn--primary" href="../write/">Write a post</a><a class="btn" href="../write/?kind=review">Write a course review</a></p>
       <div class="filters" role="group" aria-label="Filter by tag" data-filters><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="ecm" aria-pressed="false">ecm</button><button type="button" data-filter="simulation" aria-pressed="false">simulation</button><button type="button" data-filter="solar-cars" aria-pressed="false">solar-cars</button><button type="button" data-filter="statistics" aria-pressed="false">statistics</button></div>
       <ul class="postlist"><li data-tags="statistics simulation ecm"><a href="paired-weather/"><span class="d">22 Nov 2026</span><span class="t">Give both cars the same weather</span><span class="r">2 min read</span><span class="s">A fast pacing rule can look brilliant on a calm day. For a fair comparison, weather is an input we can share.</span></a></li><li data-tags="solar-cars simulation ecm"><a href="battery-ledger/"><span class="d">22 Nov 2026</span><span class="t">Where did the battery charge go?</span><span class="r">1 min read</span><span class="s">A six-leg audit of one simulated day in the Sunswift 7 preset.</span></a></li></ul>
     </section>

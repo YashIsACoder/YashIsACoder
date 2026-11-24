@@ -1,7 +1,7 @@
 <!-- {"title": "Write: Yashwanth Madan", "description": "The editor for this site.", "base": "../", "noindex": true, "scripts": ["write.js"], "bodyAttrs": "data-base=\"../\" data-kind=\"post\"", "mainClass": "writer"} -->
     <section class="page">
       <h1 class="page__h">Write</h1>
-      <p class="page__lede">Write a post or a course review in Markdown, check the preview, then publish. This saves to <span class="mono" id="w-path">content/blog/new.md</span>. <span id="w-saved">Draft not saved yet.</span> Press <kbd>⌘</kbd> <kbd>S</kbd> to save it in this browser.</p>
+      <p class="page__lede"><span id="w-mode">Write a post or a course review in Markdown, check the preview, then press Publish.</span> It goes to <span class="mono" id="w-path">content/blog/new.md</span>. <span id="w-saved">Draft not saved yet.</span></p>
 
       <div class="wform">
         <fieldset class="wkind">
@@ -52,28 +52,29 @@
 
       <div class="wpublish">
         <div class="wpublish__main">
-          <button class="btn btn--primary" type="button" id="w-github">Publish on GitHub</button>
+          <button class="btn btn--primary" type="button" id="w-publish">Publish</button>
+          <button class="btn" type="button" id="w-github">Publish via GitHub</button>
           <button class="btn" type="button" id="w-copy">Copy Markdown</button>
           <button class="btn" type="button" id="w-download">Download .md</button>
           <label class="btn">Open .md<input id="w-import" type="file" accept=".md,text/markdown,text/plain" class="sr-only"></label>
           <button class="btn" type="button" id="w-new">New</button>
         </div>
-        <p class="cmt" style="margin:0">Publish on GitHub opens GitHub with this post filled in. Sign in, press Commit changes, and the site rebuilds in about a minute.</p>
-        <details class="wtoken">
-          <summary>Commit straight from this page (optional, one-time setup)</summary>
+        <p id="w-status" class="cmt" aria-live="polite" style="margin:0"></p>
+        <details class="wtoken" id="w-setup">
+          <summary id="w-setup-label">Set up one-click publishing on this device</summary>
+          <p class="cmt" style="margin:10px 0 0">Publish commits your post to the site’s GitHub repository from this page, using a token only you have. You do this once per device.</p>
           <ol>
-            <li>On GitHub, go to Settings, Developer settings, Fine-grained tokens, and generate a new token.</li>
-            <li>Give it access to <span class="mono">YashIsACoder/YashIsACoder</span> only, with Contents set to Read and write. Nothing else.</li>
-            <li>Paste it below. It’s kept only in this browser and only sent to api.github.com.</li>
+            <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub’s new fine-grained token page</a>.</li>
+            <li>Name it “Website editor”. Under Repository access choose Only select repositories, then <span class="mono">YashIsACoder/YashIsACoder</span>.</li>
+            <li>Under Permissions, set Contents to Read and write. Leave everything else alone, then press Generate token.</li>
+            <li>Paste it below and press Save token. It stays in this browser and is only ever sent to GitHub.</li>
           </ol>
           <div class="wtoken__row">
             <label class="sr-only" for="w-token">GitHub token</label>
             <input id="w-token" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
-            <label class="wcheck"><input id="w-remember" type="checkbox"> Remember on this device</label>
-            <button class="btn btn--primary" type="button" id="w-commit">Commit now</button>
+            <button class="btn btn--primary" type="button" id="w-save-token">Save token</button>
             <button class="btn" type="button" id="w-forget">Forget token</button>
           </div>
-          <p id="w-status" class="cmt" aria-live="polite" style="margin:0"></p>
         </details>
       </div>
     </section>

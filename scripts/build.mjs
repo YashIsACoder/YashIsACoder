@@ -42,13 +42,13 @@ function load(dir, kind) {
     if (data.draft && !DRAFTS) { console.log(`  skip  ${dir}/${f} (draft)`); continue; }
     if (data.tags && !Array.isArray(data.tags)) data.tags = [data.tags];
     const slug = data.slug || f.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
-    out.push({ ...data, tags: data.tags || [], kind, date: String(data.date), slug, ...render(body, `${dir}/${f}`) });
+    out.push({ ...data, tags: data.tags || [], kind, date: String(data.date), slug, source: `content/${dir}/${f}`, ...render(body, `${dir}/${f}`) });
   }
   return out.sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
 }
 
 // ------------------------------------------------------------ page shell
-const themeScript = `<script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light'})()</script>`;
+const themeScript = `<script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>`;
 
 export function shell({ title, description, base, url, active, body, scripts = ['posts.js', 'tables.js'], noindex = false, bodyAttrs = '', mainClass = '' }) {
   const nav = [['work', 'Work', `${base}#work`], ['research', 'Research', `${base}research/`], ['projects', 'Projects', `${base}#projects`], ['blog', 'Writing', `${base}blog/`], ['courses', 'Courses', `${base}courses/`], ['cv', 'CV', `${base}cv.pdf`]];
@@ -78,6 +78,7 @@ export function shell({ title, description, base, url, active, body, scripts = [
     <a class="site-head__name" href="${base}">Yashwanth Madan</a>
     <nav class="site-nav" aria-label="Sections">
       ${nav.map(([id, label, href]) => `<a href="${href}"${active === id ? ' aria-current="page"' : ''}>${label}</a>`).join('\n      ')}
+      <a href="${base}write/" data-owner${active === 'write' ? ' aria-current="page"' : ''}>Write</a>
     </nav>
   </header>
   <main id="main" class="wrap${mainClass ? ' ' + mainClass : ''}">
@@ -166,7 +167,7 @@ function postPage(p, older, newer, section) {
         ${ratings}
         <div class="prose">${p.html}</div>
         <div class="post__end">
-          <div class="btn-row"><a class="btn btn--primary" data-mail data-subject="${esc('Re: ' + p.title)}" href="${base}">Reply by email</a><a class="btn" href="${base}${section}/">All ${section === 'blog' ? 'writing' : 'reviews'}</a></div>
+          <div class="btn-row"><a class="btn btn--primary" data-mail data-subject="${esc('Re: ' + p.title)}" href="${base}">Reply by email</a><a class="btn" href="${base}${section}/">All ${section === 'blog' ? 'writing' : 'reviews'}</a><a class="btn" data-owner href="${base}write/?edit=${encodeURIComponent(p.source)}">Edit this post</a></div>
           <details><summary>Cite this</summary><pre>${esc(bib)}</pre></details>
           <div class="pager">${older ? `<a href="${base}${section}/${older.slug}/"><small>Older</small>${esc(older.title)}</a>` : '<span></span>'}${newer ? `<a href="${base}${section}/${newer.slug}/"><small>Newer</small>${esc(newer.title)}</a>` : '<span></span>'}</div>
         </div>
@@ -181,6 +182,7 @@ function blogIndex(posts) {
   const body = `    <section class="page">
       <h1 class="page__h">Writing</h1>
       <p class="page__lede">Notes on what I’m building and learning: C++, algorithms, statistics, markets and solar cars. New posts also go out by <a href="${base}feed.xml">RSS</a>.</p>
+      <p class="btn-row" data-owner style="margin-top:22px"><a class="btn btn--primary" href="${base}write/">Write a post</a><a class="btn" href="${base}write/?kind=review">Write a course review</a></p>
       <div class="filters" role="group" aria-label="Filter by tag" data-filters><button type="button" data-filter="all" aria-pressed="true">All</button>${tags.map((t) => `<button type="button" data-filter="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('')}</div>
       <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a></li>`).join('')}</ul>
     </section>`;

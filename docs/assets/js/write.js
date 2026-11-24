@@ -1,16 +1,17 @@
-// yash.nvim — /write/: write a blog post or a course review in the browser.
+// /write/: write, edit and publish posts and course reviews from the site.
 //
-// GitHub Pages only serves files, so publishing hands the Markdown to GitHub:
-//   1. "Publish on GitHub" opens GitHub's new-file page, pre-filled. Sign in, commit.
-//   2. "Commit directly" uses a fine-grained token you paste once. It never leaves
-//      this browser except to talk to api.github.com.
-// Either way the GitHub Action rebuilds the site about a minute later.
+// GitHub Pages only serves files, so publishing commits the Markdown to the
+// repository and the GitHub Action rebuilds the site about a minute later.
+//   Publish            commits straight from this page, with a fine-grained
+//                      token saved once per device (only ever sent to GitHub).
+//   Publish via GitHub opens GitHub's editor with the post filled in.
+// /write/?edit=content/blog/<file>.md loads an existing post to change it.
 
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=5a60447d';
-import { mountWidgets } from './posts.js?v=5a60447d';
-import { toast } from './site.js?v=5a60447d';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=30be2d68';
+import { mountWidgets } from './posts.js?v=30be2d68';
+import { toast } from './site.js?v=30be2d68';
 
 const REPO = 'YashIsACoder/YashIsACoder';
 const BRANCH = 'main';
@@ -23,6 +24,11 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* ignore */ } },
   del(k) { try { localStorage.removeItem(k); } catch { /* ignore */ } }
 };
+try { localStorage.setItem('yash-owner', '1'); document.documentElement.classList.add('is-owner'); } catch { /* private mode */ }
+const params = new URLSearchParams(location.search);
+const EDIT = /^content\/(blog|courses)\/[\w.-]+\.md$/.test(params.get('edit') || '') ? params.get('edit') : null;
+const draftKey = () => (EDIT ? `${DRAFT_KEY}:${EDIT}` : DRAFT_KEY);
+const liveUrl = (p) => `../${p.startsWith('content/courses/') ? 'courses' : 'blog'}/${p.split('/').pop().replace(/\.md$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '')}/`;
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
 const STARTER = {
@@ -66,7 +72,7 @@ const f = {
 // ------------------------------------------------------------ courses list
 fetch('../assets/data/courses.json').then((r) => r.json()).then((list) => {
   f.course.innerHTML = list.map((c) => `<option value="${esc(c.code)}">${esc(c.code)} · ${esc(c.name)}</option>`).join('');
-  const saved = JSON.parse(store.get(DRAFT_KEY) || 'null');
+  const saved = JSON.parse(store.get(draftKey()) || 'null');
   if (saved?.course) f.course.value = saved.course;
   update();
 }).catch(() => { f.course.innerHTML = '<option value="">(could not load courses)</option>'; });
@@ -74,6 +80,7 @@ fetch('../assets/data/courses.json').then((r) => r.json()).then((list) => {
 // ------------------------------------------------------------ markdown out
 function tagsList() { return f.tags.value.split(',').map((t) => t.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w+#.-]/g, '')).filter(Boolean); }
 function filePath() {
+  if (EDIT) return EDIT;
   const kind = f.kind();
   const slug = kind === 'review' ? slugify(`${f.course.value}-${f.title.value.replace(new RegExp('^' + f.course.value + '\\s*[·:-]?\\s*', 'i'), '')}`) : slugify(f.title.value);
   return `content/${kind === 'review' ? 'courses' : 'blog'}/${f.date.value || today()}-${slug || 'untitled'}.md`;
@@ -93,7 +100,7 @@ export function toMarkdown() {
 }
 
 // ------------------------------------------------------------ preview
-function meter(n, c) { const v = +n; return `<span class="meter" style="--c: var(${c})">${Array.from({ length: 10 }, (_, i) => `<i class="${i < v ? 'on' : ''}"></i>`).join('')}</span> <span class="mono" style="font-size:12.5px;color:var(--sub)">${v}/10</span>`; }
+function meter(n) { const v = +n; return `<span class="meter" role="img" aria-label="${v} out of 10">${Array.from({ length: 10 }, (_, i) => `<i class="${i < v ? 'on' : ''}"></i>`).join('')}</span> <span class="muted">${v}/10</span>`; }
 let timer = 0;
 function update() {
   clearTimeout(timer);
@@ -107,11 +114,12 @@ function update() {
       const { html, words } = render(f.body.value, 'your post');
       const tags = tagsList();
       out.innerHTML = `
-        <span class="post__kicker">${kind === 'review' ? `courses/<b>${esc(f.course.value)}</b>` : `blog/<b>${esc(slugify(f.title.value) || 'untitled')}.md</b>`}${tags.length ? ' · ' + tags.map((t) => '#' + esc(t)).join(' ') : ''}</span>
+        <span class="crumbs">${kind === 'review' ? `Courses / ${esc(f.course.value)}` : 'Writing'}</span>
+        ${tags.length ? `<ul class="post__tags">${tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
         <h1>${esc(f.title.value || 'Untitled')}</h1>
         ${f.summary.value.trim() ? `<p class="post__summary">${esc(f.summary.value)}</p>` : ''}
-        <div class="post__meta"><span>Yashwanth Madan</span><span>${esc(f.date.value || today())}</span><span>${readTime(words)}</span>${f.draft.checked ? '<span class="todo">DRAFT</span>' : ''}</div>
-        ${kind === 'review' ? `<div class="ratings"><span>difficulty</span><span>${meter(f.difficulty.value, '--red')}</span><span>workload</span><span>${meter(f.workload.value, '--peach')}</span><span>enjoyment</span><span>${meter(f.enjoyment.value, '--green')}</span><span>take again?</span><span>${f.again.checked ? 'yes' : 'no'}</span></div>` : ''}
+        <div class="post__meta"><span>Yashwanth Madan</span><span>${esc(f.date.value || today())}</span><span>${readTime(words)}</span>${f.draft.checked ? '<span>Draft</span>' : ''}</div>
+        ${kind === 'review' ? `<div class="ratings"><span>Difficulty</span><span>${meter(f.difficulty.value)}</span><span>Workload</span><span>${meter(f.workload.value)}</span><span>Enjoyment</span><span>${meter(f.enjoyment.value)}</span><span>Take it again?</span><span>${f.again.checked ? 'Yes' : 'No'}</span>${f.term.value.trim() ? `<span>Taken</span><span>${esc(f.term.value)}</span>` : ''}</div>` : ''}
         <div class="prose">${html}</div>`;
       mountWidgets(out);
       $('#w-error').hidden = true;
@@ -126,7 +134,7 @@ function update() {
 // ------------------------------------------------------------ drafts
 function saveDraft() {
   const d = { kind: f.kind(), title: f.title.value, date: f.date.value, tags: f.tags.value, summary: f.summary.value, math: f.math.value, course: f.course.value, term: f.term.value, difficulty: f.difficulty.value, workload: f.workload.value, enjoyment: f.enjoyment.value, again: f.again.checked, draft: f.draft.checked, body: f.body.value };
-  store.set(DRAFT_KEY, JSON.stringify(d));
+  store.set(draftKey(), JSON.stringify(d));
   const t = new Date();
   $('#w-saved').textContent = `Draft saved at ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
 }
@@ -136,24 +144,43 @@ function loadDraft(d) {
   if (d.course) f.course.value = d.course;
   f.again.checked = d.again !== false; f.draft.checked = !!d.draft;
 }
-const saved = JSON.parse(store.get(DRAFT_KEY) || 'null');
-if (saved) loadDraft(saved); else { f.date.value = today(); f.body.value = STARTER.post; }
+const saved = JSON.parse(store.get(draftKey()) || 'null');
+if (saved) loadDraft(saved);
+else if (!EDIT) {
+  const k = params.get('kind') === 'review' ? 'review' : 'post';
+  loadDraft({ kind: k, date: today(), body: STARTER[k] });
+}
 
 // ------------------------------------------------------------ import a .md file
-$('#w-import').addEventListener('change', async (e) => {
-  const file = e.target.files[0]; if (!file) return;
-  const text = await file.text();
+function parseMd(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
   const data = {};
   if (m) for (const line of m[1].split(/\r?\n/)) { const kv = line.match(/^([\w-]+):\s*(.*)$/); if (kv) data[kv[1]] = kv[2].trim(); }
-  loadDraft({
+  return {
     kind: data.course ? 'review' : 'post', title: data.title || '', date: data.date || today(),
     tags: (data.tags || '').replace(/^\[|\]$/g, ''), summary: data.summary || '', math: data.card_math || '', course: data.course, term: data.term || '',
     difficulty: data.difficulty || 5, workload: data.workload || 5, enjoyment: data.enjoyment || 5, again: data.again !== 'false', draft: data.draft === 'true',
-    body: m ? text.slice(m[0].length) : text
-  });
+    body: (m ? text.slice(m[0].length) : text).replace(/^\n+/, '')
+  };
+}
+$('#w-import').addEventListener('change', async (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  loadDraft(parseMd(await file.text()));
   update(); toast(`Loaded ${file.name}`);
 });
+
+// ------------------------------------------------------------ editing a published post
+if (EDIT) {
+  $('#w-mode').textContent = 'You’re editing a published post. Change anything, then press Publish to update it.';
+  document.querySelectorAll('input[name="kind"]').forEach((r) => { r.disabled = true; });
+  if (!saved) {
+    $('#w-saved').textContent = 'Loading the post…';
+    fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/${EDIT}?t=${Date.now()}`)
+      .then((r) => { if (!r.ok) throw new Error(r.status === 404 ? 'that post isn’t in the repository' : `GitHub answered ${r.status}`); return r.text(); })
+      .then((text) => { loadDraft(parseMd(text)); update(); $('#w-saved').textContent = 'Loaded from GitHub.'; })
+      .catch((e) => { $('#w-saved').textContent = `Couldn’t load the post: ${e.message}.`; });
+  }
+}
 
 // ------------------------------------------------------------ editor niceties
 document.addEventListener('input', (e) => { if (e.target.closest('.writer')) update(); });
@@ -193,6 +220,12 @@ $('#w-download').addEventListener('click', () => {
 $('#w-github').addEventListener('click', async () => {
   if (!check()) return;
   const md = toMarkdown();
+  if (EDIT) {
+    try { await navigator.clipboard.writeText(md); } catch { /* fall through */ }
+    window.open(`https://github.com/${REPO}/edit/${BRANCH}/${EDIT}`, '_blank', 'noopener');
+    toast('Your edit is on your clipboard. In GitHub, select all, paste, then press Commit changes.');
+    return;
+  }
   const base = `https://github.com/${REPO}/new/${BRANCH}?filename=${encodeURIComponent(filePath())}`;
   const url = `${base}&value=${encodeURIComponent(md)}`;
   if (url.length < 7500) { window.open(url, '_blank', 'noopener'); toast('Opened GitHub: check the post, then press Commit changes'); return; }
@@ -201,38 +234,65 @@ $('#w-github').addEventListener('click', async () => {
   toast('Long post: it’s on your clipboard. Paste it into GitHub, then commit.');
 });
 
-// token commit
+// one-click publishing with a token saved on this device
 const tokenIn = $('#w-token');
-const savedToken = store.get(TOKEN_KEY);
-if (savedToken) { tokenIn.value = savedToken; $('#w-remember').checked = true; }
+const setup = $('#w-setup');
+function showSetupState() {
+  const has = !!store.get(TOKEN_KEY);
+  $('#w-setup-label').textContent = has ? 'One-click publishing is set up on this device' : 'Set up one-click publishing on this device';
+  tokenIn.value = has ? store.get(TOKEN_KEY) : '';
+}
+showSetupState();
+$('#w-save-token').addEventListener('click', () => {
+  const t = tokenIn.value.trim();
+  if (!/^(github_pat_|ghp_)\w+/.test(t)) { toast('That doesn’t look like a GitHub token: it should start with github_pat_'); tokenIn.focus(); return; }
+  store.set(TOKEN_KEY, t); showSetupState(); setup.open = false;
+  toast('Token saved on this device. Press Publish.');
+});
+$('#w-forget').addEventListener('click', () => { store.del(TOKEN_KEY); showSetupState(); toast('Token removed from this device'); });
+
 const b64 = (s) => { const bytes = new TextEncoder().encode(s); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(bin); };
-$('#w-commit').addEventListener('click', async () => {
+$('#w-publish').addEventListener('click', async () => {
   if (!check()) return;
-  const token = tokenIn.value.trim();
-  if (!token) { toast('Paste a fine-grained token first (see the steps)'); tokenIn.focus(); return; }
-  if ($('#w-remember').checked) store.set(TOKEN_KEY, token); else store.del(TOKEN_KEY);
+  const token = store.get(TOKEN_KEY);
+  if (!token) {
+    setup.open = true; setup.scrollIntoView({ block: 'center' }); tokenIn.focus();
+    toast('First, a one-time setup on this device: follow the steps below.');
+    return;
+  }
   const p = filePath();
   const api = `https://api.github.com/repos/${REPO}/contents/${p.split('/').map(encodeURIComponent).join('/')}`;
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   const status = $('#w-status');
-  status.textContent = 'Committing…';
+  const btn = $('#w-publish');
+  btn.disabled = true; btn.textContent = 'Publishing…';
+  status.textContent = '';
   try {
     let sha;
-    const head = await fetch(`${api}?ref=${BRANCH}`, { headers });
+    const head = await fetch(`${api}?ref=${BRANCH}`, { headers, cache: 'no-store' });
     if (head.ok) sha = (await head.json()).sha;
-    const res = await fetch(api, { method: 'PUT', headers, body: JSON.stringify({ message: `${f.kind() === 'review' ? 'review' : 'blog'}: ${sha ? 'update' : 'add'} ${f.title.value.trim()}`, content: b64(toMarkdown()), branch: BRANCH, ...(sha ? { sha } : {}) }) });
+    else if (head.status === 401) throw new Error('GitHub didn’t accept the token. It may have expired: make a new one and save it again');
+    if (sha && !EDIT) throw new Error('a post with this title and date already exists. Change the title, or open that post and use Edit this post');
+    const verb = sha ? 'Update' : 'Add';
+    const res = await fetch(api, { method: 'PUT', headers, body: JSON.stringify({ message: `${verb} ${f.kind() === 'review' ? 'review' : 'post'}: ${f.title.value.trim()}`, content: b64(toMarkdown()), branch: BRANCH, ...(sha ? { sha } : {}) }) });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || res.status);
-    status.innerHTML = `committed <a class="c-blue" href="${esc(data.commit.html_url)}" target="_blank" rel="noopener">${esc(data.commit.sha.slice(0, 7))}</a> · the site rebuilds in about a minute (<a class="c-blue" href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">watch</a>)`;
-    toast(f.draft.checked ? 'Committed as a draft: it won’t show until you untick draft' : 'Published: live in about a minute');
+    if (!res.ok) throw new Error(res.status === 403 || res.status === 404 ? 'the token can’t write to the repository. Check it has Contents set to Read and write' : data.message || res.status);
+    const live = new URL(liveUrl(p), location.href).href;
+    status.innerHTML = f.draft.checked
+      ? `Saved as a draft (<a href="${esc(data.commit.html_url)}" target="_blank" rel="noopener">see the commit</a>). It won’t appear until you untick draft and publish again.`
+      : `${sha ? 'Updated' : 'Published'}. The site rebuilds in about a minute, then it’s at <a href="${esc(live)}">${esc(live.replace(/^https?:\/\//, ''))}</a>. <a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">Watch the build</a>.`;
+    toast(f.draft.checked ? 'Saved as a draft' : `${sha ? 'Updated' : 'Published'}: live in about a minute`);
+    if (!f.draft.checked && !EDIT) store.del(DRAFT_KEY);
   } catch (e) {
-    status.textContent = `Commit failed: ${e.message}. Check the token can write "Contents" on ${REPO}.`;
+    status.textContent = `Couldn’t publish: ${e.message}.`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Publish';
   }
 });
-$('#w-forget').addEventListener('click', () => { store.del(TOKEN_KEY); tokenIn.value = ''; $('#w-remember').checked = false; toast('Token removed from this browser'); });
 $('#w-new').addEventListener('click', () => {
+  if (EDIT) { location.href = './'; return; }
   if (!confirmClear()) return;
-  store.del(DRAFT_KEY);
+  store.del(draftKey());
   loadDraft({ kind: f.kind(), title: '', date: today(), tags: '', summary: '', math: '', term: '', difficulty: 5, workload: 5, enjoyment: 5, again: true, draft: false, body: STARTER[f.kind()] });
   update();
 });
