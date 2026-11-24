@@ -8,9 +8,9 @@
 
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js';
-import { mountWidgets } from './posts.js';
-import { toast } from './site.js';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=5a60447d';
+import { mountWidgets } from './posts.js?v=5a60447d';
+import { toast } from './site.js?v=5a60447d';
 
 const REPO = 'YashIsACoder/YashIsACoder';
 const BRANCH = 'main';

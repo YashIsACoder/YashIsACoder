@@ -11,6 +11,7 @@
 //   npm run build            (add --drafts to include drafts)
 
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
@@ -232,6 +233,33 @@ function feed(items) {
 `;
 }
 
+
+// ------------------------------------------------------------ cache busting
+// GitHub Pages lets browsers keep files for ten minutes, so after a deploy a
+// visitor can get new HTML with an old stylesheet. Every link to our own CSS
+// and JS, and every import between our modules, carries ?v=<hash of their
+// contents>, so a change to any of them changes every URL that points at them.
+function stampVersions() {
+  const strip = (t) => t.replace(/\?v=[0-9a-f]{8}/g, '');
+  const assets = [path.join(DOCS, 'assets/css/site.css'), ...fs.readdirSync(path.join(DOCS, 'assets/js')).filter((f) => f.endsWith('.js')).sort().map((f) => path.join(DOCS, 'assets/js', f))];
+  const h = createHash('sha1');
+  for (const f of assets) h.update(strip(fs.readFileSync(f, 'utf8')));
+  const v = h.digest('hex').slice(0, 8);
+  const rewrite = (file, fn) => { const before = fs.readFileSync(file, 'utf8'); const after = fn(before); if (after !== before) fs.writeFileSync(file, after); };
+  for (const f of assets.filter((f) => f.endsWith('.js'))) {
+    rewrite(f, (t) => t.replace(/(from\s+['"]\.\/[\w-]+\.js)(\?v=[0-9a-f]{8})?(['"])/g, `$1?v=${v}$3`));
+  }
+  const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
+    const p = path.join(dir, d.name);
+    if (d.isDirectory()) return ['labs', 'vendor', 'katex'].includes(d.name) ? [] : walk(p);
+    return d.name.endsWith('.html') ? [p] : [];
+  });
+  for (const f of walk(DOCS)) {
+    rewrite(f, (t) => t.replace(/(assets\/(?:css\/site\.css|js\/[\w-]+\.js))(\?v=[0-9a-f]{8})?/g, `$1?v=${v}`));
+  }
+  console.log(`  stamped assets with v=${v}`);
+}
+
 // ------------------------------------------------------------ go
 function write(rel, text) { const f = path.join(DOCS, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, text); }
 
@@ -264,6 +292,7 @@ function main() {
   let home = fs.readFileSync(homePath, 'utf8');
   home = home.replace(/<!-- blog:start -->[\s\S]*?<!-- blog:end -->/, `<!-- blog:start -->\n${posts.slice(0, 4).map((p) => card(p, '')).join('\n')}\n<!-- blog:end -->`);
   fs.writeFileSync(homePath, typeset(home));
+  stampVersions();
   console.log(`\n  built ${posts.length} post(s), ${reviews.length} review(s), the indexes, the research, write and 404 pages, feed.xml and the homepage.`);
 }
 
