@@ -581,3 +581,5 @@ body[data-view="write"] .ed__cm .cm-content { max-width: 820px; margin: 0 auto; 
 .ed__cm .cm-math { font-family: var(--mono); font-size: .88em; color: var(--accent); }
 .ed__pane--preview .prose > [data-line] { cursor: pointer; }
 @media (max-width: 720px) { .ed__cm .cm-content { font-size: 16px !important; } }
+.diagram--stale .diagram__svg { opacity: .45; }
+.diagram--stale .diagram__note { color: var(--warm); }

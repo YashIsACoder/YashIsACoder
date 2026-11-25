@@ -20,10 +20,10 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=e9a92854';
-import { mountWidgets } from './posts.js?v=e9a92854';
-import { renderDiagrams } from './diagrams.js?v=e9a92854';
-import { toast } from './site.js?v=e9a92854';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=42b371ac';
+import { mountWidgets } from './posts.js?v=42b371ac';
+import { renderDiagrams } from './diagrams.js?v=42b371ac';
+import { toast } from './site.js?v=42b371ac';
 
 const REPO = 'YashIsACoder/YashIsACoder';
 const BRANCH = 'main';

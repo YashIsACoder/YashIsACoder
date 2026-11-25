@@ -37,9 +37,22 @@ function palette() {
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-// Draw every diagram under root. Returns the first error message, if any,
-// so the editor can show it.
-export async function renderDiagrams(root = document) {
+// Draw every diagram under root. Calls are queued: Mermaid can't draw two
+// things at once, and the editor asks again on every keystroke. While a
+// diagram has an error (say, half typed), the last good drawing stays up.
+let running = null;
+let queued = null;
+const lastGood = new WeakMap();       // root -> svgs by position
+export function renderDiagrams(root = document) {
+  if (running) { queued = root; return running; }
+  running = (async () => {
+    let r = root, err = null;
+    while (r) { queued = null; err = await renderNow(r); r = queued; }
+    return err;
+  })().finally(() => { running = null; });
+  return running;
+}
+async function renderNow(root) {
   const figs = [...root.querySelectorAll('figure[data-mermaid]')];
   if (!figs.length) return null;
   let mermaid;
@@ -50,7 +63,9 @@ export async function renderDiagrams(root = document) {
   const theme = document.documentElement.dataset.theme || 'light';
   mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables: palette(), fontFamily: 'Archivo, ui-sans-serif, system-ui, sans-serif', flowchart: { useMaxWidth: true }, sequence: { useMaxWidth: true } });
   let firstError = null;
-  for (const fig of figs) {
+  const good = lastGood.get(root) || [];
+  for (const [i, fig] of figs.entries()) {
+    if (!fig.isConnected) continue;
     const src = fig.dataset.mermaid;
     const key = `${theme}\n${src}`;
     try {
@@ -62,15 +77,22 @@ export async function renderDiagrams(root = document) {
         if (cache.size > 60) cache.delete(cache.keys().next().value);
       }
       fig.innerHTML = `<div class="diagram__svg">${svg}</div>`;
-      fig.classList.remove('diagram--error');
+      fig.classList.remove('diagram--error', 'diagram--stale');
+      good[i] = svg;
     } catch (e) {
       const msg = String(e?.message || e).split('\n').slice(0, 3).join(' ').trim();
       firstError ??= msg;
-      fig.classList.add('diagram--error');
-      fig.innerHTML = `<pre class="diagram__src"><code>${esc(src)}</code></pre><figcaption class="diagram__note">This diagram has an error: ${esc(msg)}</figcaption>`;
+      if (good[i]) {
+        fig.classList.add('diagram--stale');
+        fig.innerHTML = `<div class="diagram__svg">${good[i]}</div><figcaption class="diagram__note">Showing the last version that worked. This one has an error: ${esc(msg)}</figcaption>`;
+      } else {
+        fig.classList.add('diagram--error');
+        fig.innerHTML = `<pre class="diagram__src"><code>${esc(src)}</code></pre><figcaption class="diagram__note">This diagram has an error: ${esc(msg)}</figcaption>`;
+      }
       document.querySelectorAll('body > [id^="dmmd-"], body > [id^="mmd-"]').forEach((n) => n.remove());
     }
   }
+  lastGood.set(root, good);
   return firstError;
 }
 

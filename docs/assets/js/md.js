@@ -71,10 +71,13 @@ export function createRenderer({ marked, katex, assetBase = '', resolveAsset = n
       catch (e) { throw new Error(`${file}: LaTeX error in ${display ? '$$…$$' : '$…$'}: ${e.message.replace(/^KaTeX parse error: /, '')}`); }
     };
 
-    let text = body.replace(/^```([\w+-]*)[^\n]*\n([\s\S]*?)^```\s*$/gm, (_, lang, code) => {
-      const src = code.replace(/\n$/, '');
-      if (lang.toLowerCase() === 'mermaid') return hold(blocks, `<figure class="diagram" data-mermaid="${esc(src)}"><pre class="diagram__src"><code>${esc(src)}</code></pre></figure>`, true);
-      return hold(blocks, `<pre><code class="language-${esc(lang || 'text')}">${highlight(src, (lang || '').toLowerCase())}</code></pre>`, true);
+    // Fenced blocks, written any way GitHub accepts: ``` or ~~~, a space before
+    // the language or not, any case, indented up to three spaces (inside a list).
+    let text = body.replace(/^( {0,3})(`{3,}|~{3,})[ \t]*([\w+-]*)[^\n]*\n([\s\S]*?)^ {0,3}\2[`~]*[ \t]*$/gm, (_, indent, _fence, lang, code) => {
+      const src = code.replace(/\n$/, '').split('\n').map((l) => (l.startsWith(indent) ? l.slice(indent.length) : l.replace(/^ +/, ''))).join('\n');
+      const lc = lang.toLowerCase();
+      if (lc === 'mermaid') return hold(blocks, `<figure class="diagram" data-mermaid="${esc(src)}"><pre class="diagram__src"><code>${esc(src)}</code></pre></figure>`, true);
+      return hold(blocks, `<pre><code class="language-${esc(lc || 'text')}">${highlight(src, lc)}</code></pre>`, true);
     });
     text = text.replace(/`([^`\n]+)`/g, (_, code) => hold(inlines, `<code>${esc(code)}</code>`));
     text = text.replace(/^:::\s*widget\s+([\w-]+)(.*)$/gm, (_, name, rest) => {
@@ -108,11 +111,13 @@ export function createRenderer({ marked, katex, assetBase = '', resolveAsset = n
     let html = marked.parse(text, { renderer, gfm: true, async: false });
     const restore = (s) => s.replace(/<p>\s*KXB(\d+)KX\s*<\/p>/g, (_, i) => blocks[+i]).replace(/KXB(\d+)KX/g, (_, i) => blocks[+i]).replace(/KXI(\d+)KX/g, (_, i) => inlines[+i]);
     html = restore(html);
+    // a diagram nested deeper than the fence pattern reaches still becomes a diagram
+    html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/gi, (_, code) => `<figure class="diagram" data-mermaid="${code.replace(/\n$/, '')}"><pre class="diagram__src"><code>${code}</code></pre></figure>`);
     if (order.length) {
       html += `<section class="footnotes" aria-label="Footnotes"><ol>${order.map((id) =>
         `<li id="fn-${esc(id)}">${restore(marked.parseInline(defs.get(id) || '', { renderer }))} <a href="#fnref-${esc(id)}" aria-label="Back to the text">↩</a></li>`).join('')}</ol></section>`;
     }
-    const words = body.replace(/```[\s\S]*?```/g, '').split(/\s+/).filter(Boolean).length;
+    const words = body.replace(/(`{3,}|~{3,})[\s\S]*?\1/g, '').split(/\s+/).filter(Boolean).length;
     return { html, toc, words };
   };
 }
