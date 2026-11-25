@@ -20,10 +20,10 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=725af973';
-import { mountWidgets } from './posts.js?v=725af973';
-import { renderDiagrams } from './diagrams.js?v=725af973';
-import { toast } from './site.js?v=725af973';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=86821b38';
+import { mountWidgets } from './posts.js?v=86821b38';
+import { renderDiagrams } from './diagrams.js?v=86821b38';
+import { toast } from './site.js?v=86821b38';
 
 const REPO = 'YashIsACoder/YashIsACoder';
 const BRANCH = 'main';
@@ -762,17 +762,74 @@ $('#w-publish').addEventListener('click', async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(res.status === 403 || res.status === 404 ? 'the token can’t write to the repository. Check it has Contents set to Read and write' : data.message || res.status);
     const live = new URL(liveUrl(p), location.href).href;
-    status.innerHTML = f.draft.checked
-      ? `Saved as a draft (<a href="${esc(data.commit.html_url)}" target="_blank" rel="noopener">see the commit</a>). It won’t appear until you untick draft and publish again.`
-      : `${sha ? 'Updated' : 'Published'}. The site rebuilds in about a minute, then it’s at <a href="${esc(live)}">${esc(live.replace(/^https?:\/\//, ''))}</a>. <a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">Watch the build</a>.`;
-    toast(f.draft.checked ? 'Saved as a draft' : `${sha ? 'Updated' : 'Published'}: live in about a minute`);
-    if (!f.draft.checked && !EDIT) store.del(DRAFT_KEY);
+    if (f.draft.checked) {
+      status.innerHTML = `Saved as a draft (<a href="${esc(data.commit.html_url)}" target="_blank" rel="noopener">see the commit</a>). It won’t appear until you turn draft off and publish again.`;
+      toast('Saved as a draft');
+    } else {
+      if (!EDIT) store.del(DRAFT_KEY);
+      toast(`${sha ? 'Updated' : 'Published'}. Putting it on the site…`);
+      watchDeploy(data.commit.sha, live, sha ? 'Updated' : 'Published');
+    }
   } catch (e) {
     status.textContent = `Couldn’t publish: ${e.message}.`;
   } finally {
     btn.disabled = false; btn.textContent = publishLabel();
   }
 });
+
+// After publishing: follow GitHub's build until the post is live, then
+// refresh this browser's copies of the pages it appears on (GitHub Pages
+// lets browsers keep pages for ten minutes).
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function ghGet(path) {
+  const token = store.get(TOKEN_KEY);
+  let r = await fetch(`https://api.github.com/repos/${REPO}/${path}`, { headers: ghHeaders(token), cache: 'no-store' }).catch(() => null);
+  if (r && !r.ok && token) r = await fetch(`https://api.github.com/repos/${REPO}/${path}`, { headers: ghHeaders(null), cache: 'no-store' }).catch(() => null);   // public repo: no token needed
+  return r && r.ok ? r.json() : null;
+}
+let watching = 0;
+async function watchDeploy(commitSha, live, verb) {
+  const me = ++watching;
+  const status = $('#w-status');
+  const started = Date.now();
+  const secs = () => `${Math.round((Date.now() - started) / 1000)} s`;
+  const say = (html) => { if (me === watching) status.innerHTML = html; };
+  const short = live.replace(/^https?:\/\//, '');
+  let run = null;
+  say(`<span class="ed__live is-busy"></span>${verb}. Waiting for GitHub to start building the site…`);
+  while (Date.now() - started < 10 * 60e3) {
+    await sleep(4000);
+    if (me !== watching) return;
+    const runs = await ghGet(`actions/runs?head_sha=${commitSha}&per_page=1`);
+    run = runs?.workflow_runs?.[0] || run;
+    if (!run) { say(`<span class="ed__live is-busy"></span>${verb}. Waiting for GitHub to start building the site… ${secs()}`); continue; }
+    if (run.status !== 'completed') { say(`<span class="ed__live is-busy"></span>${verb}. Building the site… ${secs()} <a href="${esc(run.html_url)}" target="_blank" rel="noopener">Watch it</a>`); continue; }
+    if (run.conclusion === 'cancelled') {
+      // a newer commit started its own build, which will include this post
+      const latest = await ghGet('actions/runs?branch=main&per_page=1');
+      const next = latest?.workflow_runs?.[0];
+      if (next && next.id !== run.id) { commitSha = next.head_sha; run = null; continue; }
+    }
+    if (run.conclusion !== 'success') {
+      say(`<span class="ed__live is-bad"></span>The build failed, so the site hasn’t changed yet. <a href="${esc(run.html_url)}" target="_blank" rel="noopener">See what went wrong</a>, fix it here and publish again.`);
+      toast('The site build failed');
+      return;
+    }
+    break;
+  }
+  if (!run || run.conclusion !== 'success') { say(`It’s taking longer than usual. <a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">Check the build on GitHub</a>.`); return; }
+  // the deploy is done; make sure the page answers, then refresh the cached copies
+  for (let i = 0; i < 20; i++) {
+    const r = await fetch(live, { cache: 'reload' }).catch(() => null);
+    if (r && r.ok) break;
+    say(`<span class="ed__live is-busy"></span>Built. Waiting for the page to appear… ${secs()}`);
+    await sleep(4000);
+  }
+  const base = new URL('../', location.href).href;
+  await Promise.all([base, `${base}blog/`, `${base}courses/`, `${base}feed.xml`, live].map((u) => fetch(u, { cache: 'reload' }).catch(() => null)));
+  say(`<span class="ed__live is-ok"></span>Live on the site after ${secs()}. <a class="btn btn--primary ed__open-post" href="${esc(live)}">Open the post</a> <span class="muted">${esc(short)}</span>`);
+  toast(`${verb}: it’s live`);
+}
 
 $('#w-new').addEventListener('click', () => {
   if (EDIT) { location.href = './'; return; }

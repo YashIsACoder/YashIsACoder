@@ -586,3 +586,10 @@ body[data-view="write"] .ed__cm .cm-content { max-width: 820px; margin: 0 auto; 
 .ed__draftnote { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0; padding: 10px 14px; border: 1px solid var(--warm); border-radius: 10px; background: color-mix(in srgb, var(--warm) 10%, var(--surface)); color: var(--ink); font-size: 15.5px; }
 .ed__draftnote[hidden] { display: none; }
 .ed__draftnote button { padding: 0; border: 0; background: none; color: var(--accent); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ed #w-status { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.ed__live { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--ink-3); }
+.ed__live.is-busy { background: var(--accent); animation: ed-pulse 1.2s ease-in-out infinite; }
+.ed__live.is-ok { background: var(--good); }
+.ed__live.is-bad { background: var(--warm); }
+.ed__open-post { min-height: 38px; padding: 6px 14px; font-size: 15px; }
+@keyframes ed-pulse { 50% { opacity: .3; } }
