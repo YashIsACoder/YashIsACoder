@@ -24,7 +24,7 @@ const CONTENT = path.join(ROOT, 'content');
 const SITE = 'https://yashisacoder.github.io/YashIsACoder/';
 const AUTHOR = 'Yashwanth Madan';
 const DRAFTS = process.argv.includes('--drafts');
-const render = createRenderer({ marked, katex });
+const render = createRenderer({ marked, katex, assetBase: '../../' });   // posts live at blog/<slug>/
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const nice = (d) => { const [y, m, day] = d.split('-').map(Number); return `${day} ${MONTHS[m - 1]} ${y}`; };
 const inlineTex = (src) => { const m = String(src || '').match(/^\$(.+)\$$/); return m ? katex.renderToString(m[1], { throwOnError: false }) : esc(src); };

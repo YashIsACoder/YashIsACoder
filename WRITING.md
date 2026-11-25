@@ -46,6 +46,13 @@ Course reviews (in `content/courses/`) also take `course: COMP3331`, `term: 2026
 | `## Heading` | a section, listed in the side table of contents |
 | `[^1]` and `[^1]: text` | footnotes |
 | `::: widget paired-draws seed=7 trials=8` | a live widget (see `docs/assets/js/posts.js`) |
+| fenced code with `mermaid` | a diagram (flowchart, sequence, class, state, gantt, pie), drawn in the site's colours and redrawn for dark mode |
+| `![description](assets/posts/<post>/<file>.webp)` | an image. In `/write/`, paste or drop one and it uploads, resizes to 1600 px and links itself |
+| `![description](assets/… "Caption")` | an image with a caption underneath |
+
+In `/write/`, the toolbar inserts all of these, and so does the slash menu: type `/` at the start of a line and pick from the list. The ? button shows this table. Shortcuts: ⌘Z undo, ⌘⇧Z redo, ⌘F find and replace, ⌘B bold, ⌘I italic, ⌘K link, ⌘E code, ⌘S save, ⌘⇧. focus mode. Enter carries a list on; Enter on an empty item ends it. In Split view, scrolling either side moves the other, and clicking a paragraph in the preview jumps to its Markdown.
+
+The editor is CodeMirror, bundled into `docs/assets/vendor/codemirror.js` from `scripts/vendor/codemirror-entry.js` (rebuild with esbuild if you ever need to update it).
 
 ## Where things live
 

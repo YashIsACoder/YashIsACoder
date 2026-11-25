@@ -14,11 +14,11 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="../assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/katex/katex.min.css">
-  <link rel="stylesheet" href="../assets/css/site.css?v=30be2d68">
-  <script type="module" src="../assets/js/site.js?v=30be2d68"></script>
-  <script type="module" src="../assets/js/write.js?v=30be2d68"></script>
+  <link rel="stylesheet" href="../assets/css/site.css?v=e9a92854">
+  <script type="module" src="../assets/js/site.js?v=e9a92854"></script>
+  <script type="module" src="../assets/js/write.js?v=e9a92854"></script>
 </head>
-<body data-base="../" data-kind="post">
+<body data-base="../" data-kind="post" data-view="split">
   <a class="skip" href="#main">Skip to content</a>
   <header class="wrap site-head">
     <a class="site-head__name" href="../">Yashwanth Madan</a>
@@ -29,74 +29,139 @@
       <a href="../blog/">Writing</a>
       <a href="../courses/">Courses</a>
       <a href="../cv.pdf">CV</a>
-      <a href="../write/" data-owner>Write</a>
+      <a href="../write/" data-owner aria-current="page">Write</a>
     </nav>
   </header>
   <main id="main" class="wrap writer">
-    <section class="page">
-      <h1 class="page__h">Write</h1>
-      <p class="page__lede"><span id="w-mode">Write a post or a course review in Markdown, check the preview, then press Publish.</span> It goes to <span class="mono" id="w-path">content/blog/new.md</span>. <span id="w-saved">Draft not saved yet.</span></p>
-
-      <div class="wform">
-        <fieldset class="wkind">
-          <legend class="sr-only">What are you writing?</legend>
-          <label><input type="radio" name="kind" value="post" checked> Blog post</label>
-          <label><input type="radio" name="kind" value="review"> Course review</label>
-        </fieldset>
-        <label class="wf wf--wide"><span>Title</span><input id="w-title" type="text" placeholder="Give both cars the same weather" autocomplete="off"></label>
-        <label class="wf"><span>Date</span><input id="w-date" type="date"></label>
-        <label class="wf only-review"><span>Course</span><select id="w-course"><option>Loading…</option></select></label>
-        <label class="wf only-review"><span>Term taken</span><input id="w-term" type="text" placeholder="2026 T2"></label>
-        <label class="wf wf--wide"><span>Summary: one sentence for the card and the feed</span><input id="w-summary" type="text"></label>
-        <label class="wf"><span>Tags, separated by commas</span><input id="w-tags" type="text" placeholder="c++, statistics"></label>
-        <label class="wf only-post"><span>Card formula, optional LaTeX</span><input id="w-math" type="text" placeholder="$\hat d = (n_{10} - n_{01}) / n$"></label>
-        <div class="wmeters only-review">
-          <label class="wf"><span>Difficulty <output id="o-difficulty">5/10</output></span><input id="w-difficulty" type="range" min="1" max="10" value="5"></label>
-          <label class="wf"><span>Workload <output id="o-workload">5/10</output></span><input id="w-workload" type="range" min="1" max="10" value="5"></label>
-          <label class="wf"><span>Enjoyment <output id="o-enjoyment">5/10</output></span><input id="w-enjoyment" type="range" min="1" max="10" value="5"></label>
-          <label class="wcheck"><input id="w-again" type="checkbox" checked> I’d take it again</label>
+    <section class="page ed">
+      <div class="ed__top">
+        <div>
+          <h1 class="page__h ed__h">Write</h1>
+          <p class="ed__mode" id="w-mode">A new post. It saves in this browser as you type.</p>
         </div>
-        <label class="wcheck" style="grid-column: 1 / -1"><input id="w-draft" type="checkbox"> Save as a draft (it won’t appear on the site)</label>
+        <div class="ed__topbtns">
+          <fieldset class="seg" id="w-kindset">
+            <legend class="sr-only">What are you writing?</legend>
+            <label><input type="radio" name="kind" value="post" checked><span>Post</span></label>
+            <label><input type="radio" name="kind" value="review"><span>Course review</span></label>
+          </fieldset>
+          <label class="ed__open"><span class="sr-only">Open a published post</span>
+            <select id="w-open"><option value="">Open a published post…</option></select>
+          </label>
+          <button class="btn" type="button" id="w-new">New</button>
+        </div>
       </div>
 
-      <div class="wsplit">
-        <div class="wpane">
-          <div class="wpane__bar">
-            <span>Markdown</span>
-            <span class="wtools" aria-label="Insert">
-              <button type="button" data-insert="h2">## Section</button>
-              <button type="button" data-insert="math">$$ Maths</button>
-              <button type="button" data-insert="code">``` Code</button>
-              <button type="button" data-insert="fn">[^1] Note</button>
-              <button type="button" data-insert="link">Link</button>
-              <button type="button" data-insert="widget">Widget</button>
-            </span>
+      <label class="sr-only" for="w-title">Title</label>
+      <input class="ed__title" id="w-title" type="text" placeholder="Title" autocomplete="off">
+      <label class="sr-only" for="w-summary">Summary</label>
+      <input class="ed__summary" id="w-summary" type="text" placeholder="One sentence that sums it up, for the card and the feed" autocomplete="off">
+
+      <details class="ed__details" id="w-details">
+        <summary><span>Details</span><span class="ed__peek" id="w-peek"></span></summary>
+        <div class="wform">
+          <label class="wf"><span>Date</span><input id="w-date" type="date"></label>
+          <label class="wf"><span>Tags, separated by commas</span><input id="w-tags" type="text" placeholder="c++, statistics"></label>
+          <label class="wf only-post wf--wide"><span>Formula for the homepage card (optional LaTeX)</span><input id="w-math" type="text" placeholder="$\hat d = (n_{10} - n_{01}) / n$"></label>
+          <label class="wf only-review"><span>Course</span><select id="w-course"><option>Loading…</option></select></label>
+          <label class="wf only-review"><span>Term taken</span><input id="w-term" type="text" placeholder="2026 T2"></label>
+          <div class="wmeters only-review">
+            <label class="wf"><span>Difficulty <output id="o-difficulty">5/10</output></span><input id="w-difficulty" type="range" min="1" max="10" value="5"></label>
+            <label class="wf"><span>Workload <output id="o-workload">5/10</output></span><input id="w-workload" type="range" min="1" max="10" value="5"></label>
+            <label class="wf"><span>Enjoyment <output id="o-enjoyment">5/10</output></span><input id="w-enjoyment" type="range" min="1" max="10" value="5"></label>
+            <label class="wcheck"><input id="w-again" type="checkbox" checked> I’d take it again</label>
           </div>
-          <label class="sr-only" for="w-body">Post body in Markdown</label>
-          <textarea id="w-body" spellcheck="true"></textarea>
+          <label class="wcheck wf--all"><input id="w-draft" type="checkbox"> Draft: publish it to the repository but keep it off the site</label>
+          <p class="wf--all ed__path">Saved as <span class="mono" id="w-path">content/blog/new.md</span></p>
         </div>
-        <div class="wpane">
-          <div class="wpane__bar"><span>Preview: exactly what gets published</span><span>Updates as you type</span></div>
-          <div class="wpreview">
-            <p id="w-error" class="werror" role="alert" hidden></p>
-            <article class="post" id="preview"></article>
-          </div>
+      </details>
+
+      <div class="ed__bar" role="toolbar" aria-label="Formatting">
+        <div class="ed__tools">
+          <button type="button" id="w-undo" title="Undo (⌘Z)" aria-label="Undo" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4L3 8l4 4"/><path d="M3 8h9a5 5 0 0 1 0 10H9"/></svg></button>
+          <button type="button" id="w-redo" title="Redo (⌘⇧Z)" aria-label="Redo" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 4l4 4-4 4"/><path d="M17 8H8a5 5 0 0 0 0 10h3"/></svg></button>
+          <span class="ed__sep" aria-hidden="true"></span>
+          <button type="button" data-cmd="bold" title="Bold (⌘B)" aria-label="Bold"><b>B</b></button>
+          <button type="button" data-cmd="italic" title="Italic (⌘I)" aria-label="Italic"><i>I</i></button>
+          <button type="button" data-cmd="heading" title="Section heading" aria-label="Section heading">H</button>
+          <button type="button" data-cmd="link" title="Link (⌘K)" aria-label="Link"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.5 11.5a3.5 3.5 0 0 0 5 0l2.5-2.5a3.5 3.5 0 0 0-5-5L10 5M11.5 8.5a3.5 3.5 0 0 0-5 0L4 11a3.5 3.5 0 0 0 5 5l1-1"/></svg></button>
+          <span class="ed__sep" aria-hidden="true"></span>
+          <button type="button" data-cmd="ul" title="Bulleted list" aria-label="Bulleted list"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 5h9M8 10h9M8 15h9"/><circle cx="4" cy="5" r="1.2"/><circle cx="4" cy="10" r="1.2"/><circle cx="4" cy="15" r="1.2"/></svg></button>
+          <button type="button" data-cmd="ol" title="Numbered list" aria-label="Numbered list"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 5h9M8 10h9M8 15h9"/><path d="M3 3.5h1.5v3M3 8.5h2l-2 3h2M3 13.5h2v3H3M3.5 15h1.5" stroke-width="1.2"/></svg></button>
+          <button type="button" data-cmd="quote" title="Quote" aria-label="Quote"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4v12M8 6h8M8 10h8M8 14h5"/></svg></button>
+          <span class="ed__sep" aria-hidden="true"></span>
+          <button type="button" data-cmd="code" title="Inline code (⌘E)" aria-label="Inline code"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 6l-4 4 4 4M13 6l4 4-4 4"/></svg></button>
+          <button type="button" data-cmd="codeblock" title="Code block" aria-label="Code block"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><path d="M8 8l-2 2 2 2M12 8l2 2-2 2"/></svg></button>
+          <button type="button" data-cmd="math" title="Maths ($…$ inline, $$…$$ display)" aria-label="Maths">∑</button>
+          <button type="button" data-cmd="diagram" title="Mermaid diagram" aria-label="Diagram"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="6" height="4.5" rx="1"/><rect x="11.5" y="12.5" width="6" height="4.5" rx="1"/><path d="M5.5 7.5v5.5h6"/></svg></button>
+          <button type="button" data-cmd="table" title="Table" aria-label="Table"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="1.5"/><path d="M2.5 8h15M2.5 12.5h15M8 3.5v13"/></svg></button>
+          <button type="button" data-cmd="image" title="Image (or paste or drop one)" aria-label="Image"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><circle cx="7" cy="8" r="1.5"/><path d="M3 15l4.5-4.5 3 3 2-2 4.5 4.5"/></svg></button>
+          <button type="button" data-cmd="footnote" title="Footnote" aria-label="Footnote">¹</button>
+          <button type="button" data-cmd="widget" title="Live widget" aria-label="Live widget"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15l4-6 3 4 3-7 4 9"/></svg></button>
+          <span class="ed__sep" aria-hidden="true"></span>
+          <button type="button" data-cmd="find" title="Find and replace (⌘F)" aria-label="Find and replace"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" class="ring"/><path d="M12.5 12.5L17 17"/></svg></button>
+          <input id="w-image" type="file" accept="image/*" class="sr-only" tabindex="-1">
         </div>
+        <div class="ed__views">
+          <fieldset class="seg seg--sm" id="w-viewset">
+            <legend class="sr-only">Layout</legend>
+            <label><input type="radio" name="view" value="write"><span>Write</span></label>
+            <label><input type="radio" name="view" value="split" checked><span>Split</span></label>
+            <label><input type="radio" name="view" value="preview"><span>Preview</span></label>
+          </fieldset>
+          <button type="button" class="ed__icon" id="w-focus" title="Focus mode (⌘⇧.)" aria-pressed="false" aria-label="Focus mode"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4"/></svg></button>
+          <button type="button" class="ed__icon" id="w-guide-btn" title="Markdown guide" aria-label="Markdown guide" aria-controls="w-guide" aria-expanded="false">?</button>
+        </div>
+      </div>
+
+      <div class="ed__guide" id="w-guide" hidden>
+        <table>
+          <tbody>
+            <tr><th>Section</th><td><code>## Heading</code></td><th>Bold, italic</th><td><code>**bold**</code> <code>*italic*</code></td></tr>
+            <tr><th>Link</th><td><code>[text](https://…)</code></td><th>Image</th><td>Paste or drop it in, or <code>![alt](assets/…)</code></td></tr>
+            <tr><th>Maths</th><td><code>$x^2$</code> inline, <code>$$ … $$</code> on its own lines</td><th>Footnote</th><td><code>text[^1]</code> then <code>[^1]: the note</code></td></tr>
+            <tr><th>Code</th><td><code>```cpp</code> … <code>```</code></td><th>Diagram</th><td><code>```mermaid</code> … <code>```</code> (flowchart, sequence, class, gantt, pie)</td></tr>
+            <tr><th>Table</th><td><code>| a | b |</code> then <code>|---|---|</code></td><th>Quote</th><td><code>&gt; quoted text</code></td></tr>
+            <tr><th>Slash menu</th><td colspan="3">Type <code>/</code> at the start of a line for headings, lists, code, maths, diagrams, tables, images and more. Keep typing to filter, Enter to insert.</td></tr>
+            <tr><th>Shortcuts</th><td colspan="3"><kbd>⌘</kbd><kbd>Z</kbd> undo, <kbd>⌘</kbd><kbd>⇧</kbd><kbd>Z</kbd> redo, <kbd>⌘</kbd><kbd>F</kbd> find and replace, <kbd>⌘</kbd><kbd>B</kbd> bold, <kbd>⌘</kbd><kbd>I</kbd> italic, <kbd>⌘</kbd><kbd>K</kbd> link, <kbd>⌘</kbd><kbd>E</kbd> code, <kbd>⌘</kbd><kbd>S</kbd> save, <kbd>Tab</kbd> indent, <kbd>⌘</kbd><kbd>⇧</kbd><kbd>.</kbd> focus mode. Enter carries a list on.</td></tr>
+            <tr><th>Preview</th><td colspan="3">In Split, scrolling either side moves the other. Click a paragraph in the preview to jump to its Markdown.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ed__panes" id="w-panes">
+        <div class="ed__pane ed__pane--write">
+          <div id="w-body" class="ed__cm" aria-label="Post body in Markdown"></div>
+          <div class="ed__drop" id="w-drop" hidden>Drop the image to add it</div>
+        </div>
+        <div class="ed__pane ed__pane--preview" id="w-scroll">
+          <p id="w-error" class="werror" role="alert" hidden></p>
+          <article class="post" id="preview"></article>
+        </div>
+      </div>
+
+      <div class="ed__status">
+        <span id="w-count">0 words</span>
+        <span id="w-saved">Not saved yet</span>
       </div>
 
       <div class="wpublish">
         <div class="wpublish__main">
           <button class="btn btn--primary" type="button" id="w-publish">Publish</button>
           <button class="btn" type="button" id="w-github">Publish via GitHub</button>
-          <button class="btn" type="button" id="w-copy">Copy Markdown</button>
-          <button class="btn" type="button" id="w-download">Download .md</button>
-          <label class="btn">Open .md<input id="w-import" type="file" accept=".md,text/markdown,text/plain" class="sr-only"></label>
-          <button class="btn" type="button" id="w-new">New</button>
+          <details class="ed__more">
+            <summary class="btn">More</summary>
+            <div class="ed__menu">
+              <button type="button" id="w-copy">Copy the Markdown</button>
+              <button type="button" id="w-download">Download as .md</button>
+              <label>Open a .md file<input id="w-import" type="file" accept=".md,text/markdown,text/plain" class="sr-only"></label>
+            </div>
+          </details>
         </div>
-        <p id="w-status" class="cmt" aria-live="polite" style="margin:0"></p>
+        <p id="w-status" class="cmt" aria-live="polite"></p>
         <details class="wtoken" id="w-setup">
           <summary id="w-setup-label">Set up one-click publishing on this device</summary>
-          <p class="cmt" style="margin:10px 0 0">Publish commits your post to the site’s GitHub repository from this page, using a token only you have. You do this once per device.</p>
+          <p class="cmt">Publish commits your post to the site’s GitHub repository from this page, using a token only you have. Images you paste upload the same way. You do this once per device.</p>
           <ol>
             <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub’s new fine-grained token page</a>.</li>
             <li>Name it “Website editor”. Under Repository access choose Only select repositories, then <span class="mono">YashIsACoder/YashIsACoder</span>.</li>

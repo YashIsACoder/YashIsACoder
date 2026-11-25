@@ -1,3 +1,4 @@
+import { renderDiagrams } from './diagrams.js?v=e9a92854';
 // yash.nvim — blog and course-review pages: live widgets, the scroll-aware
 // table of contents and the list filters.
 // A post asks for a widget with a line like:   ::: widget paired-draws seed=7 trials=8
@@ -34,6 +35,7 @@ export function mountWidgets(root = document) {
   });
 }
 mountWidgets();
+if (document.querySelector('.prose figure[data-mermaid]')) renderDiagrams(document.querySelector('.prose'));
 
 // ------------------------------------------------------------ table of contents follows the reader
 const tocLinks = [...document.querySelectorAll('.toc a[href^="#"]')];

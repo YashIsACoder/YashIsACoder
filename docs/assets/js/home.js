@@ -1,8 +1,8 @@
 // The homepage: the Gaussian process, and the projects list with its
 // live labs (Payoff Lab, SolarRoute, the solver race), the solar panel
 // and QuantSprint.
-import { ROWS, PROJECTS } from './projects.js?v=30be2d68';
-import { mountGP } from './gp.js?v=30be2d68';
+import { ROWS, PROJECTS } from './projects.js?v=e9a92854';
+import { mountGP } from './gp.js?v=e9a92854';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

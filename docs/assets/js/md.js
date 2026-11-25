@@ -1,7 +1,11 @@
 // Markdown + LaTeX → HTML. Shared by the site build (Node) and the /write/
 // editor (browser), so the live preview is exactly what gets published.
 //
-//   $inline$  $$display$$  ```cpp code```  [^footnotes]  ::: widget name k=v
+//   $inline$  $$display$$  ```cpp code```  ```mermaid diagrams```  [^footnotes]
+//   ![images](assets/posts/…)  ::: widget name k=v
+//
+// Image paths that start with assets/ are relative to the site root; pass
+// assetBase (or resolveAsset) so they work from any page.
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const slugify = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-');
@@ -57,7 +61,8 @@ export function highlight(code, lang) {
 }
 
 // ------------------------------------------------------------ the renderer
-export function createRenderer({ marked, katex }) {
+export function createRenderer({ marked, katex, assetBase = '', resolveAsset = null }) {
+  const asset = (href) => (/^assets\//.test(href) ? (resolveAsset ? resolveAsset(href) : assetBase + href) : href);
   return function render(body, file = 'post') {
     const blocks = [], inlines = [];
     const hold = (arr, html, block) => { arr.push(html); return block ? `\n\nKXB${arr.length - 1}KX\n\n` : `KXI${arr.length - 1}KX`; };
@@ -66,8 +71,11 @@ export function createRenderer({ marked, katex }) {
       catch (e) { throw new Error(`${file}: LaTeX error in ${display ? '$$…$$' : '$…$'}: ${e.message.replace(/^KaTeX parse error: /, '')}`); }
     };
 
-    let text = body.replace(/^```([\w+-]*)[^\n]*\n([\s\S]*?)^```\s*$/gm, (_, lang, code) =>
-      hold(blocks, `<pre><code class="language-${esc(lang || 'text')}">${highlight(code.replace(/\n$/, ''), (lang || '').toLowerCase())}</code></pre>`, true));
+    let text = body.replace(/^```([\w+-]*)[^\n]*\n([\s\S]*?)^```\s*$/gm, (_, lang, code) => {
+      const src = code.replace(/\n$/, '');
+      if (lang.toLowerCase() === 'mermaid') return hold(blocks, `<figure class="diagram" data-mermaid="${esc(src)}"><pre class="diagram__src"><code>${esc(src)}</code></pre></figure>`, true);
+      return hold(blocks, `<pre><code class="language-${esc(lang || 'text')}">${highlight(src, (lang || '').toLowerCase())}</code></pre>`, true);
+    });
     text = text.replace(/`([^`\n]+)`/g, (_, code) => hold(inlines, `<code>${esc(code)}</code>`));
     text = text.replace(/^:::\s*widget\s+([\w-]+)(.*)$/gm, (_, name, rest) => {
       const attrs = [...rest.matchAll(/([\w-]+)=("[^"]*"|\S+)/g)].map(([, k, v]) => ` data-${esc(k)}="${esc(v.replace(/^"|"$/g, ''))}"`).join('');
@@ -93,12 +101,16 @@ export function createRenderer({ marked, katex }) {
       if (depth === 2) toc.push({ id, text: plain });
       return `<h${depth} id="${id}">${inner}</h${depth}>\n`;
     };
+    renderer.image = function ({ href, title, text }) {
+      const img = `<img src="${esc(asset(href))}" alt="${esc(text)}" loading="lazy">`;
+      return title ? `<figure class="pic">${img}<figcaption>${esc(title)}</figcaption></figure>` : img;
+    };
     let html = marked.parse(text, { renderer, gfm: true, async: false });
     const restore = (s) => s.replace(/<p>\s*KXB(\d+)KX\s*<\/p>/g, (_, i) => blocks[+i]).replace(/KXB(\d+)KX/g, (_, i) => blocks[+i]).replace(/KXI(\d+)KX/g, (_, i) => inlines[+i]);
     html = restore(html);
     if (order.length) {
       html += `<section class="footnotes" aria-label="Footnotes"><ol>${order.map((id) =>
-        `<li id="fn-${esc(id)}">${restore(marked.parseInline(defs.get(id) || ''))} <a href="#fnref-${esc(id)}" aria-label="Back to the text">↩</a></li>`).join('')}</ol></section>`;
+        `<li id="fn-${esc(id)}">${restore(marked.parseInline(defs.get(id) || '', { renderer }))} <a href="#fnref-${esc(id)}" aria-label="Back to the text">↩</a></li>`).join('')}</ol></section>`;
     }
     const words = body.replace(/```[\s\S]*?```/g, '').split(/\s+/).filter(Boolean).length;
     return { html, toc, words };
