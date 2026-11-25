@@ -1,4 +1,4 @@
-import { renderDiagrams } from './diagrams.js?v=42b371ac';
+import { renderDiagrams } from './diagrams.js?v=725af973';
 // yash.nvim — blog and course-review pages: live widgets, the scroll-aware
 // table of contents and the list filters.
 // A post asks for a widget with a line like:   ::: widget paired-draws seed=7 trials=8

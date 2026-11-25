@@ -20,10 +20,10 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=42b371ac';
-import { mountWidgets } from './posts.js?v=42b371ac';
-import { renderDiagrams } from './diagrams.js?v=42b371ac';
-import { toast } from './site.js?v=42b371ac';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=725af973';
+import { mountWidgets } from './posts.js?v=725af973';
+import { renderDiagrams } from './diagrams.js?v=725af973';
+import { toast } from './site.js?v=725af973';
 
 const REPO = 'YashIsACoder/YashIsACoder';
 const BRANCH = 'main';
@@ -340,6 +340,7 @@ function update() {
     $('#w-path').textContent = filePath();
     ['difficulty', 'workload', 'enjoyment'].forEach((k) => { $(`#o-${k}`).textContent = `${f[k].value}/10`; });
     const tags = tagsList();
+    showDraftState();
     $('#w-peek').textContent = [f.date.value || today(), tags.length ? tags.join(', ') : 'no tags', kind === 'review' ? f.course.value : '', f.draft.checked ? 'draft' : ''].filter(Boolean).join(', ');
     const out = $('#preview');
     try {
@@ -678,6 +679,15 @@ $('#w-import').addEventListener('change', async (e) => {
 });
 
 // ------------------------------------------------------------ publish
+// A ticked draft is easy to miss, so the button and a note say so plainly.
+const publishLabel = () => (f.draft.checked ? 'Save draft' : 'Publish');
+function showDraftState() {
+  $('#w-draftnote').hidden = !f.draft.checked;
+  const btn = $('#w-publish');
+  if (!btn.disabled) btn.textContent = publishLabel();
+}
+$('#w-draftoff').addEventListener('click', () => { f.draft.checked = false; update(); showDraftState(); toast('Draft is off: Publish will put it on the site'); });
+f.draft.addEventListener('change', showDraftState);
 function check() {
   if (!f.title.value.trim()) { toast('Add a title first'); f.title.focus(); return false; }
   if (doc().includes('![Uploading')) { toast('Wait for the image to finish uploading'); return false; }
@@ -739,7 +749,7 @@ $('#w-publish').addEventListener('click', async () => {
   const api = `https://api.github.com/repos/${REPO}/contents/${p.split('/').map(encodeURIComponent).join('/')}`;
   const status = $('#w-status');
   const btn = $('#w-publish');
-  btn.disabled = true; btn.textContent = 'Publishing…';
+  btn.disabled = true; btn.textContent = f.draft.checked ? 'Saving…' : 'Publishing…';
   status.textContent = '';
   try {
     let sha;
@@ -760,7 +770,7 @@ $('#w-publish').addEventListener('click', async () => {
   } catch (e) {
     status.textContent = `Couldn’t publish: ${e.message}.`;
   } finally {
-    btn.disabled = false; btn.textContent = 'Publish';
+    btn.disabled = false; btn.textContent = publishLabel();
   }
 });
 

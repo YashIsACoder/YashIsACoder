@@ -3,7 +3,6 @@ title: Dilworth's theorem
 date: 2026-11-25
 tags: [algorithms, graphs]
 summary: Relationship between min count to max size
-draft: true
 ---
 
 *How a problem about partitioning an array into increasing subsequences turns into a problem about finding a decreasing one.*

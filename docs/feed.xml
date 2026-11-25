@@ -6,6 +6,13 @@
     <description>Writing and course reviews from Yashwanth Madan.</description>
     <language>en-au</language>
     <item>
+      <title>Dilworth&#39;s theorem</title>
+      <link>https://yashisacoder.github.io/YashIsACoder/blog/dilworths-theorem/</link>
+      <guid>https://yashisacoder.github.io/YashIsACoder/blog/dilworths-theorem/</guid>
+      <pubDate>Tue, 24 Nov 2026 22:00:00 GMT</pubDate>
+      <description>Relationship between min count to max size</description>
+    </item>
+    <item>
       <title>Give both cars the same weather</title>
       <link>https://yashisacoder.github.io/YashIsACoder/blog/paired-weather/</link>
       <guid>https://yashisacoder.github.io/YashIsACoder/blog/paired-weather/</guid>
