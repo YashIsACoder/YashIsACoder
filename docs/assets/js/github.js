@@ -75,6 +75,29 @@ export async function followBuild(commitSha, progress = () => {}, isCurrent = ()
   return { state: 'slow', run, seconds: secs() };
 }
 
+// Posts deleted on this device in the last 20 minutes. site.js hides them
+// on every page straight away, so the owner doesn't see a deleted post
+// while GitHub rebuilds the site or while the browser holds an old copy.
+const GONE_KEY = 'yash-gone';
+const goneList = () => { try { return JSON.parse(store.get(GONE_KEY) || '[]'); } catch { return []; } };
+export function markGone(source) {
+  store.set(GONE_KEY, JSON.stringify([...goneList().filter((g) => g.source !== source && Date.now() - g.at < 20 * 60e3), { source, at: Date.now() }]));
+}
+export function unmarkGone(source) {
+  store.set(GONE_KEY, JSON.stringify(goneList().filter((g) => g.source !== source)));
+}
+
+// Wait until a deleted post's page stops answering (GitHub's CDN can serve
+// the old copy for a few seconds after a deploy). Resolves to true once it 404s.
+export async function waitUntilGone(url, tries = 15) {
+  for (let i = 0; i < tries; i++) {
+    const r = await fetch(url, { cache: 'reload' }).catch(() => null);
+    if (r && r.status === 404) return true;
+    await sleep(3000);
+  }
+  return false;
+}
+
 // GitHub Pages lets browsers keep pages for ten minutes. After a deploy,
 // fetch fresh copies of the pages a post appears on so this browser shows
 // the change straight away.

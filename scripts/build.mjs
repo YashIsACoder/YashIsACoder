@@ -112,7 +112,7 @@ function meter(n) {
 }
 
 function card(p, base) {
-  return `<a class="card" href="${base}blog/${p.slug}/"><span class="card__date">${nice(p.date)}</span><span class="card__title">${esc(p.title)}</span>${p.summary ? `<span class="card__dek">${esc(p.summary)}</span>` : ''}${p.card_math ? `<span class="card__math">${inlineTex(p.card_math)}</span>` : ''}</a>`;
+  return `<a class="card" data-post="${esc(p.source)}" href="${base}blog/${p.slug}/"><span class="card__date">${nice(p.date)}</span><span class="card__title">${esc(p.title)}</span>${p.summary ? `<span class="card__dek">${esc(p.summary)}</span>` : ''}${p.card_math ? `<span class="card__math">${inlineTex(p.card_math)}</span>` : ''}</a>`;
 }
 
 const termKey = (t) => { const m = String(t || '').match(/(\d{4})\s*T(\d)/i); return m ? Number(m[1]) * 10 + Number(m[2]) : 0; };
@@ -187,7 +187,7 @@ function blogIndex(posts) {
       <p class="page__lede">Notes on what I’m building and learning: C++, algorithms, statistics, markets and solar cars. New posts also go out by <a href="${base}feed.xml">RSS</a>.</p>
       <p class="btn-row" data-owner style="margin-top:22px"><a class="btn btn--primary" href="${base}write/">Write a post</a><a class="btn" href="${base}write/?kind=review">Write a course review</a></p>
       <div class="filters" role="group" aria-label="Filter by tag" data-filters><button type="button" data-filter="all" aria-pressed="true">All</button>${tags.map((t) => `<button type="button" data-filter="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('')}</div>
-      <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a>${ownerActions(p, base)}</li>`).join('')}</ul>
+      <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}" data-post="${esc(p.source)}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a>${ownerActions(p, base)}</li>`).join('')}</ul>
     </section>`;
   return shell({ title: 'Writing: Yashwanth Madan', description: 'Notes on C++, algorithms, statistics, markets and solar cars.', base, url: `${SITE}blog/`, active: 'blog', body });
 }
@@ -198,7 +198,7 @@ function coursesIndex(courses, reviews) {
       <h1 class="page__h">Courses</h1>
       <p class="page__lede">Every UNSW course I’ve taken or am taking, newest first, with an honest review of each as I write them: how hard it is and whether I enjoyed it. Click a column to sort.</p>
       ${courseTable(courses, reviews, base)}
-      ${reviews.length ? `<ul class="postlist">${reviews.map((r) => `<li><a href="${r.slug}/"><span class="d">${esc(r.course)}</span><span class="t">${esc(r.title)}</span><span class="r">${readTime(r.words)}</span>${r.summary ? `<span class="s">${esc(r.summary)}</span>` : ''}</a>${ownerActions(r, base)}</li>`).join('')}</ul>` : ''}
+      ${reviews.length ? `<ul class="postlist">${reviews.map((r) => `<li data-post="${esc(r.source)}"><a href="${r.slug}/"><span class="d">${esc(r.course)}</span><span class="t">${esc(r.title)}</span><span class="r">${readTime(r.words)}</span>${r.summary ? `<span class="s">${esc(r.summary)}</span>` : ''}</a>${ownerActions(r, base)}</li>`).join('')}</ul>` : ''}
     </section>`;
   return shell({ title: 'Courses: Yashwanth Madan', description: 'Every UNSW course I have taken, with honest reviews.', base, url: `${SITE}courses/`, active: 'courses', body });
 }

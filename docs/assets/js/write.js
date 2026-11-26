@@ -20,11 +20,11 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=6938b5c2';
-import { mountWidgets } from './posts.js?v=6938b5c2';
-import { renderDiagrams } from './diagrams.js?v=6938b5c2';
-import { toast } from './site.js?v=6938b5c2';
-import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages } from './github.js?v=6938b5c2';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=fb8957ba';
+import { mountWidgets } from './posts.js?v=fb8957ba';
+import { renderDiagrams } from './diagrams.js?v=fb8957ba';
+import { toast } from './site.js?v=fb8957ba';
+import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, unmarkGone } from './github.js?v=fb8957ba';
 
 const DRAFT_KEY = 'yash-write-draft';
 const VIEW_KEY = 'yash-write-view';
@@ -759,6 +759,7 @@ $('#w-publish').addEventListener('click', async () => {
       toast('Saved as a draft');
     } else {
       if (!EDIT) store.del(DRAFT_KEY);
+      unmarkGone(p);
       toast(`${sha ? 'Updated' : 'Published'}. Putting it on the site…`);
       watchDeploy(data.commit.sha, live, sha ? 'Updated' : 'Published');
     }
@@ -794,14 +795,14 @@ async function watchDeploy(commitSha, live, verb, { deleted = false } = {}) {
   for (let i = 0; i < 20; i++) {
     const r = await fetch(live, { cache: 'reload' }).catch(() => null);
     if (deleted ? r && r.status === 404 : r && r.ok) break;
-    busy(deleted ? `Built. Waiting for the page to go… ${secs()}` : `Built. Waiting for the page to appear… ${secs()}`);
+    busy(deleted ? `Rebuilt. Checking the page is gone… ${secs()}` : `Built. Waiting for the page to appear… ${secs()}`);
     await new Promise((res) => setTimeout(res, 4000));
   }
   await refreshPages(new URL('../', location.href).href, [live]);
   if (deleted) {
     store.del(draftKey());
-    say(`<span class="ed__live is-ok"></span>Deleted. It’s off the site after ${secs()}. <a class="btn btn--primary ed__open-post" href="../${live.includes('/courses/') ? 'courses' : 'blog'}/">Back to the list</a>`);
-    toast('Deleted: it’s off the site');
+    say(`<span class="ed__live is-ok"></span>Gone from the site after ${secs()}. <a class="btn btn--primary ed__open-post" href="../${live.includes('/courses/') ? 'courses' : 'blog'}/">Back to the list</a>`);
+    toast('Gone from the site');
     return;
   }
   const short = live.replace(/^https?:\/\//, '');
@@ -835,8 +836,9 @@ if (EDIT) {
       const commit = await deleteFile(EDIT, `Delete ${EDIT.startsWith('content/courses/') ? 'review' : 'post'}: ${f.title.value.trim() || EDIT}`);
       delBox.hidden = true;
       $('#w-publish').disabled = true;
-      toast('Deleted. Taking it off the site…');
-      watchDeploy(commit, new URL(liveUrl(EDIT), location.href).href, 'Deleted', { deleted: true });
+      markGone(EDIT);
+      toast('Deleted from the repository. Rebuilding the site…');
+      watchDeploy(commit, new URL(liveUrl(EDIT), location.href).href, 'Deleted from the repository', { deleted: true });
     } catch (e) {
       status.textContent = `Couldn’t delete: ${e.message}.`;
     } finally {

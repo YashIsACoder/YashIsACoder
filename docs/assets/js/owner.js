@@ -2,8 +2,8 @@
 // only). Delete asks once in the row, removes the Markdown file from the
 // repository, then follows the rebuild until the post is off the site.
 
-import { TOKEN_KEY, store, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages } from './github.js?v=6938b5c2';
-import { toast } from './site.js?v=6938b5c2';
+import { REPO, TOKEN_KEY, store, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, waitUntilGone } from './github.js?v=fb8957ba';
+import { toast } from './site.js?v=fb8957ba';
 
 const base = new URL('../../', import.meta.url).href;   // the site root
 
@@ -47,14 +47,21 @@ async function remove(row, source, title, before) {
       return;
     }
   }
+  markGone(source);   // hidden on this device from now on, whatever the build does
+  const live = new URL(sitePath(source), base).href;
   if (commit) {
-    toast('Deleted. Taking it off the site…');
-    const out = await followBuild(commit, (phase, run, s) => say(`${phase === 'queued' ? 'Deleted. Waiting for GitHub to start building the site…' : 'Deleted. Rebuilding the site…'}${s ? ` ${s} s` : ''}`));
-    if (out.state === 'failed') { say(`Deleted from the repository, but the site build failed. <a href="${out.run.html_url}" target="_blank" rel="noopener">See what went wrong</a>.`, 'is-bad'); return; }
-    if (out.state === 'slow') { say('Deleted from the repository. The site is taking longer than usual to rebuild.', 'is-bad'); return; }
+    toast('Deleted from the repository. Rebuilding the site…');
+    const out = await followBuild(commit, (phase, run, s) => say(phase === 'queued'
+      ? `Deleted from the repository. Waiting for GitHub to start rebuilding the site…${s ? ` ${s} s` : ''}`
+      : `Deleted from the repository. GitHub is rebuilding the site… ${s} s`));
+    if (out.state === 'failed') { say(`Deleted from the repository, but the site build failed, so the page is still up. <a href="${out.run.html_url}" target="_blank" rel="noopener">See what went wrong</a>.`, 'is-bad'); return; }
+    if (out.state === 'slow') { say(`Deleted from the repository. GitHub is taking longer than usual to rebuild, so the page is still up. <a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">Check the build</a>.`, 'is-bad'); return; }
   }
-  await refreshPages(base, [new URL(sitePath(source), base).href]);
-  toast('Deleted: it’s off the site');
+  say('Rebuilt. Checking the page is gone…');
+  const gone = await waitUntilGone(live);
+  await refreshPages(base, [live]);
+  if (!gone) { say('The site is rebuilt but the page still answers. Reload in a minute.', 'is-bad'); return; }
+  toast('Gone from the site');
   row.remove();
 }
 

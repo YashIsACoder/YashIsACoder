@@ -24,6 +24,13 @@ apply(stored());
 // The owner's own devices: set by opening /write/ once.
 try { if (localStorage.getItem('yash-owner') === '1') root.classList.add('is-owner'); } catch { /* private mode */ }
 
+// Posts the owner deleted in the last 20 minutes: hidden on this device
+// straight away, while the site rebuilds (see markGone in github.js).
+try {
+  const gone = JSON.parse(localStorage.getItem('yash-gone') || '[]').filter((g) => Date.now() - g.at < 20 * 60e3);
+  for (const g of gone) document.querySelectorAll(`[data-post="${CSS.escape(g.source)}"]`).forEach((el) => { el.hidden = true; el.style.display = 'none'; });
+} catch { /* private mode */ }
+
 // Email: assembled here so the address never sits in the page source.
 const MAIL = ['yashwanth.madan7070', 'gmail.com'];
 export const mailto = (subject) => `mailto:${MAIL.join('@')}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
