@@ -11,6 +11,8 @@ Open **https://yashisacoder.github.io/YashIsACoder/write/**.
 
 Optional: under "commit directly from here", paste a fine-grained token (only this repo, **Contents: Read and write**) and posts commit without leaving the page. The token stays in that browser.
 
+To delete a post: on the Writing or Courses page (on a device where you've opened /write/), press **Delete** under the post and confirm. Or open it in the editor and choose **More → Delete this post…**. The Markdown file is removed from the repository, the next build takes its page off the site, and you can restore it from the repository history. Images it used stay in `docs/assets/posts/<post>/`.
+
 ## The terminal way
 
 ```sh

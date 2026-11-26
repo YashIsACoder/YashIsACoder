@@ -14,10 +14,10 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="../../assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../../assets/katex/katex.min.css">
-  <link rel="stylesheet" href="../../assets/css/site.css?v=86821b38">
-  <script type="module" src="../../assets/js/site.js?v=86821b38"></script>
-  <script type="module" src="../../assets/js/posts.js?v=86821b38"></script>
-  <script type="module" src="../../assets/js/tables.js?v=86821b38"></script>
+  <link rel="stylesheet" href="../../assets/css/site.css?v=6938b5c2">
+  <script type="module" src="../../assets/js/site.js?v=6938b5c2"></script>
+  <script type="module" src="../../assets/js/posts.js?v=6938b5c2"></script>
+  <script type="module" src="../../assets/js/tables.js?v=6938b5c2"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -35,7 +35,7 @@
   </header>
   <main id="main" class="wrap">
     <div class="post-layout">
-      <nav class="toc" aria-label="On this page"><span class="toc__label">On this page</span><a href="#1-the-obvious-idea-that-doesn39t-quite-work">1. The obvious idea (that doesn&amp;#39;t quite work)</a><a href="#2-the-obstacle-is-the-answer">2. The obstacle is the answer</a><a href="#3-meet-chains-antichains-and-posets">3. Meet chains, antichains, and posets</a><a href="#4-the-reveal-dilworth39s-theorem">4. The reveal: Dilworth&amp;#39;s theorem</a><a href="#5-a-fast-algorithm-in-c">5. A fast algorithm in C++</a><a href="#6-what-does-this-have-to-do-with-flow-networks">6. What does this have to do with flow networks?</a><a href="#7-try-one-yourself">7. Try one yourself</a><a href="#the-takeaway">The takeaway</a></nav>
+      <nav class="toc" aria-label="On this page"><span class="toc__label">On this page</span><a href="#1-the-obvious-idea-that-doesnt-quite-work">1. The obvious idea (that doesn&#39;t quite work)</a><a href="#2-the-obstacle-is-the-answer">2. The obstacle is the answer</a><a href="#3-meet-chains-antichains-and-posets">3. Meet chains, antichains, and posets</a><a href="#4-the-reveal-dilworths-theorem">4. The reveal: Dilworth&#39;s theorem</a><a href="#5-a-fast-algorithm-in-c">5. A fast algorithm in C++</a><a href="#6-what-does-this-have-to-do-with-flow-networks">6. What does this have to do with flow networks?</a><a href="#7-try-one-yourself">7. Try one yourself</a><a href="#the-takeaway">The takeaway</a></nav>
       <article class="post">
         <span class="crumbs"><a href="../../blog/">Writing</a></span>
         <ul class="post__tags" aria-label="Tags"><li>algorithms</li><li>graphs</li></ul>
@@ -50,7 +50,7 @@
 <p>I came across this while studying flow networks in COMP3821. It looks like an LIS problem. It turns out that its answer comes from a rather surprising place: <strong>antichains</strong>, <strong>partial orders</strong>, and a theorem called <strong>Dilworth&#39;s theorem</strong>.</p>
 <p>And the best part? We can compute the answer in <strong><code>O(n log n)</code></strong> time.</p>
 <hr>
-<h2 id="1-the-obvious-idea-that-doesn39t-quite-work">1. The obvious idea (that doesn&#39;t quite work)</h2>
+<h2 id="1-the-obvious-idea-that-doesnt-quite-work">1. The obvious idea (that doesn&#39;t quite work)</h2>
 <p>If you&#39;ve done dynamic programming, you&#39;ve probably encountered the infamous <a href="https://leetcode.com/problems/longest-increasing-subsequence/description/">Longest Increasing Subsequence (LIS)</a> problem.</p>
 <p>Given an array, LIS asks for the longest subsequence whose values are <strong>strictly increasing</strong>. A classic <code>O(n²)</code> DP solution uses</p>
 <div class="math-display"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">dp</mi><mo>⁡</mo><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>=</mo><mn>1</mn><mo>+</mo><munder><mrow><mi>max</mi><mo>⁡</mo></mrow><mstyle scriptlevel="1"><mtable rowspacing="0.1em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="1" displaystyle="false"><mrow><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="1" displaystyle="false"><mrow><mi>A</mi><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo><mo>&lt;</mo><mi>A</mi><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo></mrow></mstyle></mtd></mtr></mtable></mstyle></munder><mi mathvariant="normal">dp</mi><mo>⁡</mo><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">\operatorname{dp}[i]
@@ -183,7 +183,7 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
     p3 --&gt; p5</code></pre></figure>
 <p>For example, positions <code>1</code> and <code>5</code> are <em>incomparable</em>: their values are both <code>3</code>, so they cannot be in the same strictly increasing chain.</p>
 <hr>
-<h2 id="4-the-reveal-dilworth39s-theorem">4. The reveal: Dilworth&#39;s theorem</h2>
+<h2 id="4-the-reveal-dilworths-theorem">4. The reveal: Dilworth&#39;s theorem</h2>
 <blockquote>
 <p><strong>Dilworth&#39;s theorem.</strong> In any finite poset, the <strong>maximum number of pairwise incomparable elements</strong> equals the <strong>minimum number of chains required to partition the set</strong>.</p>
 </blockquote>

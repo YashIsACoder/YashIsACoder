@@ -121,8 +121,14 @@
               <button type="button" id="w-copy">Copy the Markdown</button>
               <button type="button" id="w-download">Download as .md</button>
               <label>Open a .md file<input id="w-import" type="file" accept=".md,text/markdown,text/plain" class="sr-only"></label>
+              <button type="button" id="w-delete" class="ed__menu-danger" hidden>Delete this post…</button>
             </div>
           </details>
+        </div>
+        <div class="confirmdel" id="w-confirmdel" role="group" aria-labelledby="w-delq" hidden>
+          <p id="w-delq">Delete “<span id="w-delname"></span>”? It comes off the site in about a minute. You can get it back from the repository’s history on GitHub.</p>
+          <button type="button" class="btn btn--danger" id="w-delyes">Delete</button>
+          <button type="button" class="btn" id="w-delno">Keep it</button>
         </div>
         <p class="ed__draftnote" id="w-draftnote" hidden>Draft is on, so this won’t appear on the site. <button type="button" id="w-draftoff">Turn draft off</button></p>
         <p id="w-status" class="cmt" aria-live="polite"></p>

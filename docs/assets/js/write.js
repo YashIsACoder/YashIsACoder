@@ -20,31 +20,23 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=86821b38';
-import { mountWidgets } from './posts.js?v=86821b38';
-import { renderDiagrams } from './diagrams.js?v=86821b38';
-import { toast } from './site.js?v=86821b38';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=6938b5c2';
+import { mountWidgets } from './posts.js?v=6938b5c2';
+import { renderDiagrams } from './diagrams.js?v=6938b5c2';
+import { toast } from './site.js?v=6938b5c2';
+import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages } from './github.js?v=6938b5c2';
 
-const REPO = 'YashIsACoder/YashIsACoder';
-const BRANCH = 'main';
 const DRAFT_KEY = 'yash-write-draft';
-const TOKEN_KEY = 'yash-write-token';
 const VIEW_KEY = 'yash-write-view';
 const $ = (s) => document.querySelector(s);
-const store = {
-  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
-  del(k) { try { localStorage.removeItem(k); } catch { /* private mode */ } }
-};
 store.set('yash-owner', '1');
 document.documentElement.classList.add('is-owner');
 
 const params = new URLSearchParams(location.search);
 const EDIT = /^content\/(blog|courses)\/[\w.-]+\.md$/.test(params.get('edit') || '') ? params.get('edit') : null;
 const draftKey = () => (EDIT ? `${DRAFT_KEY}:${EDIT}` : DRAFT_KEY);
-const liveUrl = (p) => `../${p.startsWith('content/courses/') ? 'courses' : 'blog'}/${p.split('/').pop().replace(/\.md$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '')}/`;
+const liveUrl = (p) => `../${sitePath(p)}`;
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
-const ghHeaders = (token) => ({ ...(token ? { Authorization: `Bearer ${token}` } : {}), Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' });
 
 // Images uploaded in this session: shown from memory until the site rebuilds.
 const uploads = new Map();
@@ -746,7 +738,7 @@ $('#w-publish').addEventListener('click', async () => {
   const token = store.get(TOKEN_KEY);
   if (!token) { openSetup('First, a one-time setup on this device: follow the steps below.'); return; }
   const p = filePath();
-  const api = `https://api.github.com/repos/${REPO}/contents/${p.split('/').map(encodeURIComponent).join('/')}`;
+  const api = contentsUrl(p);
   const status = $('#w-status');
   const btn = $('#w-publish');
   btn.disabled = true; btn.textContent = f.draft.checked ? 'Saving…' : 'Publishing…';
@@ -777,58 +769,80 @@ $('#w-publish').addEventListener('click', async () => {
   }
 });
 
-// After publishing: follow GitHub's build until the post is live, then
-// refresh this browser's copies of the pages it appears on (GitHub Pages
-// lets browsers keep pages for ten minutes).
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function ghGet(path) {
-  const token = store.get(TOKEN_KEY);
-  let r = await fetch(`https://api.github.com/repos/${REPO}/${path}`, { headers: ghHeaders(token), cache: 'no-store' }).catch(() => null);
-  if (r && !r.ok && token) r = await fetch(`https://api.github.com/repos/${REPO}/${path}`, { headers: ghHeaders(null), cache: 'no-store' }).catch(() => null);   // public repo: no token needed
-  return r && r.ok ? r.json() : null;
-}
+// After publishing or deleting: follow GitHub's build until the site has
+// the change, then refresh this browser's copies of the pages it touches.
 let watching = 0;
-async function watchDeploy(commitSha, live, verb) {
+async function watchDeploy(commitSha, live, verb, { deleted = false } = {}) {
   const me = ++watching;
   const status = $('#w-status');
-  const started = Date.now();
-  const secs = () => `${Math.round((Date.now() - started) / 1000)} s`;
   const say = (html) => { if (me === watching) status.innerHTML = html; };
-  const short = live.replace(/^https?:\/\//, '');
-  let run = null;
-  say(`<span class="ed__live is-busy"></span>${verb}. Waiting for GitHub to start building the site…`);
-  while (Date.now() - started < 10 * 60e3) {
-    await sleep(4000);
-    if (me !== watching) return;
-    const runs = await ghGet(`actions/runs?head_sha=${commitSha}&per_page=1`);
-    run = runs?.workflow_runs?.[0] || run;
-    if (!run) { say(`<span class="ed__live is-busy"></span>${verb}. Waiting for GitHub to start building the site… ${secs()}`); continue; }
-    if (run.status !== 'completed') { say(`<span class="ed__live is-busy"></span>${verb}. Building the site… ${secs()} <a href="${esc(run.html_url)}" target="_blank" rel="noopener">Watch it</a>`); continue; }
-    if (run.conclusion === 'cancelled') {
-      // a newer commit started its own build, which will include this post
-      const latest = await ghGet('actions/runs?branch=main&per_page=1');
-      const next = latest?.workflow_runs?.[0];
-      if (next && next.id !== run.id) { commitSha = next.head_sha; run = null; continue; }
-    }
-    if (run.conclusion !== 'success') {
-      say(`<span class="ed__live is-bad"></span>The build failed, so the site hasn’t changed yet. <a href="${esc(run.html_url)}" target="_blank" rel="noopener">See what went wrong</a>, fix it here and publish again.`);
-      toast('The site build failed');
-      return;
-    }
-    break;
+  const busy = (t) => say(`<span class="ed__live is-busy"></span>${t}`);
+  const out = await followBuild(commitSha, (phase, run, s) => {
+    if (phase === 'queued') busy(`${verb}. Waiting for GitHub to start building the site…${s ? ` ${s} s` : ''}`);
+    else busy(`${verb}. Building the site… ${s} s <a href="${esc(run.html_url)}" target="_blank" rel="noopener">Watch it</a>`);
+  }, () => me === watching);
+  if (out.state === 'stopped') return;
+  if (out.state === 'failed') {
+    say(`<span class="ed__live is-bad"></span>The build failed, so the site hasn’t changed yet. <a href="${esc(out.run.html_url)}" target="_blank" rel="noopener">See what went wrong</a>${deleted ? '' : ', fix it here and publish again'}.`);
+    toast('The site build failed');
+    return;
   }
-  if (!run || run.conclusion !== 'success') { say(`It’s taking longer than usual. <a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">Check the build on GitHub</a>.`); return; }
-  // the deploy is done; make sure the page answers, then refresh the cached copies
+  if (out.state === 'slow') { say(`It’s taking longer than usual. <a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">Check the build on GitHub</a>.`); return; }
+  const started = Date.now() - out.seconds * 1000;
+  const secs = () => `${Math.round((Date.now() - started) / 1000)} s`;
+  // the deploy is done; wait for the page to answer (or to stop answering)
   for (let i = 0; i < 20; i++) {
     const r = await fetch(live, { cache: 'reload' }).catch(() => null);
-    if (r && r.ok) break;
-    say(`<span class="ed__live is-busy"></span>Built. Waiting for the page to appear… ${secs()}`);
-    await sleep(4000);
+    if (deleted ? r && r.status === 404 : r && r.ok) break;
+    busy(deleted ? `Built. Waiting for the page to go… ${secs()}` : `Built. Waiting for the page to appear… ${secs()}`);
+    await new Promise((res) => setTimeout(res, 4000));
   }
-  const base = new URL('../', location.href).href;
-  await Promise.all([base, `${base}blog/`, `${base}courses/`, `${base}feed.xml`, live].map((u) => fetch(u, { cache: 'reload' }).catch(() => null)));
+  await refreshPages(new URL('../', location.href).href, [live]);
+  if (deleted) {
+    store.del(draftKey());
+    say(`<span class="ed__live is-ok"></span>Deleted. It’s off the site after ${secs()}. <a class="btn btn--primary ed__open-post" href="../${live.includes('/courses/') ? 'courses' : 'blog'}/">Back to the list</a>`);
+    toast('Deleted: it’s off the site');
+    return;
+  }
+  const short = live.replace(/^https?:\/\//, '');
   say(`<span class="ed__live is-ok"></span>Live on the site after ${secs()}. <a class="btn btn--primary ed__open-post" href="${esc(live)}">Open the post</a> <span class="muted">${esc(short)}</span>`);
   toast(`${verb}: it’s live`);
+}
+
+// Delete the post being edited (only offered for published posts).
+const delBtn = $('#w-delete');
+const delBox = $('#w-confirmdel');
+if (EDIT) {
+  delBtn.hidden = false;
+  delBtn.addEventListener('click', () => {
+    $('.ed__more').open = false;
+    $('#w-delname').textContent = f.title.value.trim() || 'this post';
+    delBox.hidden = false;
+    $('#w-delyes').focus();
+  });
+  $('#w-delno').addEventListener('click', () => { delBox.hidden = true; delBtn.focus(); });
+  $('#w-delyes').addEventListener('click', async () => {
+    const status = $('#w-status');
+    if (!store.get(TOKEN_KEY)) {
+      window.open(githubDeleteUrl(EDIT), '_blank', 'noopener');
+      delBox.hidden = true;
+      status.textContent = 'GitHub opened in a new tab. Press Commit changes there to delete it; the site updates about a minute later.';
+      return;
+    }
+    const yes = $('#w-delyes');
+    yes.disabled = true; yes.textContent = 'Deleting…';
+    try {
+      const commit = await deleteFile(EDIT, `Delete ${EDIT.startsWith('content/courses/') ? 'review' : 'post'}: ${f.title.value.trim() || EDIT}`);
+      delBox.hidden = true;
+      $('#w-publish').disabled = true;
+      toast('Deleted. Taking it off the site…');
+      watchDeploy(commit, new URL(liveUrl(EDIT), location.href).href, 'Deleted', { deleted: true });
+    } catch (e) {
+      status.textContent = `Couldn’t delete: ${e.message}.`;
+    } finally {
+      yes.disabled = false; yes.textContent = 'Delete';
+    }
+  });
 }
 
 $('#w-new').addEventListener('click', () => {

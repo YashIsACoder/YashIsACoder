@@ -8,6 +8,10 @@
 // assetBase (or resolveAsset) so they work from any page.
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// marked escapes heading text (it's -> it&#39;s). The table of contents
+// escapes its own text, so it needs the plain characters back.
+const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0' };
+export const unescapeHtml = (s) => String(s).replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (m, e) => e[0] === '#' ? String.fromCodePoint(e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : +e.slice(1)) : ENTITIES[e.toLowerCase()] ?? m);
 export const slugify = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-');
 
 // ------------------------------------------------------------ front matter
@@ -99,7 +103,7 @@ export function createRenderer({ marked, katex, assetBase = '', resolveAsset = n
     const renderer = new marked.Renderer();
     renderer.heading = function ({ tokens, depth }) {
       const inner = this.parser.parseInline(tokens);
-      const plain = inner.replace(/<[^>]+>/g, '').replace(/KXI\d+KX/g, '');
+      const plain = unescapeHtml(inner.replace(/<[^>]+>/g, '').replace(/KXI\d+KX/g, ''));
       const id = slugify(plain) || `section-${toc.length + 1}`;
       if (depth === 2) toc.push({ id, text: plain });
       return `<h${depth} id="${id}">${inner}</h${depth}>\n`;

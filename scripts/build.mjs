@@ -176,6 +176,9 @@ function postPage(p, older, newer, section) {
   return shell({ title: `${p.title}: Yashwanth Madan`, description: p.summary || p.title, base, url, active: section, body });
 }
 
+// Edit and Delete for each post, shown only on the owner's devices.
+const ownerActions = (p, base) => `<div class="postlist__own" data-owner><a class="btn" href="${base}write/?edit=${encodeURIComponent(p.source)}">Edit</a><button type="button" class="btn" data-delete="${esc(p.source)}" data-title="${esc(p.title)}">Delete</button></div>`;
+
 function blogIndex(posts) {
   const base = '../';
   const tags = [...new Set(posts.flatMap((p) => p.tags))].sort();
@@ -184,7 +187,7 @@ function blogIndex(posts) {
       <p class="page__lede">Notes on what I’m building and learning: C++, algorithms, statistics, markets and solar cars. New posts also go out by <a href="${base}feed.xml">RSS</a>.</p>
       <p class="btn-row" data-owner style="margin-top:22px"><a class="btn btn--primary" href="${base}write/">Write a post</a><a class="btn" href="${base}write/?kind=review">Write a course review</a></p>
       <div class="filters" role="group" aria-label="Filter by tag" data-filters><button type="button" data-filter="all" aria-pressed="true">All</button>${tags.map((t) => `<button type="button" data-filter="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('')}</div>
-      <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a></li>`).join('')}</ul>
+      <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a>${ownerActions(p, base)}</li>`).join('')}</ul>
     </section>`;
   return shell({ title: 'Writing: Yashwanth Madan', description: 'Notes on C++, algorithms, statistics, markets and solar cars.', base, url: `${SITE}blog/`, active: 'blog', body });
 }
@@ -195,7 +198,7 @@ function coursesIndex(courses, reviews) {
       <h1 class="page__h">Courses</h1>
       <p class="page__lede">Every UNSW course I’ve taken or am taking, newest first, with an honest review of each as I write them: how hard it is and whether I enjoyed it. Click a column to sort.</p>
       ${courseTable(courses, reviews, base)}
-      ${reviews.length ? `<ul class="postlist">${reviews.map((r) => `<li><a href="${r.slug}/"><span class="d">${esc(r.course)}</span><span class="t">${esc(r.title)}</span><span class="r">${readTime(r.words)}</span>${r.summary ? `<span class="s">${esc(r.summary)}</span>` : ''}</a></li>`).join('')}</ul>` : ''}
+      ${reviews.length ? `<ul class="postlist">${reviews.map((r) => `<li><a href="${r.slug}/"><span class="d">${esc(r.course)}</span><span class="t">${esc(r.title)}</span><span class="r">${readTime(r.words)}</span>${r.summary ? `<span class="s">${esc(r.summary)}</span>` : ''}</a>${ownerActions(r, base)}</li>`).join('')}</ul>` : ''}
     </section>`;
   return shell({ title: 'Courses: Yashwanth Madan', description: 'Every UNSW course I have taken, with honest reviews.', base, url: `${SITE}courses/`, active: 'courses', body });
 }
@@ -249,7 +252,7 @@ function stampVersions() {
   const v = h.digest('hex').slice(0, 8);
   const rewrite = (file, fn) => { const before = fs.readFileSync(file, 'utf8'); const after = fn(before); if (after !== before) fs.writeFileSync(file, after); };
   for (const f of assets.filter((f) => f.endsWith('.js'))) {
-    rewrite(f, (t) => t.replace(/(from\s+['"]\.\/[\w-]+\.js)(\?v=[0-9a-f]{8})?(['"])/g, `$1?v=${v}$3`));
+    rewrite(f, (t) => t.replace(/((?:from\s+|import\()['"]\.\/[\w-]+\.js)(\?v=[0-9a-f]{8})?(['"])/g, `$1?v=${v}$3`));
   }
   const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
     const p = path.join(dir, d.name);
@@ -264,6 +267,19 @@ function stampVersions() {
 
 // ------------------------------------------------------------ go
 function write(rel, text) { const f = path.join(DOCS, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, text); }
+
+// Take a deleted post's page off the site: remove generated post folders
+// (a folder holding only index.html) that no longer have a Markdown file.
+function prune(section, items) {
+  const dir = path.join(DOCS, section);
+  if (!fs.existsSync(dir)) return;
+  const keep = new Set(items.map((p) => p.slug));
+  for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!d.isDirectory() || keep.has(d.name)) continue;
+    const inside = fs.readdirSync(path.join(dir, d.name));
+    if (inside.length === 1 && inside[0] === 'index.html') { fs.rmSync(path.join(dir, d.name), { recursive: true }); console.log(`  gone  ${section}/${d.name}/`); }
+  }
+}
 
 function main() {
   const posts = load('blog', 'post');
@@ -282,6 +298,7 @@ function main() {
 
   posts.forEach((p, i) => { write(`blog/${p.slug}/index.html`, postPage(p, posts[i + 1], posts[i - 1], 'blog')); console.log(`  page  blog/${p.slug}/`); });
   reviews.forEach((r, i) => { write(`courses/${r.slug}/index.html`, postPage(r, reviews[i + 1], reviews[i - 1], 'courses')); console.log(`  page  courses/${r.slug}/`); });
+  prune('blog', posts); prune('courses', reviews);
   write('blog/index.html', blogIndex(posts));
   write('courses/index.html', coursesIndex(courses, reviews));
   write('feed.xml', feed([...posts.map((p) => ({ ...p, section: 'blog' })), ...reviews.map((r) => ({ ...r, section: 'courses' }))].sort((a, b) => b.date.localeCompare(a.date))));
