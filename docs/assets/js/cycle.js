@@ -21,7 +21,7 @@ export function makeGraph(n) {
   const w = () => 1 + Math.floor(Math.random() * 9);
   for (let i = 0; i < n; i++) edges.push({ a: i, b: (i + 1) % n, w: w(), ring: true });
   let tries = 0;
-  while (edges.length < n + n - 1 && tries++ < 200) {
+  while (edges.length < n + 2 && tries++ < 200) {          // a ring and two shortcuts: simple to read
     const a = Math.floor(Math.random() * n), b = Math.floor(Math.random() * n);
     if (a === b || has(a, b)) continue;
     edges.push({ a, b, w: w(), ring: false });
@@ -80,7 +80,7 @@ export function mountCycle(box, { status, onPlay } = {}) {
   function layout() {
     const w = Math.max(280, box.clientWidth), h = Math.max(200, box.clientHeight);
     size = { w, h };
-    const cx = w / 2, cy = h / 2, rx = Math.min(w * 0.38, h * 1.25), ry = h * 0.39;
+    const cx = w / 2, cy = h / 2 + 4, rx = Math.min(w * 0.3, h * 0.95), ry = h * 0.38;
     centre = { x: cx, y: cy };
     const off = -Math.PI / 2 + g.spin;
     pos = Array.from({ length: g.n }, (_, i) => {
@@ -89,7 +89,7 @@ export function mountCycle(box, { status, onPlay } = {}) {
     });
   }
 
-  const R = () => (size.w < 520 ? 17 : 21);
+  const R = () => (size.w < 520 ? 19 : 25);
   function curve(e) {
     const p = pos[e.a], q = pos[e.b];
     const dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy) || 1;
@@ -176,7 +176,7 @@ export function mountCycle(box, { status, onPlay } = {}) {
 
   const loopText = (nodes) => [...nodes, nodes[0]].map((v) => LETTERS[v]).join(' → ');
   function newGraph() {
-    g = makeGraph(size.w && size.w < 520 ? 5 : 6);
+    g = makeGraph(5);
     g.spin = (Math.random() - 0.5) * 0.5;
     best = bestCycle(g);
     best.karp = karp(g);

@@ -13,9 +13,9 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/katex/katex.min.css">
-  <link rel="stylesheet" href="assets/css/site.css?v=2fb509c6">
-  <script type="module" src="assets/js/site.js?v=2fb509c6"></script>
-  <script type="module" src="assets/js/home.js?v=2fb509c6"></script>
+  <link rel="stylesheet" href="assets/css/site.css?v=dda207ea">
+  <script type="module" src="assets/js/site.js?v=dda207ea"></script>
+  <script type="module" src="assets/js/home.js?v=dda207ea"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -38,50 +38,61 @@
       <p class="hero__lede">I study computer science and statistics at UNSW Sydney. This year I modelled government bond auctions at the Commonwealth Bank of Australia, and proved when Karp’s algorithm can skip most of its work. I’m looking for an honours thesis in algorithms or C++.</p>
     </section>
 
-    <section class="stage" aria-label="Things to try" data-stage>
-      <div class="stage__tabs" role="tablist" aria-label="Pick one to try">
-        <span class="stage__ink" aria-hidden="true"></span>
-        <button type="button" role="tab" id="tab-gp" aria-controls="panel-gp" aria-selected="true">Gaussian process</button>
-        <button type="button" role="tab" id="tab-cycle" aria-controls="panel-cycle" aria-selected="false" tabindex="-1">Best cycle</button>
-        <button type="button" role="tab" id="tab-auction" aria-controls="panel-auction" aria-selected="false" tabindex="-1">Bond auction</button>
-      </div>
-      <div class="stage__panels">
-        <div class="stage__panel is-active" role="tabpanel" id="panel-gp" aria-labelledby="tab-gp" data-panel="gp">
-        <figure class="gp" aria-labelledby="gp-cap">
-          <div class="gp__plot" data-gp tabindex="0" role="img" aria-label="A Gaussian process fitted to a few observations. Click or press Enter to add one."></div>
-          <figcaption class="gp__bar">
-            <p id="gp-cap">A Gaussian process, the model I used for bond auctions at CBA. Click the plot to add an observation: the shaded band is how unsure the model is, and it narrows wherever it has seen data. <span class="sr-only" data-gp-status aria-live="polite"></span></p>
-            <span class="btn-row">
-              <button class="btn" type="button" data-gp-clear>Clear observations</button>
-              <button class="btn" type="button" data-gp-reset>Reset</button>
-            </span>
-          </figcaption>
-        </figure>
+    <section class="stage theatre" aria-label="Things to try" data-stage>
+      <div class="theatre__inner">
+        <div class="stage__top">
+          <div class="stage__tabs" role="tablist" aria-label="Pick one to try">
+            <span class="stage__ink" aria-hidden="true"></span>
+            <button type="button" role="tab" id="tab-bond" aria-controls="panel-bond" aria-selected="true">Bond auctions</button>
+            <button type="button" role="tab" id="tab-cycle" aria-controls="panel-cycle" aria-selected="false" tabindex="-1">Algorithms</button>
+            <button type="button" role="tab" id="tab-ecm" aria-controls="panel-ecm" aria-selected="false" tabindex="-1">ECM</button>
+          </div>
+          <button type="button" class="stage__full" data-stage-full hidden>Full screen</button>
         </div>
-        <div class="stage__panel" role="tabpanel" id="panel-cycle" aria-labelledby="tab-cycle" data-panel="cycle">
-          <figure class="gp">
+        <div class="stage__panels">
+          <div class="stage__panel is-active" role="tabpanel" id="panel-bond" aria-labelledby="tab-bond" data-panel="bond">
+            <div class="bond">
+              <div class="bond__book">
+                <p class="stage__h">One tender</p>
+                <div class="bond__plot" data-book></div>
+                <p class="bond__note" data-book-note></p>
+              </div>
+              <div class="bond__gp">
+                <p class="stage__h">What the Gaussian process has learnt</p>
+                <div class="bond__plot bond__plot--gp" data-bondgp></div>
+              </div>
+            </div>
+            <div class="stage__bar">
+              <p><b data-bond-read aria-live="polite"></b> Each simulated tender clears on the left: bids fill from the lowest yield up until the offer runs out. Its result lands on the right, where a Gaussian process, the model I used for bond auctions at CBA, learns how demand moves the price. The band is how unsure it is. Click the chart to add a tender of your own.</p>
+              <span class="btn-row">
+                <button class="btn" type="button" data-bond-next>Run a tender</button>
+                <button class="btn" type="button" data-bond-reset>Start again</button>
+              </span>
+            </div>
+          </div>
+          <div class="stage__panel" role="tabpanel" id="panel-cycle" aria-labelledby="tab-cycle" data-panel="cycle">
             <div class="stage__plot" data-cycle></div>
-            <figcaption class="gp__bar">
-              <p>Find the loop with the highest average weight: click a node, then follow the arrows until you’re back where you started. It’s the question behind my COMP3821 research, and Karp’s algorithm answers it exactly. <span class="sr-only" data-cycle-status aria-live="polite"></span></p>
+            <div class="stage__bar">
+              <p>Find the loop whose arrows have the highest average weight: click a node, then follow the arrows back to where you started. It’s the question behind my COMP3821 research, and Karp’s algorithm answers it exactly. <span class="sr-only" data-cycle-status aria-live="polite"></span></p>
               <span class="btn-row">
                 <button class="btn" type="button" data-cycle-best>Show the best loop</button>
                 <button class="btn" type="button" data-cycle-new>New graph</button>
               </span>
-            </figcaption>
-          </figure>
-        </div>
-        <div class="stage__panel" role="tabpanel" id="panel-auction" aria-labelledby="tab-auction" data-panel="auction">
-          <figure class="gp">
-            <div class="stage__plot" data-auction></div>
-            <dl class="auc__stats" data-auction-stats aria-live="polite"></dl>
-            <figcaption class="gp__bar">
-              <p>A simulated government bond tender, the kind I modelled at CBA. Each bar is a bid, as tall as its amount. Bids fill from the lowest yield up until the offer runs out, and each winner gets the yield they bid.</p>
-              <span class="btn-row">
-                <label class="auc__offer">On offer <output data-auction-out>$800m</output><input type="range" min="300" max="3000" step="50" value="800" data-auction-offer></label>
-                <button class="btn" type="button" data-auction-new>Run a new auction</button>
+            </div>
+          </div>
+          <div class="stage__panel" role="tabpanel" id="panel-ecm" aria-labelledby="tab-ecm" data-panel="ecm">
+            <div class="ecmlab">
+              <div class="ecmlab__plot" data-ecm></div>
+              <div class="eled" data-ecm-ledger aria-live="off"></div>
+            </div>
+            <div class="stage__bar">
+              <p><span data-ecm-read aria-live="polite"></span> ECM is my C++ energy model for solar cars. This runs solar-ecm-cpp’s equations, plus hills, on a 240 km stage starting at 9 am.</p>
+              <span class="btn-row stage__controls">
+                <label class="rng">Speed <output data-ecm-speed-out>85 km/h</output><input type="range" min="50" max="120" step="5" value="85" data-ecm-speed></label>
+                <label class="rng">Sky <output data-ecm-sky-out>clear</output><input type="range" min="0" max="100" step="10" value="100" data-ecm-sky></label>
               </span>
-            </figcaption>
-          </figure>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,24 +1,13 @@
-// The homepage: the Gaussian process, and the projects list with its
+// The homepage: the theatre at the top (stage.js), and the projects list with its
 // live labs (Payoff Lab, SolarRoute, the solver race), the solar panel
 // and QuantSprint.
-import { ROWS, PROJECTS } from './projects.js?v=2fb509c6';
-import { mountGP } from './gp.js?v=2fb509c6';
-import { startMotion } from './motion.js?v=2fb509c6';
-import { mountStage } from './stage.js?v=2fb509c6';
+import { ROWS, PROJECTS } from './projects.js?v=dda207ea';
+import { startMotion } from './motion.js?v=dda207ea';
+import { mountStage } from './stage.js?v=dda207ea';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-// ------------------------------------------------------------ the Gaussian process
-const plot = $('[data-gp]');
-if (plot) {
-  const gp = mountGP(plot, {
-    seed: [[0.06, -0.5], [0.2, 0.7], [0.37, 0.15], [0.5, -0.8], [0.66, -0.2], [0.84, 0.6]],
-    status: $('[data-gp-status]')
-  });
-  $('[data-gp-clear]')?.addEventListener('click', () => gp.clear());
-  $('[data-gp-reset]')?.addEventListener('click', () => gp.reset());
-}
 mountStage($('[data-stage]'));
 
 // ------------------------------------------------------------ projects
