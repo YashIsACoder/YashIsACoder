@@ -1,8 +1,9 @@
 // The homepage: the Gaussian process, and the projects list with its
 // live labs (Payoff Lab, SolarRoute, the solver race), the solar panel
 // and QuantSprint.
-import { ROWS, PROJECTS } from './projects.js?v=fb8957ba';
-import { mountGP } from './gp.js?v=fb8957ba';
+import { ROWS, PROJECTS } from './projects.js?v=8327ef27';
+import { mountGP } from './gp.js?v=8327ef27';
+import { startMotion } from './motion.js?v=8327ef27';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -79,6 +80,7 @@ if (host) {
   openFromHash();
   addEventListener('hashchange', openFromHash);
 }
+startMotion();
 
 function toggle(id, forceOpen = false) {
   const row = $(`.proj__row[data-project="${id}"]`);

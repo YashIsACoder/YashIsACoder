@@ -13,9 +13,9 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/katex/katex.min.css">
-  <link rel="stylesheet" href="assets/css/site.css?v=fb8957ba">
-  <script type="module" src="assets/js/site.js?v=fb8957ba"></script>
-  <script type="module" src="assets/js/home.js?v=fb8957ba"></script>
+  <link rel="stylesheet" href="assets/css/site.css?v=8327ef27">
+  <script type="module" src="assets/js/site.js?v=8327ef27"></script>
+  <script type="module" src="assets/js/home.js?v=8327ef27"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -51,9 +51,10 @@
 
     <section id="work" class="section" aria-labelledby="work-h">
       <h2 class="section__h" id="work-h">Work</h2>
-      <div class="jobs">
+      <div class="jobs" data-timeline>
+        <span class="jobs__line" aria-hidden="true"><span class="jobs__fill"></span></span>
         <article class="job">
-          <img class="job__logo" src="assets/logos/cba.svg" alt="" width="48" height="48">
+          <span class="mark" aria-hidden="true"><span class="mark__mono" style="-webkit-mask-image:url(assets/logos/cba-mono.png);mask-image:url(assets/logos/cba-mono.png)"></span><img src="assets/logos/cba.svg" alt="" width="48" height="48"></span>
           <div>
             <h3>Commonwealth Bank of Australia</h3>
             <p class="job__role">Data Science Intern, Institutional Banking &amp; Markets</p>
@@ -62,7 +63,7 @@
           <p class="job__when">Mar – Sep 2026</p>
         </article>
         <article class="job">
-          <svg class="job__logo job__logo--sun" viewBox="12 22 232 146" aria-hidden="true" focusable="false"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 137c45-20 84-30 123-29 18 0 32 10 45 18 16 4 29 8 41 17 7 5 9 11 8 20" stroke-width="9"/><path d="M21 157h214" stroke-width="7"/></g><g class="stars"><path d="M154 42l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M198 33l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M210 81l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M184 93l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/><path d="M157 124l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/></g></svg>
+          <span class="mark mark--sun" aria-hidden="true"><svg viewBox="12 22 232 146" aria-hidden="true" focusable="false"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 137c45-20 84-30 123-29 18 0 32 10 45 18 16 4 29 8 41 17 7 5 9 11 8 20" stroke-width="9"/><path d="M21 157h214" stroke-width="7"/></g><g class="stars"><path d="M154 42l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M198 33l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M210 81l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M184 93l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/><path d="M157 124l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/></g></svg></span>
           <div>
             <h3>Sunswift Racing</h3>
             <p class="job__role">Performance Optimisation Engineer</p>
@@ -71,7 +72,7 @@
           <p class="job__when">2025 – 2026</p>
         </article>
         <article class="job">
-          <img class="job__logo" src="assets/logos/unsw.png" alt="" width="48" height="48">
+          <span class="mark" aria-hidden="true"><span class="mark__mono" style="-webkit-mask-image:url(assets/logos/unsw-mono.png);mask-image:url(assets/logos/unsw-mono.png)"></span><img src="assets/logos/unsw.png" alt="" width="48" height="48"></span>
           <div>
             <h3>UNSW School of Computer Science and Engineering</h3>
             <p class="job__role">Tutor, COMP3110</p>
@@ -80,7 +81,7 @@
           <p class="job__when">2026 – now</p>
         </article>
         <article class="job">
-          <img class="job__logo" src="assets/logos/anzhfr.png" alt="" width="48" height="48">
+          <span class="mark" aria-hidden="true"><span class="mark__mono" style="-webkit-mask-image:url(assets/logos/anzhfr-mono.png);mask-image:url(assets/logos/anzhfr-mono.png)"></span><img src="assets/logos/anzhfr.png" alt="" width="48" height="48"></span>
           <div>
             <h3>UNSW and ANZHFR Health Datathon</h3>
             <p class="job__role">First place</p>
@@ -89,7 +90,7 @@
           <p class="job__when">Dec 2025</p>
         </article>
         <article class="job">
-          <img class="job__logo" src="assets/logos/swans.png" alt="" width="48" height="48">
+          <span class="mark" aria-hidden="true"><span class="mark__mono" style="-webkit-mask-image:url(assets/logos/swans-mono.png);mask-image:url(assets/logos/swans-mono.png)"></span><img src="assets/logos/swans.png" alt="" width="48" height="48"></span>
           <div>
             <h3>Sydney Swans</h3>
             <p class="job__role">Data Engineering Intern</p>
