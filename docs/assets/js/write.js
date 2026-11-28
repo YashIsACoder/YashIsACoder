@@ -20,11 +20,11 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=dda207ea';
-import { mountWidgets } from './posts.js?v=dda207ea';
-import { renderDiagrams } from './diagrams.js?v=dda207ea';
-import { toast } from './site.js?v=dda207ea';
-import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, unmarkGone } from './github.js?v=dda207ea';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=e43c745f';
+import { mountWidgets } from './posts.js?v=e43c745f';
+import { renderDiagrams } from './diagrams.js?v=e43c745f';
+import { toast } from './site.js?v=e43c745f';
+import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, unmarkGone } from './github.js?v=e43c745f';
 
 const DRAFT_KEY = 'yash-write-draft';
 const VIEW_KEY = 'yash-write-view';

@@ -3,9 +3,9 @@
 // and runs by itself while it's showing; it pauses when another tab is
 // picked or the stage scrolls away. Full screen where the browser allows it.
 
-import { mountCycle } from './cycle.js?v=dda207ea';
-import { mountBondLab } from './bondlab.js?v=dda207ea';
-import { mountEcmLab } from './ecmlab.js?v=dda207ea';
+import { mountCycle } from './cycle.js?v=e43c745f';
+import { mountBondLab } from './bondlab.js?v=e43c745f';
+import { mountEcmLab } from './ecmlab.js?v=e43c745f';
 
 export function mountStage(root) {
   if (!root) return;

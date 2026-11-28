@@ -7,7 +7,7 @@
 // tenders accumulate. Nothing here is fitted to real data: the pattern comes
 // out of the bidding itself.
 
-import { posterior } from './gp.js?v=dda207ea';
+import { posterior } from './gp.js?v=e43c745f';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, attrs = {}, parent) => {

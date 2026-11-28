@@ -1,9 +1,10 @@
 // The homepage: the theatre at the top (stage.js), and the projects list with its
 // live labs (Payoff Lab, SolarRoute, the solver race), the solar panel
 // and QuantSprint.
-import { ROWS, PROJECTS } from './projects.js?v=dda207ea';
-import { startMotion } from './motion.js?v=dda207ea';
-import { mountStage } from './stage.js?v=dda207ea';
+import { ROWS, PROJECTS } from './projects.js?v=e43c745f';
+import { startMotion } from './motion.js?v=e43c745f';
+import { mountStage } from './stage.js?v=e43c745f';
+import { thumbSVG } from './thumbs.js?v=e43c745f';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -11,7 +12,6 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 mountStage($('[data-stage]'));
 
 // ------------------------------------------------------------ projects
-const CHEVRON = '<svg class="proj__chev" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
 
 function linksHTML(p) {
   const out = p.links.map((l) => {
@@ -25,75 +25,106 @@ function tapHTML(p) {
   const t = p.tap;
   if (!t) return `<div class="tap"><div class="tap__bar"><b>Run it yourself</b><span>${esc(p.lang)}</span></div><p class="tap__note">Clone it and build it with CMake; the README has the steps.</p><pre><span class="tok-f">git</span> clone ${esc((p.links[0] || {}).href || '')}</pre></div>`;
   if (t.kind === 'iframe') return `<div class="tap"><div class="tap__bar"><b>Running live</b><a href="${esc(t.src)}" target="_blank" rel="noopener">Open full screen</a></div><iframe data-src="${esc(t.src)}" title="${esc(p.name)}, running live" loading="lazy"></iframe></div>`;
-  if (t.kind === 'code') return `<div class="tap"><div class="tap__bar"><b>${esc(t.title.charAt(0).toUpperCase() + t.title.slice(1))}</b><span>${esc(({ cpp: 'C++', py: 'Python', ts: 'TypeScript', js: 'JavaScript' })[t.lang] || t.lang)}</span></div><pre><code>${highlight(t.code)}</code></pre></div>`;
+  if (t.kind === 'code') return `<div class="tap"><div class="tap__bar"><b>${esc(t.title.includes('/') ? t.title : t.title.charAt(0).toUpperCase() + t.title.slice(1))}</b><span>${esc(({ cpp: 'C++', py: 'Python', ts: 'TypeScript', js: 'JavaScript' })[t.lang] || t.lang)}</span></div><pre><code>${highlight(t.code)}</code></pre></div>`;
   if (t.kind === 'solar') return '<div class="tap"><div class="tap__bar"><b>How fast should a solar car drive?</b><span>Live</span></div><div class="lab" data-solar></div></div>';
   if (t.kind === 'sprint') return '<div class="tap"><div class="tap__bar"><b>QuantSprint, the short version</b><span data-best></span></div><div class="sprint" data-sprint></div></div>';
   return '';
 }
-function projectHTML(p) {
-  const tag = p.ontap ? '<span class="proj__tag proj__tag--live">Live</span>' : p.brewing ? '<span class="proj__tag">In progress</span>' : '';
-  return `<li class="proj" id="p-${esc(p.id)}">
-    <button type="button" class="proj__row" aria-expanded="false" aria-controls="panel-${esc(p.id)}" data-project="${esc(p.id)}">
-      <span class="proj__name">${esc(p.name)}${tag}</span>
-      <span class="proj__one">${esc(p.one)}</span>
-      <span class="proj__lang">${esc(p.lang)}</span>
-      ${CHEVRON}
-    </button>
-    <div class="proj__panel" id="panel-${esc(p.id)}" hidden>
-      <div class="proj__about">
-        ${p.about.map((t) => `<p>${esc(t)}</p>`).join('')}
-        <h4>Highlights</h4>
-        <ul>${p.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>
-        <h4>Built with</h4>
-        <p class="proj__stack">${p.stack.map(esc).join(', ')}</p>
+// ------------------------------------------------------------ the projects switcher
+// One project at a time on a big stage: its live demo or code on the left,
+// what it is on the right. Arrows (buttons, keys or a swipe) move between
+// them, and the filmstrip underneath jumps straight to one.
+const ORDER = ['3821-viz', 'ecm', 'solarroute', 'payoff-lab', 'dmdp', 'quantsprint', 'solar-ecm-cpp', 'event-replay', 'cpp-mlp', 'random-walk-sim'];
+const LIST = [...ORDER.map((id) => PROJECTS.find((p) => p.id === id)).filter(Boolean), ...PROJECTS.filter((p) => !ORDER.includes(p.id))];
+const rowName = (p) => (ROWS.find((r) => r.id === p.row) || {}).name || '';
+const tagHTML = (p) => (p.ontap ? '<span class="proj__tag proj__tag--live">Live</span>' : p.brewing ? '<span class="proj__tag">In progress</span>' : '');
+
+function slideHTML(p) {
+  return `<article class="pshow__slide" aria-labelledby="ps-${esc(p.id)}">
+      <div class="pshow__media" data-tap="${esc(p.id)}"></div>
+      <div class="pshow__text">
+        <p class="pshow__kind">${esc(rowName(p))}<span>${esc(p.lang)}</span></p>
+        <h3 id="ps-${esc(p.id)}">${esc(p.name)}${tagHTML(p)}</h3>
+        <p class="pshow__one">${esc(p.one)}</p>
+        ${p.about[0] ? `<p class="pshow__about">${esc(p.about[0])}</p>` : ''}
+        <ul class="pshow__hl">${p.highlights.slice(0, 3).map((h) => `<li>${esc(h)}</li>`).join('')}</ul>
         <div class="proj__links">${linksHTML(p)}</div>
       </div>
-      <div data-tap="${esc(p.id)}"></div>
-    </div>
-  </li>`;
+    </article>`;
 }
 
 const host = $('[data-projects]');
-let cleanup = new Map();
+let cleanup = null, idx = 0;
 if (host) {
-  host.innerHTML = ROWS.map((r) => {
-    const items = PROJECTS.filter((p) => p.row === r.id);
-    return items.length ? `<div class="pgroup"><h3 class="pgroup__h">${esc(r.name)}</h3><ul class="plist">${items.map(projectHTML).join('')}</ul></div>` : '';
-  }).join('');
-  host.addEventListener('click', (e) => {
-    const row = e.target.closest('.proj__row');
-    if (row) toggle(row.dataset.project);
-  });
-  const openFromHash = () => {
-    const m = location.hash.match(/^#p\/([\w-]+)/);
-    if (m && PROJECTS.some((p) => p.id === m[1])) { toggle(m[1], true); requestAnimationFrame(() => $(`#p-${m[1]}`)?.scrollIntoView({ block: 'start' })); }
-  };
-  openFromHash();
-  addEventListener('hashchange', openFromHash);
-}
-startMotion();
+  host.innerHTML = `<div class="pshow" data-pshow tabindex="-1">
+      <div class="pshow__stage">
+        <button type="button" class="pshow__arrow pshow__arrow--prev" data-step="-1" aria-label="Previous project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="pshow__view" aria-live="polite"></div>
+        <button type="button" class="pshow__arrow pshow__arrow--next" data-step="1" aria-label="Next project"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="pshow__foot"><p class="pshow__count" data-count></p></div>
+      <div class="pshow__strip" role="tablist" aria-label="All projects">${LIST.map((p, i) => `<button type="button" role="tab" class="pthumb" data-i="${i}" aria-selected="false" aria-label="${esc(p.name)}">
+          <span class="pthumb__art">${thumbSVG(p.id, p.name)}</span>
+          <span class="pthumb__name">${esc(p.name)}</span>
+        </button>`).join('')}</div>
+    </div>`;
+  const show = $('[data-pshow]', host), view = $('.pshow__view', show), strip = $('.pshow__strip', show);
 
-function toggle(id, forceOpen = false) {
-  const row = $(`.proj__row[data-project="${id}"]`);
-  const panel = $(`#panel-${id}`);
-  if (!row || !panel) return;
-  const open = forceOpen || row.getAttribute('aria-expanded') !== 'true';
-  row.setAttribute('aria-expanded', String(open));
-  panel.hidden = !open;
-  const slot = $(`[data-tap="${id}"]`, panel);
-  if (open) {
-    const p = PROJECTS.find((x) => x.id === id);
+  function go(i, dir = 0, { scroll = false } = {}) {
+    idx = (i + LIST.length) % LIST.length;
+    const p = LIST[idx];
+    cleanup?.(); cleanup = null;
+    view.innerHTML = slideHTML(p);
+    const slide = $('.pshow__slide', view);
+    if (dir) slide.dataset.dir = dir > 0 ? 'next' : 'prev';
+    const slot = $('[data-tap]', slide);
     slot.innerHTML = tapHTML(p);
     const frame = $('iframe[data-src]', slot); if (frame) frame.src = frame.dataset.src;
     const solar = $('[data-solar]', slot); if (solar) mountSolar(solar);
-    const sprint = $('[data-sprint]', slot); if (sprint) cleanup.set(id, mountSprint(sprint, $('[data-best]', slot)));
-    history.replaceState(null, '', `#p/${id}`);
-  } else {
-    cleanup.get(id)?.(); cleanup.delete(id);
-    slot.innerHTML = '';
-    if (location.hash === `#p/${id}`) history.replaceState(null, '', '#projects');
+    const sprint = $('[data-sprint]', slot); if (sprint) cleanup = mountSprint(sprint, $('[data-best]', slot));
+    $('[data-count]', show).innerHTML = `<b>${idx + 1}</b> of ${LIST.length}`;
+    strip.querySelectorAll('.pthumb').forEach((t, k) => { t.setAttribute('aria-selected', String(k === idx)); t.tabIndex = k === idx ? 0 : -1; });
+    const t = strip.children[idx];
+    strip.scrollTo({ left: t.offsetLeft - (strip.clientWidth - t.offsetWidth) / 2, behavior: dir ? 'smooth' : 'auto' });
+    if (dir || scroll) history.replaceState(null, '', `#p/${p.id}`);
+    if (scroll) requestAnimationFrame(() => $('#projects')?.scrollIntoView({ block: 'start' }));
   }
+
+  show.addEventListener('click', (e) => {
+    const step = e.target.closest('[data-step]');
+    if (step) return go(idx + Number(step.dataset.step), Number(step.dataset.step));
+    const th = e.target.closest('.pthumb');
+    if (th) { const i = Number(th.dataset.i); if (i !== idx) go(i, i > idx ? 1 : -1); }
+  });
+  // left and right arrows while the projects have focus (not inside a demo's inputs)
+  show.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, textarea, select, [contenteditable], .sprint')) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const d = e.key === 'ArrowRight' ? 1 : -1;
+      go(idx + d, d);
+      if (e.target.closest('.pshow__strip')) strip.children[idx].focus();
+    }
+  });
+  // swipe on touch screens
+  let sx = null, sy = null;
+  view.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
+  view.addEventListener('pointerup', (e) => {
+    if (sx === null) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(idx + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+  });
+
+  const fromHash = () => {
+    const m = location.hash.match(/^#p\/([\w-]+)/);
+    const i = m ? LIST.findIndex((p) => p.id === m[1]) : -1;
+    if (i >= 0) go(i, 0, { scroll: true });
+  };
+  go(0);
+  fromHash();
+  addEventListener('hashchange', fromHash);
 }
+startMotion();
 
 // ------------------------------------------------------------ code colour
 function highlight(src) {

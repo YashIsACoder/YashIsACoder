@@ -47,7 +47,7 @@ const GROUPS = [
   ['.section', '.section__h, .section__more'],
   ['.jobs', '.job'],
   ['#research', '.rs__title, .rs__who, .rs__text, .facts li, .links'],
-  ['.pgroups', '.pgroup__h, .proj'],
+  ['.pshow', '.pshow__stage, .pshow__strip'],
   ['.cards', '.card']
 ];
 

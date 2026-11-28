@@ -13,9 +13,9 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/katex/katex.min.css">
-  <link rel="stylesheet" href="assets/css/site.css?v=dda207ea">
-  <script type="module" src="assets/js/site.js?v=dda207ea"></script>
-  <script type="module" src="assets/js/home.js?v=dda207ea"></script>
+  <link rel="stylesheet" href="assets/css/site.css?v=e43c745f">
+  <script type="module" src="assets/js/site.js?v=e43c745f"></script>
+  <script type="module" src="assets/js/home.js?v=e43c745f"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -34,8 +34,8 @@
 
   <main id="main" class="wrap">
     <section class="hero" aria-labelledby="hero-h">
-      <h1 id="hero-h">I build statistical models and exact algorithms, mostly in C++ and Python.</h1>
-      <p class="hero__lede">I study computer science and statistics at UNSW Sydney. This year I modelled government bond auctions at the Commonwealth Bank of Australia, and proved when Karp’s algorithm can skip most of its work. I’m looking for an honours thesis in algorithms or C++.</p>
+      <h1 id="hero-h">Models that know how unsure they are. Algorithms that know when to stop.</h1>
+      <p class="hero__lede">I’m Yashwanth, and I study computer science and statistics at UNSW Sydney. I built Gaussian process models of government bond auctions at the Commonwealth Bank, wrote the simulation that recommends race speeds for UNSW’s solar car, and with my COMP3821 team proved when Karp’s algorithm can skip whole parts of a graph without changing its answer. I work mostly in C++ and Python, and I’m looking for an honours thesis in algorithms or C++.</p>
     </section>
 
     <section class="stage theatre" aria-label="Things to try" data-stage>
@@ -172,9 +172,9 @@
     <section id="projects" class="section" aria-labelledby="projects-h">
       <div>
         <h2 class="section__h" id="projects-h">Projects</h2>
-        <p class="section__more muted">Open one to read about it. The ones marked Live run right here.</p>
+        <p class="section__more muted">Use the arrows to go through them, or pick one from the strip. The ones marked Live run right here.</p>
       </div>
-      <div class="pgroups" data-projects></div>
+      <div class="pshow-host" data-projects></div>
     </section>
 
     <section id="writing" class="section" aria-labelledby="writing-h">
