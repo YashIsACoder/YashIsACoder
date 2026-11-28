@@ -1,11 +1,13 @@
-// The homepage's theatre: tabs between bond auctions learnt by a Gaussian
-// process, the best-cycle game and ECM driving a solar car. Each one draws
-// and runs by itself while it's showing; it pauses when another tab is
-// picked or the stage scrolls away. Full screen where the browser allows it.
+// The homepage's stage: bond auctions learnt by a Gaussian process, the
+// best-cycle game and ECM driving a solar car. Each one draws and runs by
+// itself while it's showing, and pauses when it's switched away or scrolled
+// off. The stage sits on the page like everything else until you hover over
+// it or scroll it to the middle of the screen: then the page dims around it
+// (theatre mode) and the arrows, or the arrow keys, move between the three.
 
-import { mountCycle } from './cycle.js?v=e43c745f';
-import { mountBondLab } from './bondlab.js?v=e43c745f';
-import { mountEcmLab } from './ecmlab.js?v=e43c745f';
+import { mountCycle } from './cycle.js?v=3367876e';
+import { mountBondLab } from './bondlab.js?v=3367876e';
+import { mountEcmLab } from './ecmlab.js?v=3367876e';
 
 export function mountStage(root) {
   if (!root) return;
@@ -43,9 +45,12 @@ export function mountStage(root) {
     if (instant) { void ink.offsetWidth; ink.style.transition = ''; }
   }
 
-  function select(id, focus) {
-    const tab = tabs.find((t) => t.getAttribute('aria-controls') === `panel-${id}`);
+  const order = tabs.map((t) => t.getAttribute('aria-controls').replace('stage-', ''));
+  function select(id, focus, dir = 0) {
+    const tab = tabs.find((t) => t.getAttribute('aria-controls') === `stage-${id}`);
     if (!tab) return;
+    if (!dir && id !== current) dir = order.indexOf(id) > order.indexOf(current) ? 1 : -1;
+    root.dataset.dir = dir > 0 ? 'next' : 'prev';
     if (id !== current) part(current)?.hide?.();
     current = id;
     tabs.forEach((t) => {
@@ -64,13 +69,13 @@ export function mountStage(root) {
   }
 
   tabs.forEach((t, i) => {
-    t.addEventListener('click', () => select(t.getAttribute('aria-controls').replace('panel-', '')));
+    t.addEventListener('click', () => select(t.getAttribute('aria-controls').replace('stage-', '')));
     t.addEventListener('keydown', (e) => {
       const k = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
       if (k === undefined) return;
       e.preventDefault();
       const next = tabs[(k + tabs.length) % tabs.length];
-      select(next.getAttribute('aria-controls').replace('panel-', ''), true);
+      select(next.getAttribute('aria-controls').replace('stage-', ''), true);
     });
   });
   Object.entries(panels).forEach(([k, p]) => { if (k !== current) p.setAttribute('inert', ''); });
@@ -84,18 +89,32 @@ export function mountStage(root) {
     if (document.hidden) part(current)?.hide?.(); else if (onScreen) part(current)?.show?.();
   });
 
-  // full screen: the whole theatre, where the browser supports it
-  const full = $('[data-stage-full]');
-  if (full && document.fullscreenEnabled) {
-    full.hidden = false;
-    full.addEventListener('click', () => (document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen()).catch(() => {}));
-    document.addEventListener('fullscreenchange', () => {
-      const on = document.fullscreenElement === root;
-      full.textContent = on ? 'Exit full screen' : 'Full screen';
-      root.classList.toggle('is-full', on);
-      requestAnimationFrame(() => placeInk(tabs.find((t) => t.getAttribute('aria-selected') === 'true'), true));
-    });
-  }
+  // the arrows either side, and the arrow keys while the theatre is on
+  const step = (d) => select(order[(order.indexOf(current) + d + order.length) % order.length], false, d);
+  root.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => step(Number(b.dataset.step))));
+  document.addEventListener('keydown', (e) => {
+    if (!root.classList.contains('is-lit') || e.altKey || e.metaKey || e.ctrlKey) return;
+    if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      if (e.target.closest('[role="tab"]')) return;          // the tabs handle their own keys
+      e.preventDefault(); step(e.key === 'ArrowRight' ? 1 : -1);
+    }
+  });
+
+  // theatre mode: on while the pointer is over the stage, or while it fills
+  // the middle of the screen; the rest of the page dims behind it
+  const dim = document.createElement('div');
+  dim.className = 'dimmer'; dim.setAttribute('aria-hidden', 'true');
+  root.before(dim);
+  let hovering = false, centred = false;
+  const light = () => {
+    const on = hovering || centred;
+    root.classList.toggle('is-lit', on);
+    document.documentElement.classList.toggle('theatre-on', on);
+  };
+  root.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hovering = true; light(); } });
+  root.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hovering = false; light(); } });
+  new IntersectionObserver(([e]) => { centred = e.isIntersecting; light(); }, { rootMargin: '-42% 0px -42% 0px' }).observe(root);
 
   part(current);
   placeInk(tabs[0], true);

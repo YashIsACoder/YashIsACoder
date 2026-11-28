@@ -2,8 +2,8 @@
 // only). Delete asks once in the row, removes the Markdown file from the
 // repository, then follows the rebuild until the post is off the site.
 
-import { REPO, TOKEN_KEY, store, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, waitUntilGone } from './github.js?v=e43c745f';
-import { toast } from './site.js?v=e43c745f';
+import { REPO, TOKEN_KEY, store, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, waitUntilGone } from './github.js?v=3367876e';
+import { toast } from './site.js?v=3367876e';
 
 const base = new URL('../../', import.meta.url).href;   // the site root
 

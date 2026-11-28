@@ -165,7 +165,7 @@ export function mountEcmLab(root, { onPlay } = {}) {
     return new Promise((done) => {
       const step = (now) => {
         if (myRun !== run) return done(false);
-        const k = Math.min(1, (now - t0) / ms);
+        const k = Math.max(0, Math.min(1, (now - t0) / ms));
         frame(d, Math.round(k * n));
         if (k < 1) requestAnimationFrame(step); else done(true);
       };

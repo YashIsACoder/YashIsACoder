@@ -47,7 +47,7 @@ const GROUPS = [
   ['.section', '.section__h, .section__more'],
   ['.jobs', '.job'],
   ['#research', '.rs__title, .rs__who, .rs__text, .facts li, .links'],
-  ['.pshow', '.pshow__stage, .pshow__strip'],
+  ['.pgroups', '.pgroup__h, .proj'],
   ['.cards', '.card']
 ];
 
@@ -82,7 +82,7 @@ function countUp() {
       const t0 = performance.now(), dur = 1300;
       const fmt = (v) => (grouped ? v.toLocaleString('en-AU') : String(v)) + suffix;
       const step = (t) => {
-        const k = Math.min(1, (t - t0) / dur), eased = 1 - Math.pow(1 - k, 4);
+        const k = Math.max(0, Math.min(1, (t - t0) / dur)), eased = 1 - Math.pow(1 - k, 4);
         b.textContent = fmt(Math.round(n * eased));
         if (k < 1) requestAnimationFrame(step);
       };

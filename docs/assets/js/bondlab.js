@@ -7,7 +7,7 @@
 // tenders accumulate. Nothing here is fitted to real data: the pattern comes
 // out of the bidding itself.
 
-import { posterior } from './gp.js?v=e43c745f';
+import { posterior } from './gp.js?v=3367876e';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, attrs = {}, parent) => {
@@ -34,6 +34,7 @@ export function tender() {
     let left = offer, w = 0;
     const fill = bids.map((b) => { const t = Math.max(0, Math.min(b.amt, left)); left -= t; w += t * b.y; return t; });
     if (left > 0) continue;                       // undersubscribed: try again
+    if (bids.reduce((s, b) => s + b.amt, 0) / offer > 6.3) continue;   // off the chart: try again
     const total = bids.reduce((s, b) => s + b.amt, 0);
     const avg = w / offer;
     return { mid, offer, bids, fill, total, cover: total / offer, avg, high: bids[fill.findLastIndex((f) => f > 0)].y, spread: (avg - mid) * 100 };
@@ -157,7 +158,7 @@ export function mountBondLab(root, { onPlay } = {}) {
     const from = shown, t0 = performance.now();
     return new Promise((done) => {
       const step = (t) => {
-        const k = ease(Math.min(1, (t - t0) / ms));
+        const k = ease(Math.max(0, Math.min(1, (t - t0) / ms)));
         shown = next.map(([u, m, s], i) => [u, from[i][1] + (m - from[i][1]) * k, from[i][2] + (s - from[i][2]) * k]);
         drawGP();
         if (k < 1) raf = requestAnimationFrame(step); else done();
@@ -187,7 +188,7 @@ export function mountBondLab(root, { onPlay } = {}) {
     book = null; noteFor(t, false);
     const anim = (ms, fn) => new Promise((done) => {
       const t0 = performance.now();
-      const step = (now) => { if (myRun !== run) return done(false); const k = Math.min(1, (now - t0) / ms); fn(k); if (k < 1) requestAnimationFrame(step); else done(true); };
+      const step = (now) => { if (myRun !== run) return done(false); const k = Math.max(0, Math.min(1, (now - t0) / ms)); fn(k); if (k < 1) requestAnimationFrame(step); else done(true); };
       requestAnimationFrame(step);
     });
     if (reduce) drawBook(t);

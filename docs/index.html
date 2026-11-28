@@ -13,9 +13,9 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/katex/katex.min.css">
-  <link rel="stylesheet" href="assets/css/site.css?v=e43c745f">
-  <script type="module" src="assets/js/site.js?v=e43c745f"></script>
-  <script type="module" src="assets/js/home.js?v=e43c745f"></script>
+  <link rel="stylesheet" href="assets/css/site.css?v=3367876e">
+  <script type="module" src="assets/js/site.js?v=3367876e"></script>
+  <script type="module" src="assets/js/home.js?v=3367876e"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -34,8 +34,8 @@
 
   <main id="main" class="wrap">
     <section class="hero" aria-labelledby="hero-h">
-      <h1 id="hero-h">Models that know how unsure they are. Algorithms that know when to stop.</h1>
-      <p class="hero__lede">I’m Yashwanth, and I study computer science and statistics at UNSW Sydney. I built Gaussian process models of government bond auctions at the Commonwealth Bank, wrote the simulation that recommends race speeds for UNSW’s solar car, and with my COMP3821 team proved when Karp’s algorithm can skip whole parts of a graph without changing its answer. I work mostly in C++ and Python, and I’m looking for an honours thesis in algorithms or C++.</p>
+      <h1 id="hero-h">I build statistical models for markets and exact algorithms for graphs, in C++ and Python.</h1>
+      <p class="hero__lede">I study computer science and statistics at UNSW Sydney. This year I modelled government bond auctions at the Commonwealth Bank of Australia, and proved when Karp’s algorithm can skip most of its work. I’m looking for an honours thesis in algorithms or C++.</p>
     </section>
 
     <section class="stage theatre" aria-label="Things to try" data-stage>
@@ -43,14 +43,17 @@
         <div class="stage__top">
           <div class="stage__tabs" role="tablist" aria-label="Pick one to try">
             <span class="stage__ink" aria-hidden="true"></span>
-            <button type="button" role="tab" id="tab-bond" aria-controls="panel-bond" aria-selected="true">Bond auctions</button>
-            <button type="button" role="tab" id="tab-cycle" aria-controls="panel-cycle" aria-selected="false" tabindex="-1">Algorithms</button>
-            <button type="button" role="tab" id="tab-ecm" aria-controls="panel-ecm" aria-selected="false" tabindex="-1">ECM</button>
+            <button type="button" role="tab" id="tab-bond" aria-controls="stage-bond" aria-selected="true">Bond auctions</button>
+            <button type="button" role="tab" id="tab-cycle" aria-controls="stage-cycle" aria-selected="false" tabindex="-1">Algorithms</button>
+            <button type="button" role="tab" id="tab-ecm" aria-controls="stage-ecm" aria-selected="false" tabindex="-1">ECM</button>
           </div>
-          <button type="button" class="stage__full" data-stage-full hidden>Full screen</button>
+          <p class="stage__hint">Use the arrows to switch</p>
         </div>
+        <div class="stage__body">
+        <button type="button" class="stage__arrow stage__arrow--prev" data-step="-1" aria-label="Previous"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button type="button" class="stage__arrow stage__arrow--next" data-step="1" aria-label="Next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <div class="stage__panels">
-          <div class="stage__panel is-active" role="tabpanel" id="panel-bond" aria-labelledby="tab-bond" data-panel="bond">
+          <div class="stage__panel is-active" role="tabpanel" id="stage-bond" aria-labelledby="tab-bond" data-panel="bond">
             <div class="bond">
               <div class="bond__book">
                 <p class="stage__h">One tender</p>
@@ -70,7 +73,7 @@
               </span>
             </div>
           </div>
-          <div class="stage__panel" role="tabpanel" id="panel-cycle" aria-labelledby="tab-cycle" data-panel="cycle">
+          <div class="stage__panel" role="tabpanel" id="stage-cycle" aria-labelledby="tab-cycle" data-panel="cycle">
             <div class="stage__plot" data-cycle></div>
             <div class="stage__bar">
               <p>Find the loop whose arrows have the highest average weight: click a node, then follow the arrows back to where you started. It’s the question behind my COMP3821 research, and Karp’s algorithm answers it exactly. <span class="sr-only" data-cycle-status aria-live="polite"></span></p>
@@ -80,7 +83,7 @@
               </span>
             </div>
           </div>
-          <div class="stage__panel" role="tabpanel" id="panel-ecm" aria-labelledby="tab-ecm" data-panel="ecm">
+          <div class="stage__panel" role="tabpanel" id="stage-ecm" aria-labelledby="tab-ecm" data-panel="ecm">
             <div class="ecmlab">
               <div class="ecmlab__plot" data-ecm></div>
               <div class="eled" data-ecm-ledger aria-live="off"></div>
@@ -93,6 +96,7 @@
               </span>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>
@@ -172,9 +176,9 @@
     <section id="projects" class="section" aria-labelledby="projects-h">
       <div>
         <h2 class="section__h" id="projects-h">Projects</h2>
-        <p class="section__more muted">Use the arrows to go through them, or pick one from the strip. The ones marked Live run right here.</p>
+        <p class="section__more muted">Open one to read about it. The ones marked Live run right here.</p>
       </div>
-      <div class="pshow-host" data-projects></div>
+      <div class="pgroups" data-projects></div>
     </section>
 
     <section id="writing" class="section" aria-labelledby="writing-h">

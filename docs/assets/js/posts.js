@@ -1,4 +1,4 @@
-import { renderDiagrams } from './diagrams.js?v=e43c745f';
+import { renderDiagrams } from './diagrams.js?v=3367876e';
 // yash.nvim — blog and course-review pages: live widgets, the scroll-aware
 // table of contents and the list filters.
 // A post asks for a widget with a line like:   ::: widget paired-draws seed=7 trials=8
@@ -109,4 +109,4 @@ if (article) {
 }
 
 // Edit and Delete on the Writing and course review lists, for the owner.
-if (document.documentElement.classList.contains('is-owner') && document.querySelector('[data-delete]')) import('./owner.js?v=e43c745f');
+if (document.documentElement.classList.contains('is-owner') && document.querySelector('[data-delete]')) import('./owner.js?v=3367876e');
