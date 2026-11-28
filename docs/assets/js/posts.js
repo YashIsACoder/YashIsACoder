@@ -1,4 +1,4 @@
-import { renderDiagrams } from './diagrams.js?v=8327ef27';
+import { renderDiagrams } from './diagrams.js?v=2fb509c6';
 // yash.nvim — blog and course-review pages: live widgets, the scroll-aware
 // table of contents and the list filters.
 // A post asks for a widget with a line like:   ::: widget paired-draws seed=7 trials=8
@@ -62,8 +62,51 @@ if (filters) {
     const tag = btn.dataset.filter;
     filters.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
     document.querySelectorAll('[data-tags]').forEach((li) => { li.hidden = tag !== 'all' && !li.dataset.tags.split(' ').includes(tag); });
+    const url = new URL(location.href);
+    if (tag === 'all') url.searchParams.delete('tag'); else url.searchParams.set('tag', tag);
+    history.replaceState(null, '', url);
+  });
+  // a tag link from a post (?tag=graphs) opens the list already filtered
+  const want = new URLSearchParams(location.search).get('tag');
+  if (want) filters.querySelector(`button[data-filter="${CSS.escape(want)}"]`)?.click();
+}
+
+// ------------------------------------------------------------ post pages
+// reading progress, copy buttons on code, and copying a section's link
+const article = document.querySelector('.post .prose');
+if (article) {
+  const bar = document.querySelector('.readbar span');
+  if (bar) {
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const r = article.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (innerHeight * 0.4 - r.top) / (r.height - innerHeight * 0.4)));
+      bar.style.transform = `scaleX(${p.toFixed(4)})`;
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+  }
+  article.querySelectorAll('figure.code').forEach((fig) => {
+    if (!fig.dataset.lang && fig.querySelector('pre').innerText.trim().split('\n').length < 3) return;   // a one-line snippet needs no toolbar
+    const bar = document.createElement('div');
+    bar.className = 'code__bar';
+    bar.innerHTML = `<span>${fig.dataset.lang || ''}</span><button type="button" class="code__copy">Copy</button>`;
+    fig.prepend(bar);
+    const btn = bar.querySelector('button');
+    btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(fig.querySelector('pre').innerText.replace(/\n$/, '')); btn.textContent = 'Copied'; }
+      catch { btn.textContent = 'Press ⌘C'; getSelection().selectAllChildren(fig.querySelector('pre')); }
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+    });
+  });
+  article.addEventListener('click', async (e) => {
+    const a = e.target.closest('a.anchor');
+    if (!a) return;
+    try { await navigator.clipboard.writeText(new URL(a.getAttribute('href'), location.href).href); a.dataset.copied = ''; setTimeout(() => delete a.dataset.copied, 1400); } catch { /* the link still works */ }
   });
 }
 
 // Edit and Delete on the Writing and course review lists, for the owner.
-if (document.documentElement.classList.contains('is-owner') && document.querySelector('[data-delete]')) import('./owner.js?v=8327ef27');
+if (document.documentElement.classList.contains('is-owner') && document.querySelector('[data-delete]')) import('./owner.js?v=2fb509c6');

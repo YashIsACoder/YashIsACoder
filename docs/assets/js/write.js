@@ -20,14 +20,16 @@ import {
 } from '../vendor/codemirror.js';
 import { marked } from '../vendor/marked.esm.js';
 import katex from '../vendor/katex.mjs';
-import { createRenderer, esc, slugify, readTime } from './md.js?v=8327ef27';
-import { mountWidgets } from './posts.js?v=8327ef27';
-import { renderDiagrams } from './diagrams.js?v=8327ef27';
-import { toast } from './site.js?v=8327ef27';
-import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, unmarkGone } from './github.js?v=8327ef27';
+import { createRenderer, esc, slugify, readTime } from './md.js?v=2fb509c6';
+import { mountWidgets } from './posts.js?v=2fb509c6';
+import { renderDiagrams } from './diagrams.js?v=2fb509c6';
+import { toast } from './site.js?v=2fb509c6';
+import { REPO, BRANCH, TOKEN_KEY, store, ghHeaders, contentsUrl, sitePath, githubDeleteUrl, deleteFile, followBuild, refreshPages, markGone, unmarkGone } from './github.js?v=2fb509c6';
 
 const DRAFT_KEY = 'yash-write-draft';
 const VIEW_KEY = 'yash-write-view';
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const niceDate = (d) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d); return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}` : d; };
 const $ = (s) => document.querySelector(s);
 store.set('yash-owner', '1');
 document.documentElement.classList.add('is-owner');
@@ -339,11 +341,12 @@ function update() {
       const { html, words } = render(body, 'your post');
       $('#w-count').textContent = `${words.toLocaleString()} word${words === 1 ? '' : 's'}, ${readTime(words)}`;
       out.innerHTML = `
-        <span class="crumbs">${kind === 'review' ? `Courses / ${esc(f.course.value)}` : 'Writing'}</span>
-        ${tags.length ? `<ul class="post__tags">${tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-        <h1>${esc(f.title.value || 'Untitled')}</h1>
-        ${f.summary.value.trim() ? `<p class="post__summary">${esc(f.summary.value)}</p>` : ''}
-        <div class="post__meta"><span>Yashwanth Madan</span><span>${esc(f.date.value || today())}</span><span>${readTime(words)}</span>${f.draft.checked ? '<span>Draft</span>' : ''}</div>
+        <header class="post__head">
+          <p class="post__kicker"><a>${kind === 'review' ? 'Courses' : 'Writing'}</a>${kind === 'review' && f.course.value ? `<span>${esc(f.course.value)}</span>` : ''}<span>${esc(niceDate(f.date.value || today()))}</span><span>${readTime(words)}</span>${f.draft.checked ? '<span>Draft</span>' : ''}</p>
+          <h1>${esc(f.title.value || 'Untitled')}</h1>
+          ${f.summary.value.trim() ? `<p class="post__summary">${esc(f.summary.value)}</p>` : ''}
+          <div class="post__by"><span class="avatar" aria-hidden="true">YM</span><span class="post__who"><b>Yashwanth Madan</b><span>Computer science and statistics, UNSW Sydney</span></span>${tags.length ? `<span class="post__tags">${tags.map((t) => `<a>${esc(t)}</a>`).join('')}</span>` : ''}</div>
+        </header>
         ${kind === 'review' ? `<div class="ratings"><span>Difficulty</span><span>${meter(f.difficulty.value)}</span><span>Workload</span><span>${meter(f.workload.value)}</span><span>Enjoyment</span><span>${meter(f.enjoyment.value)}</span><span>Take it again?</span><span>${f.again.checked ? 'Yes' : 'No'}</span>${f.term.value.trim() ? `<span>Taken</span><span>${esc(f.term.value)}</span>` : ''}</div>` : ''}
         <div class="prose">${html}</div>`;
       mapLines(body, out.querySelector('.prose'));

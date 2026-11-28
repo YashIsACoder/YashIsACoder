@@ -14,10 +14,10 @@
   <script>(function(){var t=null;try{t=localStorage.getItem('yash-theme')}catch(e){}var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark':'light';try{if(localStorage.getItem('yash-owner')==='1')document.documentElement.classList.add('is-owner')}catch(e){}})()</script>
   <link rel="preload" href="../../assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../../assets/katex/katex.min.css">
-  <link rel="stylesheet" href="../../assets/css/site.css?v=8327ef27">
-  <script type="module" src="../../assets/js/site.js?v=8327ef27"></script>
-  <script type="module" src="../../assets/js/posts.js?v=8327ef27"></script>
-  <script type="module" src="../../assets/js/tables.js?v=8327ef27"></script>
+  <link rel="stylesheet" href="../../assets/css/site.css?v=2fb509c6">
+  <script type="module" src="../../assets/js/site.js?v=2fb509c6"></script>
+  <script type="module" src="../../assets/js/posts.js?v=2fb509c6"></script>
+  <script type="module" src="../../assets/js/tables.js?v=2fb509c6"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -36,34 +36,35 @@
   <main id="main" class="wrap">
     <div class="post-layout">
       <nav class="toc" aria-label="On this page"><span class="toc__label">On this page</span><a href="#1-the-obvious-idea-that-doesnt-quite-work">1. The obvious idea (that doesn&#39;t quite work)</a><a href="#2-the-obstacle-is-the-answer">2. The obstacle is the answer</a><a href="#3-meet-chains-antichains-and-posets">3. Meet chains, antichains, and posets</a><a href="#4-the-reveal-dilworths-theorem">4. The reveal: Dilworth&#39;s theorem</a><a href="#5-a-fast-algorithm-in-c">5. A fast algorithm in C++</a><a href="#6-what-does-this-have-to-do-with-flow-networks">6. What does this have to do with flow networks?</a><a href="#7-try-one-yourself">7. Try one yourself</a><a href="#the-takeaway">The takeaway</a></nav>
+      <div class="readbar" aria-hidden="true"><span></span></div>
       <article class="post">
-        <span class="crumbs"><a href="../../blog/">Writing</a></span>
-        <ul class="post__tags" aria-label="Tags"><li>algorithms</li><li>graphs</li></ul>
-        <h1>Dilworth&#39;s theorem</h1>
-        <p class="post__summary">Relationship between min count to max size</p>
-        <div class="post__meta"><span>Yashwanth Madan</span><time datetime="2026-11-25">25 Nov 2026</time><span>7 min read</span></div>
+        <header class="post__head">
+          <p class="post__kicker"><a href="../../blog/">Writing</a><time datetime="2026-11-25">25 Nov 2026</time><span>7 min read</span></p>
+          <h1>Dilworth&#39;s theorem</h1>
+          <p class="post__summary">Relationship between min count to max size</p>
+          <div class="post__by"><span class="avatar" aria-hidden="true">YM</span><span class="post__who"><b>Yashwanth Madan</b><span>Computer science and statistics, UNSW Sydney</span></span><span class="post__tags"><a href="../../blog/?tag=algorithms">algorithms</a><a href="../../blog/?tag=graphs">graphs</a></span></div>
+        </header>
         
         <div class="prose"><p><em>How a problem about partitioning an array into increasing subsequences turns into a problem about finding a decreasing one.</em></p>
-<blockquote>
-<p><strong>The puzzle:</strong> Given an array <code>A</code>, partition its elements into the <strong>fewest strictly increasing subsequences</strong>. You may skip elements within a subsequence, but you must preserve their original order, and <strong>every position must belong to exactly one subsequence</strong>.</p>
-</blockquote>
+<aside class="callout callout--q"><p class="callout__label">The puzzle</p><p>Given an array <code>A</code>, partition its elements into the <strong>fewest strictly increasing subsequences</strong>. You may skip elements within a subsequence, but you must preserve their original order, and <strong>every position must belong to exactly one subsequence</strong>.</p>
+</aside>
 <p>I came across this while studying flow networks in COMP3821. It looks like an LIS problem. It turns out that its answer comes from a rather surprising place: <strong>antichains</strong>, <strong>partial orders</strong>, and a theorem called <strong>Dilworth&#39;s theorem</strong>.</p>
 <p>And the best part? We can compute the answer in <strong><code>O(n log n)</code></strong> time.</p>
 <hr>
-<h2 id="1-the-obvious-idea-that-doesnt-quite-work">1. The obvious idea (that doesn&#39;t quite work)</h2>
+<h2 id="1-the-obvious-idea-that-doesnt-quite-work">1. The obvious idea (that doesn&#39;t quite work)<a class="anchor" href="#1-the-obvious-idea-that-doesnt-quite-work" aria-label="Link to this section">#</a></h2>
 <p>If you&#39;ve done dynamic programming, you&#39;ve probably encountered the infamous <a href="https://leetcode.com/problems/longest-increasing-subsequence/description/">Longest Increasing Subsequence (LIS)</a> problem.</p>
 <p>Given an array, LIS asks for the longest subsequence whose values are <strong>strictly increasing</strong>. A classic <code>O(n²)</code> DP solution uses</p>
 <div class="math-display"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">dp</mi><mo>⁡</mo><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>=</mo><mn>1</mn><mo>+</mo><munder><mrow><mi>max</mi><mo>⁡</mo></mrow><mstyle scriptlevel="1"><mtable rowspacing="0.1em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="1" displaystyle="false"><mrow><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="1" displaystyle="false"><mrow><mi>A</mi><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo><mo>&lt;</mo><mi>A</mi><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo></mrow></mstyle></mtd></mtr></mtable></mstyle></munder><mi mathvariant="normal">dp</mi><mo>⁡</mo><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">\operatorname{dp}[i]
 =1+\max_{\substack{j&lt;i\\A[j]&lt;A[i]}}\operatorname{dp}[j],</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">dp</span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.3138em;vertical-align:-1.5638em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.4306em;"><span style="top:-2.0101em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.177em;"><span style="top:-3.2675em;"><span class="pstrut" style="height:2.75em;"></span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mrel mtight">&lt;</span><span class="mord mathnormal mtight">i</span></span></span><span style="top:-2.323em;"><span class="pstrut" style="height:2.75em;"></span><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mopen mtight">[</span><span class="mord mathnormal mtight" style="margin-right:0.0572em;">j</span><span class="mclose mtight">]</span><span class="mrel mtight">&lt;</span><span class="mord mathnormal mtight">A</span><span class="mopen mtight">[</span><span class="mord mathnormal mtight">i</span><span class="mclose mtight">]</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.677em;"><span></span></span></span></span></span></span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop">max</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.5638em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">dp</span></span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">]</span><span class="mpunct">,</span></span></span></span></span></div>
 <p>where the maximum over an empty set is treated as <code>0</code>.</p>
-<pre><code class="language-cpp">vector&lt;<span class="tok-k">int</span>&gt; <span class="tok-f">dp</span>(n, <span class="tok-n">1</span>);
+<figure class="code" data-lang="C++"><pre><code class="language-cpp">vector&lt;<span class="tok-k">int</span>&gt; <span class="tok-f">dp</span>(n, <span class="tok-n">1</span>);
 <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; n; ++i) {
     <span class="tok-k">for</span> (<span class="tok-k">int</span> j = <span class="tok-n">0</span>; j &lt; i; ++j) {
         <span class="tok-k">if</span> (a[j] &lt; a[i]) {
             dp[i] = <span class="tok-f">max</span>(dp[i], dp[j] + <span class="tok-n">1</span>);
         }
     }
-}</code></pre>
+}</code></pre></figure>
 <p>So here&#39;s a tempting strategy for our <em>partitioning</em> problem:</p>
 <ol>
 <li>Find a longest increasing subsequence.</li>
@@ -76,18 +77,18 @@
 <summary><strong>Reveal a counterexample (try finding one first!)</strong></summary>
 
 <p>Consider</p>
-<pre><code class="language-text">Index:   1  2  3  4  5  6
-A:      [1, 2, 4, 1, 3, 4]</code></pre>
+<figure class="code"><pre><code class="language-text">Index:   1  2  3  4  5  6
+A:      [1, 2, 4, 1, 3, 4]</code></pre></figure>
 <p>The <strong>unique LIS</strong> is <code>[1, 2, 3, 4]</code>, at positions <code>1, 2, 5, 6</code>.</p>
 <p>If we remove it, the remaining values are <code>[4, 1]</code>. They cannot go into the same increasing subsequence, so our greedy approach uses <strong>three</strong> subsequences:</p>
-<pre><code class="language-text">Greedy:
+<figure class="code"><pre><code class="language-text">Greedy:
   Chain 1: [1, 2, 3, 4]
   Chain 2: [4]
-  Chain 3: [1]</code></pre>
+  Chain 3: [1]</code></pre></figure>
 <p>But there&#39;s a partition into just <strong>two</strong>:</p>
-<pre><code class="language-text">Optimal:
+<figure class="code"><pre><code class="language-text">Optimal:
   Chain 1: [1, 2, 4]     (positions 1, 2, 3)
-  Chain 2: [1, 3, 4]     (positions 4, 5, 6)</code></pre>
+  Chain 2: [1, 3, 4]     (positions 4, 5, 6)</code></pre></figure>
 <p>Even taking a <em>unique</em> LIS first can be the wrong choice.</p>
 </details>
 
@@ -95,7 +96,7 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
 <p><strong>What&#39;s the largest collection of elements that <em>cannot</em> belong to the same increasing chain?</strong></p>
 <p>That gives us something powerful: a <strong>lower bound</strong> on the number of chains we need.</p>
 <hr>
-<h2 id="2-the-obstacle-is-the-answer">2. The obstacle is the answer</h2>
+<h2 id="2-the-obstacle-is-the-answer">2. The obstacle is the answer<a class="anchor" href="#2-the-obstacle-is-the-answer" aria-label="Link to this section">#</a></h2>
 <p>Consider a different array:</p>
 <div class="math-display"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>A</mi><mo>=</mo><mo stretchy="false">[</mo><mn>5</mn><mo separator="true">,</mo><mn>2</mn><mo separator="true">,</mo><mn>4</mn><mo separator="true">,</mo><mn>1</mn><mo separator="true">,</mo><mn>3</mn><mo stretchy="false">]</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">A=[5,2,4,1,3].</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">3</span><span class="mclose">]</span><span class="mord">.</span></span></span></span></span></div>
 <p>Focus on the subsequence <code>[5, 4, 3]</code>, at positions <code>1, 3, 5</code>.</p>
@@ -129,7 +130,7 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
 <p>That is, the lower bound is achievable.</p>
 <p>Is that just a coincidence? <strong>Dilworth&#39;s theorem says no.</strong></p>
 <hr>
-<h2 id="3-meet-chains-antichains-and-posets">3. Meet chains, antichains, and posets</h2>
+<h2 id="3-meet-chains-antichains-and-posets">3. Meet chains, antichains, and posets<a class="anchor" href="#3-meet-chains-antichains-and-posets" aria-label="Link to this section">#</a></h2>
 <p>A <strong>partially ordered set</strong>, or <strong>poset</strong>, is a set equipped with a relation that is reflexive, antisymmetric, and transitive.</p>
 <p>The important word is <strong>partially</strong>: unlike ordinary numerical order, two elements don&#39;t necessarily have to be comparable.</p>
 <p>For our array, let&#39;s make the <em>positions</em> <code>1, 2, ..., n</code> the elements of a poset. Define</p>
@@ -138,9 +139,9 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
 \bigl(i=j\bigr)\ \text{or}\ \bigl(i&lt;j\text{ and }A[i]&lt;A[j]\bigr).</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7955em;vertical-align:-0.136em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⪯</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟺</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mopen"><span class="delimsizing size1">(</span></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose"><span class="delimsizing size1">)</span></span><span class="mspace"> </span><span class="mord text"><span class="mord">or</span></span><span class="mspace"> </span><span class="mopen"><span class="delimsizing size1">(</span></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mord text"><span class="mord"> and </span></span><span class="mord mathnormal">A</span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal">A</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.0572em;">j</span><span class="mclose">]</span><span class="mclose"><span class="delimsizing size1">)</span></span><span class="mord">.</span></span></span></span></span></div>
 <p>That is, one position comes before another only if <strong>both</strong> the index and its value increase.</p>
 <p>Why define it this way? Because it encodes the exact condition for two elements to appear in the same increasing subsequence.</p>
-<h3 id="chains">Chains</h3>
+<h3 id="chains">Chains<a class="anchor" href="#chains" aria-label="Link to this section">#</a></h3>
 <p>A <strong>chain</strong> is a set of pairwise comparable elements. In this poset, a chain is precisely a <strong>strictly increasing subsequence</strong>.</p>
-<h3 id="antichains">Antichains</h3>
+<h3 id="antichains">Antichains<a class="anchor" href="#antichains" aria-label="Link to this section">#</a></h3>
 <p>An <strong>antichain</strong> is a set of pairwise incomparable elements. If we list its positions in increasing order, the corresponding values must be <strong>non-increasing</strong>.</p>
 <p>Why non-increasing rather than strictly decreasing? Because equal values are also incompatible with belonging to a <em>strictly</em> increasing subsequence.</p>
 <table>
@@ -183,10 +184,9 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
     p3 --&gt; p5</code></pre></figure>
 <p>For example, positions <code>1</code> and <code>5</code> are <em>incomparable</em>: their values are both <code>3</code>, so they cannot be in the same strictly increasing chain.</p>
 <hr>
-<h2 id="4-the-reveal-dilworths-theorem">4. The reveal: Dilworth&#39;s theorem</h2>
-<blockquote>
-<p><strong>Dilworth&#39;s theorem.</strong> In any finite poset, the <strong>maximum number of pairwise incomparable elements</strong> equals the <strong>minimum number of chains required to partition the set</strong>.</p>
-</blockquote>
+<h2 id="4-the-reveal-dilworths-theorem">4. The reveal: Dilworth&#39;s theorem<a class="anchor" href="#4-the-reveal-dilworths-theorem" aria-label="Link to this section">#</a></h2>
+<aside class="callout callout--thm"><p class="callout__label">Dilworth&#39;s theorem</p><p>In any finite poset, the <strong>maximum number of pairwise incomparable elements</strong> equals the <strong>minimum number of chains required to partition the set</strong>.</p>
+</aside>
 <p>That is,</p>
 <div class="math-display"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mtext>maximum antichain size</mtext><mo>=</mo><mtext>minimum chain-partition size</mtext></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">\boxed{\text{maximum antichain size}=\text{minimum chain-partition size}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.5689em;vertical-align:-0.5344em;"></span><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0344em;"><span style="top:-3.5689em;"><span class="pstrut" style="height:3.5689em;"></span><span class="boxpad"><span class="mord"><span class="mord"><span class="mord text"><span class="mord">maximum antichain size</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord text"><span class="mord">minimum chain-partition size</span></span></span></span></span></span><span style="top:-3.0344em;"><span class="pstrut" style="height:3.5689em;"></span><span class="stretchy fbox" style="height:1.5689em;border-style:solid;border-width:0.04em;"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5344em;"><span></span></span></span></span></span></span></span></span></span></div>
 <p>For our array, a chain is an increasing subsequence and an antichain is a non-increasing subsequence. So the theorem becomes:</p>
@@ -199,20 +199,19 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
 \end{gathered}
 }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6.98em;vertical-align:-3.24em;"></span><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.74em;"><span style="top:-8.98em;"><span class="pstrut" style="height:8.98em;"></span><span class="boxpad"><span class="mord"><span class="mord"><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.4em;"><span style="top:-5.56em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Minimum number of strictly increasing subsequences</span></span></span></span><span style="top:-4.06em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">in a partition of </span></span><span class="mord mathnormal">A</span></span></span><span style="top:-2.26em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mrel">=</span></span></span><span style="top:-0.46em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Length of a longest non-increasing subsequence.</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.9em;"><span></span></span></span></span></span></span></span></span></span></span></span><span style="top:-5.74em;"><span class="pstrut" style="height:8.98em;"></span><span class="stretchy fbox" style="height:6.98em;border-style:solid;border-width:0.04em;"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.24em;"><span></span></span></span></span></span></span></span></span></span></div>
 <p>Let&#39;s appreciate what just happened: <strong>we solved a minimisation problem by finding a maximum of something that looks like its opposite.</strong></p>
-<h3 id="why-this-makes-intuitive-sense">Why this makes intuitive sense</h3>
+<h3 id="why-this-makes-intuitive-sense">Why this makes intuitive sense<a class="anchor" href="#why-this-makes-intuitive-sense" aria-label="Link to this section">#</a></h3>
 <p>The <strong>easy half</strong> is a counting argument. Suppose an antichain has <code>k</code> elements. No increasing chain can contain two of them, so any chain partition must have <strong>at least <code>k</code> chains</strong>.</p>
 <p>The <strong>surprising half</strong> is Dilworth&#39;s guarantee: you can <em>always</em> partition the whole poset into exactly that many chains. No clever arrangement can force you to use more than the maximum antichain size.</p>
 <p>For <code>[1, 2, 4, 1, 3, 4]</code>, a longest non-increasing subsequence has length <code>2</code> (for example, <code>[4, 1]</code>). Therefore, the minimum number of increasing subsequences is <strong>exactly <code>2</code></strong> which agrees with our optimal partition from the counterexample.</p>
-<blockquote>
-<p><strong>A tiny gotcha:</strong> If the array is <code>[7, 7, 7]</code>, you need <strong>three</strong> strictly increasing subsequences, not one. That&#39;s why the right dual is <em>longest non-increasing</em> subsequence, not <em>longest strictly decreasing</em> subsequence.</p>
-</blockquote>
+<aside class="callout callout--note"><p class="callout__label">A tiny gotcha</p><p>If the array is <code>[7, 7, 7]</code>, you need <strong>three</strong> strictly increasing subsequences, not one. That&#39;s why the right dual is <em>longest non-increasing</em> subsequence, not <em>longest strictly decreasing</em> subsequence.</p>
+</aside>
 <hr>
-<h2 id="5-a-fast-algorithm-in-c">5. A fast algorithm in C++</h2>
+<h2 id="5-a-fast-algorithm-in-c">5. A fast algorithm in C++<a class="anchor" href="#5-a-fast-algorithm-in-c" aria-label="Link to this section">#</a></h2>
 <p>Now we don&#39;t need to enumerate chain partitions at all. We just need the <strong>length of the longest non-increasing subsequence (LNIS)</strong>.</p>
 <p>If you&#39;re familiar with the <code>O(n log n)</code> binary-search algorithm for LIS, this is almost the same thing.</p>
 <p>One easy implementation trick: negate every number. A non-increasing subsequence of <code>A</code> becomes a <strong>non-decreasing</strong> subsequence of <code>-A</code>.</p>
 <p>For <em>non-decreasing</em> subsequences, we use <code>upper_bound</code>, not <code>lower_bound</code>, so equal values may extend the subsequence.</p>
-<pre><code class="language-cpp">#include &lt;algorithm&gt;
+<figure class="code" data-lang="C++"><pre><code class="language-cpp">#include &lt;algorithm&gt;
 #include &lt;vector&gt;
 <span class="tok-k">using</span> <span class="tok-k">namespace</span> std;
 
@@ -231,10 +230,10 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
     }
 
     <span class="tok-k">return</span> static_cast&lt;<span class="tok-k">int</span>&gt;(tails.<span class="tok-f">size</span>());
-}</code></pre>
+}</code></pre></figure>
 <p><strong>Complexity:</strong> <code>O(n log n)</code> time and <code>O(n)</code> auxiliary space. The <code>long long</code> conversion avoids overflow if the input contains <code>INT_MIN</code>.</p>
 <p>The <code>tails</code> array is an algorithmic bookkeeping structure; it is <strong>not</strong> itself necessarily a longest subsequence.</p>
-<h3 id="what-if-we-want-the-actual-chains">What if we want the actual chains?</h3>
+<h3 id="what-if-we-want-the-actual-chains">What if we want the actual chains?<a class="anchor" href="#what-if-we-want-the-actual-chains" aria-label="Link to this section">#</a></h3>
 <p>The LNIS algorithm gives the <strong>number</strong> of chains. To construct an optimal partition, process the values from left to right and put each value <code>x</code> into a chain whose current last element is <strong>the largest value strictly less than <code>x</code></strong>. If none exists, start a new chain.</p>
 <p>We can maintain chain endings in an ordered set, giving another <code>O(n log n)</code> algorithm. This is a patience-sorting-style greedy algorithm for <em>constructing</em> the partition, and unlike repeatedly removing an LIS, it is optimal.</p>
 <details>
@@ -242,7 +241,7 @@ A:      [1, 2, 4, 1, 3, 4]</code></pre>
 
 
 
-<pre><code class="language-cpp">#include &lt;limits&gt;
+<figure class="code" data-lang="C++"><pre><code class="language-cpp">#include &lt;limits&gt;
 #include &lt;set&gt;
 #include &lt;utility&gt;
 #include &lt;vector&gt;
@@ -270,12 +269,12 @@ vector&lt;vector&lt;<span class="tok-k">int</span>&gt;&gt; <span class="tok-f">p
     }
 
     <span class="tok-k">return</span> chains;
-}</code></pre>
+}</code></pre></figure>
 <p>Every element is appended after a smaller value, so each chain is strictly increasing. The best-fit rule produces the minimum number of chains; equivalently, the final count equals the LNIS length.</p>
 </details>
 
 <hr>
-<h2 id="6-what-does-this-have-to-do-with-flow-networks">6. What does this have to do with flow networks?</h2>
+<h2 id="6-what-does-this-have-to-do-with-flow-networks">6. What does this have to do with flow networks?<a class="anchor" href="#6-what-does-this-have-to-do-with-flow-networks" aria-label="Link to this section">#</a></h2>
 <p>This is where I originally encountered the idea.</p>
 <p>Given a DAG, we can find a minimum <strong>vertex-disjoint path cover</strong> through bipartite matching. For our array poset, construct a DAG whose vertices are array positions, and add an edge <code>i → j</code> whenever <code>i &lt; j</code> and <code>A[i] &lt; A[j]</code>.</p>
 <p>Every chain becomes a directed path in this DAG (we&#39;ve included <em>all</em> comparable pairs, not just adjacent positions). So the minimum path cover is the minimum chain partition.</p>
@@ -304,9 +303,9 @@ vector&lt;vector&lt;<span class="tok-k">int</span>&gt;&gt; <span class="tok-f">p
 </details>
 
 <hr>
-<h2 id="7-try-one-yourself">7. Try one yourself</h2>
+<h2 id="7-try-one-yourself">7. Try one yourself<a class="anchor" href="#7-try-one-yourself" aria-label="Link to this section">#</a></h2>
 <p>Before opening the answer, consider:</p>
-<pre><code class="language-text">A = [4, 1, 3, 2]</code></pre>
+<figure class="code"><pre><code class="language-text">A = [4, 1, 3, 2]</code></pre></figure>
 <p><strong>What&#39;s the minimum number of strictly increasing subsequences needed to partition this array?</strong></p>
 <details>
 <summary><strong>Reveal the answer</strong></summary>
@@ -315,24 +314,29 @@ vector&lt;vector&lt;<span class="tok-k">int</span>&gt;&gt; <span class="tok-f">p
 </details>
 
 <hr>
-<h2 id="the-takeaway">The takeaway</h2>
+<h2 id="the-takeaway">The takeaway<a class="anchor" href="#the-takeaway" aria-label="Link to this section">#</a></h2>
 <p>I initially thought of this as a problem about <strong>building increasing subsequences</strong>. Dilworth&#39;s theorem reframes it as a problem about <strong>finding elements that cannot be grouped together</strong>.</p>
 <p>The same principle shows up well beyond arrays: scheduling, partially ordered tasks, DAG path covers, and matching problems.</p>
-<blockquote>
-<p><strong>Sometimes, to minimise the number of compatible groups, the best thing to study is the largest group of mutually incompatible elements.</strong></p>
+<blockquote class="pull"><p>Sometimes, to minimise the number of compatible groups, the best thing to study is the largest group of mutually incompatible elements.</p>
 </blockquote>
 <p>That&#39;s the beautiful part of Dilworth&#39;s theorem and why a theorem from order theory ended up being one of my favourite surprises from studying flow networks.</p>
 </div>
-        <div class="post__end">
-          <div class="btn-row"><a class="btn btn--primary" data-mail data-subject="Re: Dilworth&#39;s theorem" href="../../">Reply by email</a><a class="btn" href="../../blog/">All writing</a><a class="btn" data-owner href="../../write/?edit=content%2Fblog%2F2026-11-25-dilworths-theorem.md">Edit this post</a></div>
-          <details><summary>Cite this</summary><pre>@misc{madan2026dilworths,
+        <footer class="post__end">
+          <div class="author">
+            <span class="avatar avatar--lg" aria-hidden="true">YM</span>
+            <div>
+              <p>I’m Yashwanth. I study computer science and statistics at UNSW Sydney and write about algorithms, C++, statistics and markets. If something here is wrong or could be clearer, I’d like to hear about it.</p>
+              <p class="btn-row"><a class="btn btn--primary" data-mail data-subject="Re: Dilworth&#39;s theorem" href="../../">Reply by email</a><a class="btn" href="../../blog/">All writing</a><a class="btn" data-owner href="../../write/?edit=content%2Fblog%2F2026-11-25-dilworths-theorem.md">Edit this post</a></p>
+            </div>
+          </div>
+          
+          <details class="cite"><summary>Cite this post</summary><pre>@misc{madan2026dilworths,
   author = {Yashwanth Madan},
   title  = {Dilworth&#39;s theorem},
   year   = {2026},
   note   = {https://yashisacoder.github.io/YashIsACoder/blog/dilworths-theorem/}
 }</pre></details>
-          <div class="pager"><span></span><span></span></div>
-        </div>
+        </footer>
       </article>
     </div>
   </main>

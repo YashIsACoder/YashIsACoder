@@ -1,9 +1,10 @@
 // The homepage: the Gaussian process, and the projects list with its
 // live labs (Payoff Lab, SolarRoute, the solver race), the solar panel
 // and QuantSprint.
-import { ROWS, PROJECTS } from './projects.js?v=8327ef27';
-import { mountGP } from './gp.js?v=8327ef27';
-import { startMotion } from './motion.js?v=8327ef27';
+import { ROWS, PROJECTS } from './projects.js?v=2fb509c6';
+import { mountGP } from './gp.js?v=2fb509c6';
+import { startMotion } from './motion.js?v=2fb509c6';
+import { mountStage } from './stage.js?v=2fb509c6';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -18,6 +19,7 @@ if (plot) {
   $('[data-gp-clear]')?.addEventListener('click', () => gp.clear());
   $('[data-gp-reset]')?.addEventListener('click', () => gp.reset());
 }
+mountStage($('[data-stage]'));
 
 // ------------------------------------------------------------ projects
 const CHEVRON = '<svg class="proj__chev" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';

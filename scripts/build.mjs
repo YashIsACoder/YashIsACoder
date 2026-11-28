@@ -158,19 +158,27 @@ function postPage(p, older, newer, section) {
   const toc = p.toc.length ? `<nav class="toc" aria-label="On this page"><span class="toc__label">On this page</span>${p.toc.map((t) => `<a href="#${t.id}">${esc(t.text)}</a>`).join('')}</nav>` : '<div></div>';
   const body = `    <div class="post-layout">
       ${toc}
+      <div class="readbar" aria-hidden="true"><span></span></div>
       <article class="post">
-        <span class="crumbs"><a href="${base}${section}/">${sectionName}</a>${isReview ? ` / ${esc(p.course)}` : ''}</span>
-        ${p.tags.length ? `<ul class="post__tags" aria-label="Tags">${p.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-        <h1>${esc(p.title)}</h1>
-        ${p.summary ? `<p class="post__summary">${esc(p.summary)}</p>` : ''}
-        <div class="post__meta"><span>${AUTHOR}</span><time datetime="${p.date}">${nice(p.date)}</time><span>${readTime(p.words)}</span></div>
+        <header class="post__head">
+          <p class="post__kicker"><a href="${base}${section}/">${sectionName}</a>${isReview ? `<span>${esc(p.course)}</span>` : ''}<time datetime="${p.date}">${nice(p.date)}</time><span>${readTime(p.words)}</span></p>
+          <h1>${esc(p.title)}</h1>
+          ${p.summary ? `<p class="post__summary">${esc(p.summary)}</p>` : ''}
+          <div class="post__by"><span class="avatar" aria-hidden="true">YM</span><span class="post__who"><b>${AUTHOR}</b><span>Computer science and statistics, UNSW Sydney</span></span>${p.tags.length ? `<span class="post__tags">${p.tags.map((t) => `<a href="${base}${section}/?tag=${encodeURIComponent(t)}">${esc(t)}</a>`).join('')}</span>` : ''}</div>
+        </header>
         ${ratings}
         <div class="prose">${p.html}</div>
-        <div class="post__end">
-          <div class="btn-row"><a class="btn btn--primary" data-mail data-subject="${esc('Re: ' + p.title)}" href="${base}">Reply by email</a><a class="btn" href="${base}${section}/">All ${section === 'blog' ? 'writing' : 'reviews'}</a><a class="btn" data-owner href="${base}write/?edit=${encodeURIComponent(p.source)}">Edit this post</a></div>
-          <details><summary>Cite this</summary><pre>${esc(bib)}</pre></details>
-          <div class="pager">${older ? `<a href="${base}${section}/${older.slug}/"><small>Older</small>${esc(older.title)}</a>` : '<span></span>'}${newer ? `<a href="${base}${section}/${newer.slug}/"><small>Newer</small>${esc(newer.title)}</a>` : '<span></span>'}</div>
-        </div>
+        <footer class="post__end">
+          <div class="author">
+            <span class="avatar avatar--lg" aria-hidden="true">YM</span>
+            <div>
+              <p>I’m Yashwanth. I study computer science and statistics at UNSW Sydney and write about algorithms, C++, statistics and markets. If something here is wrong or could be clearer, I’d like to hear about it.</p>
+              <p class="btn-row"><a class="btn btn--primary" data-mail data-subject="${esc('Re: ' + p.title)}" href="${base}">Reply by email</a><a class="btn" href="${base}${section}/">All ${section === 'blog' ? 'writing' : 'reviews'}</a><a class="btn" data-owner href="${base}write/?edit=${encodeURIComponent(p.source)}">Edit this post</a></p>
+            </div>
+          </div>
+          ${older || newer ? `<nav class="pager" aria-label="More ${section === 'blog' ? 'writing' : 'reviews'}">${newer ? `<a class="pager__next" href="${base}${section}/${newer.slug}/"><small>Newer</small><b>${esc(newer.title)}</b>${newer.summary ? `<span>${esc(newer.summary)}</span>` : ''}</a>` : ''}${older ? `<a class="pager__prev" href="${base}${section}/${older.slug}/"><small>Older</small><b>${esc(older.title)}</b>${older.summary ? `<span>${esc(older.summary)}</span>` : ''}</a>` : ''}</nav>` : ''}
+          <details class="cite"><summary>Cite this post</summary><pre>${esc(bib)}</pre></details>
+        </footer>
       </article>
     </div>`;
   return shell({ title: `${p.title}: Yashwanth Madan`, description: p.summary || p.title, base, url, active: section, body });
@@ -187,7 +195,7 @@ function blogIndex(posts) {
       <p class="page__lede">Notes on what I’m building and learning: C++, algorithms, statistics, markets and solar cars. New posts also go out by <a href="${base}feed.xml">RSS</a>.</p>
       <p class="btn-row" data-owner style="margin-top:22px"><a class="btn btn--primary" href="${base}write/">Write a post</a><a class="btn" href="${base}write/?kind=review">Write a course review</a></p>
       <div class="filters" role="group" aria-label="Filter by tag" data-filters><button type="button" data-filter="all" aria-pressed="true">All</button>${tags.map((t) => `<button type="button" data-filter="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('')}</div>
-      <ul class="postlist">${posts.map((p) => `<li data-tags="${esc(p.tags.join(' '))}" data-post="${esc(p.source)}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</a>${ownerActions(p, base)}</li>`).join('')}</ul>
+      <ul class="postlist postlist--writing">${posts.map((p, i) => `${i > 0 && p.date.slice(0, 4) !== posts[i - 1].date.slice(0, 4) ? `<li class="postlist__year" aria-hidden="true">${p.date.slice(0, 4)}</li>` : ''}<li class="${i === 0 ? 'is-lead' : ''}" data-tags="${esc(p.tags.join(' '))}" data-post="${esc(p.source)}"><a href="${p.slug}/"><span class="d">${nice(p.date)}</span><span class="t">${esc(p.title)}</span><span class="r">${readTime(p.words)}</span>${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}${p.tags.length ? `<span class="g">${p.tags.map(esc).join(', ')}</span>` : ''}</a>${ownerActions(p, base)}</li>`).join('')}</ul>
     </section>`;
   return shell({ title: 'Writing: Yashwanth Madan', description: 'Notes on C++, algorithms, statistics, markets and solar cars.', base, url: `${SITE}blog/`, active: 'blog', body });
 }

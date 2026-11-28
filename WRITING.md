@@ -51,6 +51,9 @@ Course reviews (in `content/courses/`) also take `course: COMP3331`, `term: 2026
 | fenced code with `mermaid` | a diagram (flowchart, sequence, class, state, gantt, pie), drawn in the site's colours and redrawn for dark mode |
 | `![description](assets/posts/<post>/<file>.webp)` | an image. In `/write/`, paste or drop one and it uploads, resizes to 1600 px and links itself |
 | `![description](assets/… "Caption")` | an image with a caption underneath |
+| `> **The puzzle:** text` | a boxed callout labelled "The puzzle". A label with *theorem*, *lemma* or *definition* in it gets the theorem style; *gotcha*, *note* or *careful* gets the warning style |
+| `> **A whole sentence in bold.**` | a large pull quote |
+| `<details><summary>Reveal the answer</summary> … </details>` | a card the reader opens |
 
 In `/write/`, the toolbar inserts all of these, and so does the slash menu: type `/` at the start of a line and pick from the list. The ? button shows this table. Shortcuts: ⌘Z undo, ⌘⇧Z redo, ⌘F find and replace, ⌘B bold, ⌘I italic, ⌘K link, ⌘E code, ⌘S save, ⌘⇧. focus mode. Enter carries a list on; Enter on an empty item ends it. In Split view, scrolling either side moves the other, and clicking a paragraph in the preview jumps to its Markdown.
 

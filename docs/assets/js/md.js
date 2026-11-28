@@ -64,6 +64,8 @@ export function highlight(code, lang) {
   return out + esc(code.slice(last));
 }
 
+const LANG_NAMES = { cpp: 'C++', 'c++': 'C++', cc: 'C++', hpp: 'C++', c: 'C', py: 'Python', python: 'Python', js: 'JavaScript', javascript: 'JavaScript', mjs: 'JavaScript', ts: 'TypeScript', typescript: 'TypeScript', rust: 'Rust', rs: 'Rust', go: 'Go', java: 'Java', sql: 'SQL', bash: 'Shell', sh: 'Shell', zsh: 'Shell', shell: 'Shell', json: 'JSON', yaml: 'YAML', yml: 'YAML', html: 'HTML', css: 'CSS', tex: 'LaTeX', latex: 'LaTeX', r: 'R', julia: 'Julia', haskell: 'Haskell', ocaml: 'OCaml', md: 'Markdown', markdown: 'Markdown', diff: 'Diff', toml: 'TOML', cmake: 'CMake', make: 'Make', makefile: 'Make' };
+
 // ------------------------------------------------------------ the renderer
 export function createRenderer({ marked, katex, assetBase = '', resolveAsset = null }) {
   const asset = (href) => (/^assets\//.test(href) ? (resolveAsset ? resolveAsset(href) : assetBase + href) : href);
@@ -81,7 +83,8 @@ export function createRenderer({ marked, katex, assetBase = '', resolveAsset = n
       const src = code.replace(/\n$/, '').split('\n').map((l) => (l.startsWith(indent) ? l.slice(indent.length) : l.replace(/^ +/, ''))).join('\n');
       const lc = lang.toLowerCase();
       if (lc === 'mermaid') return hold(blocks, `<figure class="diagram" data-mermaid="${esc(src)}"><pre class="diagram__src"><code>${esc(src)}</code></pre></figure>`, true);
-      return hold(blocks, `<pre><code class="language-${esc(lc || 'text')}">${highlight(src, lc)}</code></pre>`, true);
+      const name = LANG_NAMES[lc] ?? (lc && lc !== 'text' ? lc : '');
+      return hold(blocks, `<figure class="code"${name ? ` data-lang="${esc(name)}"` : ''}><pre><code class="language-${esc(lc || 'text')}">${highlight(src, lc)}</code></pre></figure>`, true);
     });
     text = text.replace(/`([^`\n]+)`/g, (_, code) => hold(inlines, `<code>${esc(code)}</code>`));
     text = text.replace(/^:::\s*widget\s+([\w-]+)(.*)$/gm, (_, name, rest) => {
@@ -106,7 +109,24 @@ export function createRenderer({ marked, katex, assetBase = '', resolveAsset = n
       const plain = unescapeHtml(inner.replace(/<[^>]+>/g, '').replace(/KXI\d+KX/g, ''));
       const id = slugify(plain) || `section-${toc.length + 1}`;
       if (depth === 2) toc.push({ id, text: plain });
-      return `<h${depth} id="${id}">${inner}</h${depth}>\n`;
+      const link = depth <= 3 ? `<a class="anchor" href="#${id}" aria-label="Link to this section">#</a>` : '';
+      return `<h${depth} id="${id}">${inner}${link}</h${depth}>\n`;
+    };
+    // > **Label:** text  becomes a labelled callout; a quote that is all bold becomes a pull quote
+    renderer.blockquote = function ({ tokens }) {
+      const inner = this.parser.parse(tokens);
+      const m = inner.match(/^\s*<p><strong>([^<]{1,60}?)[:.]?<\/strong>[:.]?\s*/);
+      const restOf = m ? inner.slice(m[0].length).replace(/^<\/p>\s*/, '') : '';
+      if (m && restOf.replace(/<[^>]+>/g, '').trim()) {
+        const label = m[1].replace(/[:.]\s*$/, '').trim();
+        const kind = /theorem|lemma|definition|claim|corollary|proposition|axiom/i.test(label) ? 'thm'
+          : /gotcha|careful|warning|caveat|pitfall|trap|beware|note|aside/i.test(label) ? 'note'
+          : /puzzle|problem|question|exercise|challenge|task|try/i.test(label) ? 'q' : 'plain';
+        const body = /^\s*</.test(restOf) && !/^\s*<(code|em|strong|a|span|b|i)\b/.test(restOf) ? restOf : `<p>${restOf}`;
+        return `<aside class="callout callout--${kind}"><p class="callout__label">${label}</p>${body}</aside>\n`;
+      }
+      if (/^\s*<p><strong>[\s\S]*<\/strong>\.?<\/p>\s*$/.test(inner)) return `<blockquote class="pull">${inner.replace(/<\/?strong>/g, '')}</blockquote>\n`;
+      return `<blockquote>${inner}</blockquote>\n`;
     };
     renderer.image = function ({ href, title, text }) {
       const img = `<img src="${esc(asset(href))}" alt="${esc(text)}" loading="lazy">`;

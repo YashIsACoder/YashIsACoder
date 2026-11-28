@@ -61,7 +61,14 @@ async function renderNow(root) {
     return 'Mermaid couldn’t load. Check your connection.';
   }
   const theme = document.documentElement.dataset.theme || 'light';
-  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables: palette(), fontFamily: 'Archivo, ui-sans-serif, system-ui, sans-serif', flowchart: { useMaxWidth: true }, sequence: { useMaxWidth: true } });
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables: palette(), fontFamily: 'Archivo, ui-sans-serif, system-ui, sans-serif', flowchart: { useMaxWidth: true, nodeSpacing: 28, rankSpacing: 36, padding: 12, diagramPadding: 6, curve: 'basis' }, sequence: { useMaxWidth: true },
+    themeCSS: `.node rect, .node polygon, .node circle, .node path { fill: var(--bg) !important; stroke: var(--line-2) !important; stroke-width: 1.2px !important; }
+      .node rect { rx: 9px; ry: 9px; }
+      .cluster rect { fill: transparent !important; stroke: var(--line-2) !important; stroke-dasharray: 5 4; rx: 12px; ry: 12px; }
+      .cluster-label, .cluster .nodeLabel { color: var(--ink-2) !important; fill: var(--ink-2) !important; font-weight: 600; }
+      .flowchart-link, .edgePath .path { stroke: var(--ink-3) !important; stroke-width: 1.4px !important; }
+      marker path, .arrowheadPath { fill: var(--ink-3) !important; stroke: var(--ink-3) !important; }
+      .nodeLabel, .label { color: var(--ink) !important; }` });
   let firstError = null;
   const good = lastGood.get(root) || [];
   for (const [i, fig] of figs.entries()) {
